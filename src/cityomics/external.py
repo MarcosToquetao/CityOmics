@@ -28,6 +28,33 @@ def load_manifest() -> dict:
     return json.loads(path.read_text()) if path.exists() else {}
 
 
+GEOSAMPA_WFS = "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs"
+
+
+def fetch_geosampa(layer: str, log=print) -> Path:
+    """Baixa uma camada do WFS do GeoSampa como GeoJSON em EPSG:31983 (uma vez) e registra."""
+    import requests
+
+    name = layer.split(":")[-1]
+    dest = external_dir() / "geosampa" / f"{name}.geojson"
+    if not dest.exists():
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        params = {"service": "WFS", "version": "2.0.0", "request": "GetFeature", "typeNames": layer,
+                  "outputFormat": "application/json", "srsName": "EPSG:31983"}
+        log(f"GeoSampa WFS: {layer}")
+        r = requests.get(GEOSAMPA_WFS, params=params, timeout=600)
+        r.raise_for_status()
+        dest.write_bytes(r.content)
+    manifest = load_manifest()
+    key = f"geosampa/{dest.name}"
+    if key not in manifest:
+        manifest[key] = {"url": f"{GEOSAMPA_WFS}?typeNames={layer}", "size": dest.stat().st_size,
+                         "sha256": sha256(dest),
+                         "recorded_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
+        manifest_file().write_text(json.dumps(manifest, indent=2, ensure_ascii=False))
+    return dest
+
+
 def fetch(url: str, group: str, filename: str | None = None, log=print) -> Path:
     """Baixa ``url`` para ``data/external/<group>/`` (se ainda não estiver lá) e registra."""
     filename = filename or url.rstrip("/").rsplit("/", 1)[-1]

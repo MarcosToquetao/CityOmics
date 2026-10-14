@@ -35,6 +35,8 @@ As tabelas bairro → distrito (1.745 bairros) e delegacia → distrito (69 DPs)
 - **Invariante:** a soma dos setores é igual ao total do distrito em todos os distritos × meses (diferença máxima de 0).
 - **Alvo** (`data/processed/alvos/celular_setor_mes.parquet`): 1.310.448 células (27.301 setores × 48 meses), média de 0,54 evento por célula, 79% das células zeradas.
 
+**Estações:** o estrato de trilhos só é distribuído entre os 1.578 setores a até 250 m de uma estação de metrô ou trem (94 de metrô e 109 de trem, camadas do WFS do GeoSampa). Esses setores são 5,8% do total e concentram 31,8% do crime de celular reconciliado.
+
 ## Violência letal (distrito × trimestre)
 
 Arquivo `data/processed/alvos/letal_distrito_trimestre.parquet`. São 1.170 a 1.313 eventos compostos por ano atribuídos a distrito (565 a 611 no CVLI estrito), média de 3,2 por célula.
@@ -42,6 +44,5 @@ Arquivo `data/processed/alvos/letal_distrito_trimestre.parquet`. São 1.170 a 1.
 ## Pendências da F2
 
 - **Lotes fiscais e IPTU/TPCL:** só disponíveis pela interface do GeoSampa (sem WFS nem link direto). O WFS tem `quadra_fiscal`, que permite localizar o lote pelo código SQL (setor + quadra) quando houver o cadastro.
-- **Estações de metrô e trem** (camadas `estacao_metro` e `estacao_trem` do WFS): vão restringir a distribuição do estrato de trilhos aos setores com estação.
 - **Novo geocoding** pelo CNEFE dos registros com logradouro e sem coordenada.
 - **Grade estatística de 200 m** (ponte 2010 ↔ 2022, F3).

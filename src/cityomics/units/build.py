@@ -12,7 +12,7 @@ from __future__ import annotations
 import pandas as pd
 
 from cityomics.paths import interim_dir, processed_dir
-from cityomics.units import assign, reconcile, setores as setores_mod
+from cityomics.units import assign, reconcile, setores as setores_mod, transit
 
 
 def alvos_dir():
@@ -37,7 +37,9 @@ def run(log=print) -> dict:
         log(f"{desfecho}: atribuição {report[desfecho]}")
 
     cel = pd.read_parquet(interim_dir() / "eventos_celular_atribuidos.parquet")
-    alvo = reconcile.reconcile(cel, setores, freq="M")
+    perto = transit.station_setores(setores, transit.load_stations(log=log))
+    log(f"setores a até {transit.BUFFER_M} m de estação de metrô/trem: {len(perto):,}")
+    alvo = reconcile.reconcile(cel, setores, freq="M", eligible={"trilhos": perto})
     alvo["periodo"] = alvo["periodo"].astype(str)
     alvo.to_parquet(alvos_dir() / "celular_setor_mes.parquet", index=False)
 

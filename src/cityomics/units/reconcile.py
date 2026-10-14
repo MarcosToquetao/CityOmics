@@ -10,6 +10,9 @@ com W = contagens geocodificadas na janela e α = 1 (suavização para estratos 
 histórico no distrito, a fração é a da população do setor. Nos 12 primeiros meses da série,
 sem janela anterior completa, usa-se a janela dos 12 primeiros meses.
 
+Estratos com setores elegíveis (``eligible``, ex.: trilhos → setores com estação) só
+distribuem entre esses setores; se o distrito não tiver nenhum, vale a regra geral.
+
 Invariante: a soma dos setores de um distrito é igual ao total do distrito em cada mês.
 """
 
@@ -33,7 +36,8 @@ def _window_sums(counts: pd.DataFrame, months: pd.PeriodIndex) -> pd.DataFrame:
     return pd.DataFrame(out, index=counts.index, columns=months)
 
 
-def reconcile(ev: pd.DataFrame, setores: pd.DataFrame, freq: str = "M") -> pd.DataFrame:
+def reconcile(ev: pd.DataFrame, setores: pd.DataFrame, freq: str = "M",
+              eligible: dict[str, set] | None = None) -> pd.DataFrame:
     """ev: eventos atribuídos (cd_setor, cd_dist, estrato, data_fato).
     Devolve uma linha por setor × período com n_geo, n_alocado e n_total."""
     ev = ev[ev["cd_dist"].notna() & ev["data_fato"].notna()].copy()
@@ -62,6 +66,9 @@ def reconcile(ev: pd.DataFrame, setores: pd.DataFrame, freq: str = "M") -> pd.Da
 
     for (d, st), grp in unalloc.groupby(["cd_dist", "estrato"]):
         members = dist_of.index[dist_of == d]
+        if eligible and st in eligible:
+            restricted = members[members.isin(eligible[st])]
+            members = restricted if len(restricted) else members
         if len(members) == 0:
             continue
         if W_st is not None and st in W_st.index.get_level_values("estrato"):
@@ -69,6 +76,8 @@ def reconcile(ev: pd.DataFrame, setores: pd.DataFrame, freq: str = "M") -> pd.Da
         else:
             w = pd.DataFrame(0.0, index=members, columns=periods)
         p = prior.loc[members]
+        p = p / p.sum(axis=0).replace(0, np.nan)
+        p = p.fillna(1.0 / len(members))
         share = (w + ALPHA * p) / (w.sum(axis=0) + ALPHA)
         u = grp.set_index("periodo")["u"].reindex(periods, fill_value=0)
         alloc.loc[members] += share.mul(u, axis=1).to_numpy()

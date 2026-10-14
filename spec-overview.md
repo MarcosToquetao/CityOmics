@@ -171,7 +171,7 @@ F0 specs + repo
 - [ ] Ponto → lote mais próximo (depende dos lotes)
 - [ ] Novo geocoding (CNEFE/OSM) dos registros com logradouro e sem coordenadas
 - [x] `reconcile.py` estratificado por tipo de local + teste da invariante (alvos em `data/processed/alvos/`)
-- [ ] Restringir o estrato de trilhos aos setores com estação (WFS `estacao_metro`, `estacao_trem`)
+- [x] Restringir o estrato de trilhos aos setores a até 250 m de estação (WFS `estacao_metro`, `estacao_trem`)
 
 ### F3 — Covariáveis
 - [ ] T1: Censo 2010/2022 (grade + Δ), IPVS, ITBI, IPTU, VIIRS C2, Metrô, OSM/ohsome, clima e calendário

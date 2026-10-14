@@ -54,3 +54,10 @@ def test_points_to_setores_assigns_by_location():
     df = pd.DataFrame({"longitude": pts.x, "latitude": pts.y, "coord_valida": [True, True, True]})
     out = assign.points_to_setores(df, st)
     assert out["cd_setor"].tolist()[:2] == ["A", "B"] and pd.isna(out["cd_setor"].iloc[2])
+
+
+def test_reconcile_restricts_stratum_to_eligible_setores():
+    rows = [("A", "D1", "via_publica", "2022-01-05")] * 5 + [(None, "D1", "trilhos", "2022-02-10")] * 6
+    out = reconcile.reconcile(events(rows), setores_fixture(), freq="M", eligible={"trilhos": {"B"}})
+    feb = out[out["periodo"] == pd.Period("2022-02", "M")].set_index("cd_setor")
+    assert np.isclose(feb.loc["B", "n_alocado"], 6.0) and np.isclose(feb.loc["A", "n_alocado"], 0.0)
