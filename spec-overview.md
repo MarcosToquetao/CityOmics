@@ -175,7 +175,8 @@ F0 specs + repo
 
 ### F3 — Covariáveis
 - [x] IPTU/TPCL anual agregado por lote, 1995–2026 (`covariates/iptu.py`)
-- [ ] T1: Censo 2010/2022 (grade + Δ), IPVS, ITBI, VIIRS C2, Metrô, OSM/ohsome, clima e calendário
+- [x] Censo 2022 por setor: 42 indicadores (`covariates/censo.py`)
+- [ ] T1: Censo 2010 (grade + Δ), IPVS, ITBI, VIIRS C2, Metrô, OSM/ohsome, clima e calendário
 - [ ] T2: CNPJ por CNAE (estoques e fluxos), SP156, alvarás, BCB
 - [ ] `asof.py` com defasagens de publicação + teste
 - [ ] Atualização dasimétrica da população
