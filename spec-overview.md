@@ -138,15 +138,17 @@ F0 specs + repo
 ### F0 — Specs e repositório
 - [x] Escrever specs (overview, dados, benchmark, atlas) e estado da entrevista
 - [x] `git init` + `.gitignore` (data/, .env, formatos de dados)
-- [ ] `environment.yml` (Python 3.12) e `R/renv.lock` (INLA, spdep, scoringRules, surveillance)
-- [ ] Esqueleto do pacote `src/cityomics/` + CLI `cityomics` (typer)
-- [ ] `tests/test_privacy.py` (colunas proibidas e padrões de chave) + `.env.example`
-- [ ] README com política de retenção (publicação + 5 anos)
+- [x] `environment.yml` (Python 3.12) e `R/install.R` (INLA, spdep, scoringRules, surveillance, ETAS)
+- [ ] Criar o ambiente conda e congelar versões (`conda-lock`, `renv::snapshot()`)
+- [x] Esqueleto do pacote `src/cityomics/` + CLI `cityomics` (typer) + cofre `sealed.py`
+- [x] `tests/test_privacy.py` (colunas proibidas e padrões de chave) + `tests/test_sealed.py` + `.env.example`
+- [x] README com política de retenção (publicação + 5 anos)
 
 ### F4 — Pré-registro (até 31/out/2026; depende só de F0)
-- [ ] Redigir o pré-registro a partir de spec-benchmark §5 e spec-atlas §5
-- [ ] Análise de poder da violência letal (distrito × trimestre)
-- [ ] Declarar a exposição prévia a 2026 (site do MapaSegurancaSP)
+- [x] Redigir o pré-registro a partir de spec-benchmark §5 e spec-atlas §5 (`prereg/preregistration.md`)
+- [ ] Preencher autores, afiliação e parecer/dispensa do comitê de ética
+- [x] Análise de poder da violência letal (proxy DP × trimestre; `prereg/analysis/`)
+- [x] Declarar a exposição prévia a 2026 (site do MapaSegurancaSP)
 - [ ] Registrar no OSF e gravar o DOI em `prereg/`
 
 ### F1 — Ingestão de BO

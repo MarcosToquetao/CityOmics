@@ -1,0 +1,22 @@
+desfecho           composto  estrito
+unidades             94.000   94.000
+celulas_teste       282.000  282.000
+media_por_celula      3.585    1.525
+logs_base             2.072    1.503
+logs_diff_obs         0.485    0.334
+logs_mde_3tri         0.238    0.191
+logs_mde_3tri_pct    11.480   12.707
+logs_mde_4tri_pct     9.942   11.004
+logs_mde_1tri_pct    19.884   22.008
+crps_base             1.185    0.701
+crps_diff_obs         0.462    0.272
+crps_mde_3tri         0.245    0.146
+crps_mde_3tri_pct    20.657   20.771
+crps_mde_4tri_pct    17.889   17.988
+crps_mde_1tri_pct    35.779   35.976
+           composto  estrito
+trimestre                   
+2022           1266      646
+2023           1210      539
+2024           1178      550
+2025           1316      565

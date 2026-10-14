@@ -1,0 +1,49 @@
+# Ambiente local do CityOmics (D9). Criar com:
+#   mamba env create -f environment.yml && conda activate cityomics
+# Depois de estabilizar, gerar lock reprodutível: conda-lock -f environment.yml -p linux-64
+name: cityomics
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  # dados e I/O
+  - pandas>=2.2
+  - polars
+  - duckdb
+  - pyarrow
+  - python-calamine
+  - openpyxl
+  # geoespacial
+  - geopandas>=1.0
+  - shapely>=2.0
+  - pyogrio
+  - rasterio
+  - rioxarray
+  - xarray
+  - h3-py>=4
+  - osmnx
+  - libpysal
+  - esda
+  - spreg
+  - mgwr
+  # modelos
+  - scikit-learn
+  - statsmodels
+  - lightgbm
+  - shap
+  # omics
+  - anndata
+  - mudata
+  - scanpy
+  - squidpy
+  - leidenalg
+  # utilidades
+  - typer
+  - pytest
+  - ruff
+  - pip:
+      - -e .
+      - elapid          # MaxEnt (spec-benchmark §3.2)
+      - blackmarblepy   # VIIRS Black Marble (spec-dados §3.2)
+      # - laya          # inferência local opcional; fine-tuning no Colab (D30)

@@ -45,6 +45,7 @@
   - Os registros com data do fato em 2026 vão para `data/sealed_2026/`.
   - `cityomics.sealed` recusa a leitura sem o flag `CITYOMICS_PREREG_DONE=<doi-osf>` (D10).
   - **Exceção:** os lags de 2026 usados no protocolo de entradas atualizadas (D25) só podem ser lidos na fase F7.
+  - Alvos de 2026 derivados de covariáveis (tipos de lote em 2026-S1, usados no destino celular) também só são calculados depois da abertura do cofre (pré-registro §3).
 
 ### 1.2 Fatos conhecidos (auditoria do MapaSegurancaSP @ `6072082`)
 
