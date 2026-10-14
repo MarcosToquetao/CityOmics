@@ -18,8 +18,14 @@ conda activate cityomics
 ```
 
 ```bash
-Rscript R/install.R
+mamba env create -f environment-r.yml
 ```
+
+```bash
+mamba run -n cityomics-r Rscript R/install.R
+```
+
+Versões exatas: `conda-linux-64.lock` (Python, conda) e `requirements-pip.lock` (pacotes via pip). Para recriar idêntico: `mamba create -n cityomics --file conda-linux-64.lock` e depois `pip install -r requirements-pip.lock && pip install -e .`
 
 ```bash
 pytest
@@ -53,7 +59,7 @@ data/            fora do git: raw/, interim/, processed/, sealed_2026/
 
 Os dados com data do fato em 2026 ficam em `data/sealed_2026/`. A leitura exige duas chaves:
 
-1. o DOI do pré-registro em `prereg/OSF_DOI`, versionado;
-2. a variável `CITYOMICS_PREREG_DONE` com o mesmo DOI.
+1. `prereg/UNSEAL_KEY`, versionado, com o DOI do OSF ou `FREEZE-<sha>` do commit que congela os modelos (hashes e seleção dos melhores da classe);
+2. a variável `CITYOMICS_UNSEAL_KEY` com o mesmo valor.
 
 Cada abertura é registrada em `data/sealed_2026/ACCESS_LOG.jsonl`.

@@ -1,0 +1,22 @@
+# Ambiente R do CityOmics (D9), separado do Python. Binários do conda-forge dispensam
+# as bibliotecas de sistema (GDAL, GEOS, udunits) que o R do sistema não tem.
+#   mamba env create -f environment-r.yml
+#   mamba run -n cityomics-r Rscript R/install.R   # INLA, scoringRules, ETAS
+name: cityomics-r
+channels:
+  - conda-forge
+dependencies:
+  - r-base=4.5
+  - r-arrow
+  - r-sf
+  - r-spdep
+  - r-surveillance
+  - r-fmesher
+  - r-matrix
+  - r-renv
+  - r-remotes
+  # compiladores para os pacotes que vêm do CRAN (scoringRules, ETAS)
+  - c-compiler
+  - cxx-compiler
+  - fortran-compiler
+  - make

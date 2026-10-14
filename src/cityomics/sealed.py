@@ -1,10 +1,14 @@
-"""Cofre dos dados de 2026 (D10, D26, D32).
+"""Cofre dos dados de 2026 (D10, D26, D32, D33).
 
-Nenhuma análise lê ``data/sealed_2026/`` antes do pré-registro. A leitura exige duas chaves:
+Nenhuma análise lê ``data/sealed_2026/`` antes de o plano estar congelado. A leitura exige
+duas chaves iguais:
 
-1. ``prereg/OSF_DOI`` contém o DOI do registro no OSF. O arquivo é versionado, então o
-   commit que o adiciona é um carimbo de data público.
-2. A variável de ambiente ``CITYOMICS_PREREG_DONE`` tem o mesmo DOI, o que torna a
+1. ``prereg/UNSEAL_KEY`` (versionado), que contém uma de duas formas:
+   - o DOI do registro no OSF (``10.17605/OSF.IO/XXXXX``), quando houver;
+   - ``FREEZE-<sha>``, o commit de congelamento que registra os hashes dos modelos e a
+     seleção dos melhores da classe (D33: o registro no OSF ficou para a etapa final).
+     O commit precisa existir no histórico do repositório.
+2. A variável de ambiente ``CITYOMICS_UNSEAL_KEY`` com o mesmo valor, o que torna a
    abertura uma decisão explícita da sessão, e não um efeito colateral de um import.
 
 Cada abertura é registrada em ``data/sealed_2026/ACCESS_LOG.jsonl`` com data, finalidade e
@@ -22,18 +26,19 @@ import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
-from cityomics.paths import REPO_ROOT, prereg_doi_file, sealed_dir
+from cityomics.paths import REPO_ROOT, sealed_dir, unseal_key_file
 
-ENV_FLAG = "CITYOMICS_PREREG_DONE"
+ENV_FLAG = "CITYOMICS_UNSEAL_KEY"
 ACCESS_LOG = "ACCESS_LOG.jsonl"
 _DOI_RE = re.compile(r"^10\.17605/OSF\.IO/[A-Z0-9]{5,}$")
+_FREEZE_RE = re.compile(r"^FREEZE-([0-9A-F]{7,40})$")
 
 
 class SealedError(PermissionError):
-    """Tentativa de ler o cofre de 2026 sem as duas chaves do pré-registro."""
+    """Tentativa de ler o cofre de 2026 sem as duas chaves."""
 
 
-def _normalize_doi(value: str) -> str:
+def _normalize(value: str) -> str:
     value = value.strip().upper()
     for prefix in ("HTTPS://DOI.ORG/", "DOI:"):
         if value.startswith(prefix):
@@ -41,55 +46,68 @@ def _normalize_doi(value: str) -> str:
     return value
 
 
-def registered_doi() -> str | None:
-    """DOI gravado em ``prereg/OSF_DOI`` (primeira linha não comentada), ou None."""
-    path = prereg_doi_file()
+def _git(*args: str) -> subprocess.CompletedProcess | None:
+    try:
+        return subprocess.run(["git", *args], cwd=REPO_ROOT, capture_output=True, text=True, timeout=5)
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
+def _commit_exists(sha: str) -> bool:
+    out = _git("cat-file", "-e", f"{sha.lower()}^{{commit}}")
+    return out is not None and out.returncode == 0
+
+
+def registered_key() -> str | None:
+    """Chave válida gravada em ``prereg/UNSEAL_KEY`` (primeira linha não comentada), ou None."""
+    path = unseal_key_file()
     if not path.exists():
         return None
     for line in path.read_text().splitlines():
         line = line.strip()
-        if line and not line.startswith("#"):
-            doi = _normalize_doi(line)
-            return doi if _DOI_RE.match(doi) else None
+        if not line or line.startswith("#"):
+            continue
+        key = _normalize(line)
+        if _DOI_RE.match(key):
+            return key
+        freeze = _FREEZE_RE.match(key)
+        if freeze and _commit_exists(freeze.group(1)):
+            return key
+        return None
     return None
 
 
 def is_unsealed() -> bool:
-    doi = registered_doi()
-    return doi is not None and _normalize_doi(os.environ.get(ENV_FLAG, "")) == doi
+    key = registered_key()
+    return key is not None and _normalize(os.environ.get(ENV_FLAG, "")) == key
 
 
 def require_unsealed(purpose: str) -> str:
-    """Devolve o DOI se o cofre puder ser aberto; senão levanta SealedError."""
-    doi = registered_doi()
-    if doi is None:
+    """Devolve a chave se o cofre puder ser aberto; senão levanta SealedError."""
+    key = registered_key()
+    if key is None:
         raise SealedError(
-            "Os dados de 2026 estão lacrados: falta o DOI do pré-registro em "
-            f"{prereg_doi_file()} (formato 10.17605/OSF.IO/XXXXX)."
+            "Os dados de 2026 estão lacrados: falta uma chave válida em "
+            f"{unseal_key_file()} (DOI do OSF ou FREEZE-<sha de um commit existente>)."
         )
-    flag = _normalize_doi(os.environ.get(ENV_FLAG, ""))
-    if flag != doi:
+    if _normalize(os.environ.get(ENV_FLAG, "")) != key:
         raise SealedError(
-            f"Os dados de 2026 estão lacrados: defina {ENV_FLAG}={doi} para confirmar a "
+            f"Os dados de 2026 estão lacrados: defina {ENV_FLAG}={key} para confirmar a "
             f"abertura (finalidade declarada: {purpose!r})."
         )
-    return doi
+    return key
 
 
 def _git_commit() -> str | None:
-    try:
-        out = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=REPO_ROOT,
-                             capture_output=True, text=True, timeout=5)
-        return out.stdout.strip() or None
-    except (OSError, subprocess.SubprocessError):
-        return None
+    out = _git("rev-parse", "--short", "HEAD")
+    return (out.stdout.strip() or None) if out else None
 
 
 def open_sealed(name: str, purpose: str) -> Path:
     """Caminho de um arquivo do cofre, após checar as chaves e registrar o acesso."""
     if not purpose.strip():
         raise ValueError("Declare a finalidade da leitura do cofre.")
-    doi = require_unsealed(purpose)
+    key = require_unsealed(purpose)
     path = sealed_dir() / name
     if not path.exists():
         raise FileNotFoundError(path)
@@ -97,7 +115,7 @@ def open_sealed(name: str, purpose: str) -> Path:
         "timestamp": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "file": name,
         "purpose": purpose,
-        "doi": doi,
+        "key": key,
         "commit": _git_commit(),
     }
     with (sealed_dir() / ACCESS_LOG).open("a") as fh:

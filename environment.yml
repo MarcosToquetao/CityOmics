@@ -35,9 +35,10 @@ dependencies:
   # omics
   - anndata
   - mudata
-  - scanpy
+  - scanpy>=1.11,<1.12   # squidpy 1.7 usa API interna removida no scanpy 1.12
   - squidpy
   - leidenalg
+  - imagecodecs   # exigido pelo squidpy
   # utilidades
   - typer
   - pytest

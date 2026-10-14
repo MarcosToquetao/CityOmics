@@ -73,7 +73,7 @@ IBGE/GeoSampa/... ──┘    (snapshot)     (lote→setor→distrito)         
 | Período | Marco |
 |---|---|
 | out–nov/2026 | F0–F3: specs, ingestão, unidades e covariáveis |
-| até 31/out/2026 | F4: pré-registro no OSF (depende só de F0); emendas datadas até a abertura de 2026 |
+| antes de abrir 2026 | F4: commit de congelamento (hashes dos modelos, melhores da classe) = chave do cofre; registro no OSF só na etapa final (D33) |
 | nov/2026–fev/2027 | F5 benchmark (até 2025) e F6 atlas em paralelo |
 | ~mar/2027 | Avaliação 2026 → submissão do Artigo 2 (atlas) |
 | ~jun/2027 | Dados finais da janela prospectiva → submissão do Artigo 1 (benchmark) |
@@ -114,12 +114,13 @@ IBGE/GeoSampa/... ──┘    (snapshot)     (lote→setor→distrito)         
 | D30 | Colab | Todas as análises em GPU no Colab; só dados agregados e anônimos sobem | GPU local de 4 GB | Red Team | 2026-10-14 |
 | D31 | Janela do destino | Treino 2012-S1 → 2025-S2; teste 2025-S2 → 2026-S1; alvarás só como contexto | Genes consistentes desde 2012 | Red Team | 2026-10-14 |
 | D32 | Momento do pré-registro | F4 depende só de F0: registrar até 31/out/2026 com emendas datadas permitidas até abrir 2026 | O pipeline F1–F3 não fica pronto antes do início da janela prospectiva | Red Team | 2026-10-14 |
+| D33 | Registro no OSF | Adiado para a etapa final, junto com os artigos. Antes de abrir 2026, um commit de congelamento (hashes dos modelos, melhores da classe) vira a chave do cofre (`FREEZE-<sha>`); 2026 é reportado como teste retrospectivo lacrado; a janela prospectiva é o teste totalmente limpo | Decisão do autor: campos do artigo só no fim. Custo aceito: sem carimbo externo de data antes da análise | Interview | 2026-10-14 |
 
 ## Dependency Graph & Implementation Order
 
 ```
 F0 specs + repo
- ├─► F4 pré-registro OSF (até 31/out/2026; emendas datadas até abrir 2026) ─────────┐
+ ├─► F4 rascunho do pré-registro → congelamento antes de abrir 2026 (OSF no fim, D33) ┐
  └─► F1 ingestão BO (spec-dados)                                                    │
       └─► F2 unidades + reconciliação (spec-dados)                                  │
            └─► F3 covariáveis as-of (spec-dados)                                    │
@@ -144,12 +145,13 @@ F0 specs + repo
 - [x] `tests/test_privacy.py` (colunas proibidas e padrões de chave) + `tests/test_sealed.py` + `.env.example`
 - [x] README com política de retenção (publicação + 5 anos)
 
-### F4 — Pré-registro (até 31/out/2026; depende só de F0)
+### F4 — Pré-registro (rascunho pronto; congelamento antes de abrir 2026; OSF na etapa final, D33)
 - [x] Redigir o pré-registro a partir de spec-benchmark §5 e spec-atlas §5 (`prereg/preregistration.md`)
 - [ ] Preencher autores, afiliação e parecer/dispensa do comitê de ética
 - [x] Análise de poder da violência letal (proxy DP × trimestre; `prereg/analysis/`)
 - [x] Declarar a exposição prévia a 2026 (site do MapaSegurancaSP)
-- [ ] Registrar no OSF e gravar o DOI em `prereg/`
+- [ ] Commit de congelamento antes de abrir 2026: hashes dos modelos + melhores da classe → `prereg/UNSEAL_KEY`
+- [ ] (Etapa final) Registrar no OSF e acrescentar o DOI
 
 ### F1 — Ingestão de BO
 - [ ] `ingest/snapshot.py`: novo download de 2025–2026, cópia de 2022–2024, `snapshot.json` com sha256

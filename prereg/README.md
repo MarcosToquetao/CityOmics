@@ -5,15 +5,23 @@
 | `preregistration.md` | Rascunho do pré-registro no modelo do OSF para dados secundários, em inglês |
 | `AMENDMENTS.md` | Emendas datadas, permitidas até a primeira abertura do cofre de 2026 |
 | `analysis/` | Análise de poder da violência letal (código e saída; só dados de 2022–2025) |
-| `OSF_DOI` | Criado depois do registro; contém só o DOI. É uma das duas chaves do cofre |
+| `UNSEAL_KEY` | Chave do cofre de 2026: `FREEZE-<sha>` do commit de congelamento e, na etapa final, o DOI do OSF |
 
-## Como registrar (prazo: 31/out/2026)
+## Calendário (D33)
+
+O registro no OSF fica para a etapa final, junto com os artigos. Até lá:
+
+- o rascunho evolui aqui, com mudanças anotadas em `AMENDMENTS.md`;
+- **antes de abrir os dados de 2026**, um commit de congelamento registra os hashes dos modelos e a seleção dos melhores da classe, e `UNSEAL_KEY` recebe `FREEZE-<sha>` desse commit;
+- 2026 entra no artigo como teste retrospectivo lacrado, e a janela prospectiva (nov/2026–mar/2027) como o teste totalmente limpo.
+
+## Como registrar (etapa final)
 
 1. Preencha os campos `[fill in]` de `preregistration.md`: autores, afiliação e parecer ou dispensa do comitê de ética.
 2. No OSF, crie um projeto e escolha **Registrations → "Preregistration for secondary data analysis"**. A opção "OSF Preregistration" também serve. Copie as seções.
 3. **Embargo:** o OSF permite manter o registro privado por até 4 anos, com a data registrada. Use isso se quiser que o desenho só se torne público junto com os artigos.
-4. Depois de aprovado, grave o DOI (formato `10.17605/OSF.IO/XXXXX`) em `prereg/OSF_DOI` e faça um commit. Esse commit é o carimbo de data no repositório.
-5. A partir daí, qualquer mudança de plano vai para `AMENDMENTS.md` (e para o OSF) **antes** de abrir os dados de 2026.
+4. Depois de aprovado, acrescente o DOI (formato `10.17605/OSF.IO/XXXXX`) ao histórico de `UNSEAL_KEY` e faça um commit.
+5. Junto com o registro, anexe `AMENDMENTS.md` e `data/sealed_2026/ACCESS_LOG.jsonl`, que documentam quando o cofre foi aberto.
 
 ## Reproduzir a análise de poder
 

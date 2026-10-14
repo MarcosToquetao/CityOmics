@@ -19,8 +19,8 @@ def info() -> None:
     typer.echo(f"cityomics {__version__}")
     typer.echo(f"dados:     {paths.data_dir()}")
     typer.echo(f"cofre:     {paths.sealed_dir()}")
-    doi = sealed.registered_doi()
-    typer.echo(f"pré-reg.:  {doi or 'não registrado'}")
+    key = sealed.registered_key()
+    typer.echo(f"chave:     {key or 'nenhuma (plano ainda não congelado)'}")
     typer.echo(f"2026:      {'aberto nesta sessão' if sealed.is_unsealed() else 'lacrado'}")
 
 

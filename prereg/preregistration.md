@@ -1,7 +1,7 @@
 # Pre-registration — Borrowed-science forecasting of urban crime in São Paulo, and a spatial-omics atlas of the city
 
 **Template:** OSF *Preregistration for secondary data analysis* (van den Akker et al., 2021), adapted.
-**Status:** DRAFT v0.1 (2026-10-14). To be registered on OSF by **2026-10-31**, before the prospective window opens (D32).
+**Status:** DRAFT v0.1 (2026-10-14). **Registration timing (D33):** this plan will be registered on OSF at the final stage of the project. Before the 2026 vault is opened, a freeze commit records frozen-model hashes and best-in-class selections; that commit is the software key to the vault. Consequently, the 2026 validation is reported as a **sealed retrospective hold-out**, and the prospective window (§5.5) is the fully clean test.
 **Authors:** [fill in: name(s), affiliation, supervisor]
 **Project repository:** https://github.com/MarcosToquetao/CityOmics (private until publication). Design documents: `spec-overview.md`, `spec-dados.md`, `spec-benchmark.md`, `spec-atlas.md`. Decision IDs (Dn) refer to the Decisions Log in `spec-overview.md`.
 
@@ -214,8 +214,8 @@ The cellphone outcome has two to three orders of magnitude more cells, so no pow
 ## 7. Timeline
 | Date | Milestone |
 |---|---|
-| 2026-10-31 | Registration on OSF (this document) |
 | Nov 2026 – Feb 2027 | Pipeline, tuning on 2025, atlas; amendments recorded |
 | before unsealing | Amendment with snapshot hash, frozen model hashes and selected best-in-class models |
 | ~Mar 2027 | Single unsealing of 2026; validation results |
 | ~Jun 2027 | Prospective data settled; confirmation results |
+| final stage | Registration on OSF with amendments and vault access log attached |

@@ -4,6 +4,8 @@
 # Uso: Rscript R/install.R
 # Depois de instalar, congelar versões com: renv::init(); renv::snapshot()
 
+options(repos = c(CRAN = "https://cloud.r-project.org"), Ncpus = 4, timeout = 3600)  # INLA tem ~80 MB num servidor lento
+
 cran <- c(
   "arrow",         # interface Parquet com o Python
   "sf", "spdep",   # geometria e vizinhança
@@ -19,6 +21,6 @@ if (!requireNamespace("INLA", quietly = TRUE)) {
   install.packages(
     "INLA",
     repos = c(getOption("repos"), INLA = "https://inla.r-inla-download.org/R/stable"),
-    dep = TRUE
+    dependencies = c("Depends", "Imports", "LinkingTo")
   )
 }

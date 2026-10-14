@@ -96,7 +96,7 @@ Persistência (t−1), sazonal (mesmo mês do ano anterior), média histórica, 
 
 ## 5. Pré-registro (F4)
 
-Registrado no OSF **até 31/out/2026** (depende só das specs; D32), antes de ler `sealed_2026/` para avaliação. Emendas datadas são permitidas até essa leitura. Conteúdo:
+**O registro no OSF fica para a etapa final (D33).** O rascunho está em `prereg/preregistration.md`. Antes de ler `sealed_2026/`, um commit de congelamento registra os hashes dos modelos e a seleção dos melhores da classe; ele é a chave do cofre. No artigo, 2026 é reportado como teste retrospectivo lacrado, e a janela prospectiva é o teste totalmente limpo. Conteúdo:
 - desfechos, unidades, horizontes e protocolo;
 - lista de modelos e de ablações;
 - métricas primárias (PAI a 1% e 5%, CRPS, Brier) e secundárias;

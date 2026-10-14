@@ -43,7 +43,7 @@
   - **CVLI estrito (sensibilidade):** o composto sem as tentativas.
 - **Cofre de 2026:**
   - Os registros com data do fato em 2026 vão para `data/sealed_2026/`.
-  - `cityomics.sealed` recusa a leitura sem o flag `CITYOMICS_PREREG_DONE=<doi-osf>` (D10).
+  - `cityomics.sealed` recusa a leitura sem as duas chaves: `prereg/UNSEAL_KEY` (DOI do OSF ou `FREEZE-<sha>` do commit de congelamento) e a variável `CITYOMICS_UNSEAL_KEY` com o mesmo valor (D10, D33).
   - **Exceção:** os lags de 2026 usados no protocolo de entradas atualizadas (D25) só podem ser lidos na fase F7.
   - Alvos de 2026 derivados de covariáveis (tipos de lote em 2026-S1, usados no destino celular) também só são calculados depois da abertura do cofre (pré-registro §3).
 

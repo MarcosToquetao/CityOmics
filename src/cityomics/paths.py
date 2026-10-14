@@ -4,7 +4,7 @@ As funções leem as variáveis de ambiente no momento da chamada, para que test
 notebooks do Colab possam apontar para outro diretório de dados.
 
 - ``CITYOMICS_DATA``: raiz dos dados (padrão: ``<repo>/data``, fora do git).
-- ``CITYOMICS_PREREG_DOI_FILE``: arquivo com o DOI do pré-registro (padrão: ``<repo>/prereg/OSF_DOI``).
+- ``CITYOMICS_UNSEAL_KEY_FILE``: arquivo com a chave do cofre de 2026 (padrão: ``<repo>/prereg/UNSEAL_KEY``).
 """
 
 from __future__ import annotations
@@ -38,5 +38,5 @@ def sealed_dir() -> Path:
     return data_dir() / "sealed_2026"
 
 
-def prereg_doi_file() -> Path:
-    return Path(os.environ.get("CITYOMICS_PREREG_DOI_FILE", REPO_ROOT / "prereg" / "OSF_DOI"))
+def unseal_key_file() -> Path:
+    return Path(os.environ.get("CITYOMICS_UNSEAL_KEY_FILE", REPO_ROOT / "prereg" / "UNSEAL_KEY"))
