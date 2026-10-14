@@ -140,7 +140,7 @@ F0 specs + repo
 - [x] Escrever specs (overview, dados, benchmark, atlas) e estado da entrevista
 - [x] `git init` + `.gitignore` (data/, .env, formatos de dados)
 - [x] `environment.yml` (Python 3.12) e `R/install.R` (INLA, spdep, scoringRules, surveillance, ETAS)
-- [ ] Criar o ambiente conda e congelar versões (`conda-lock`, `renv::snapshot()`)
+- [x] Criar os ambientes conda (`cityomics`, `cityomics-r`) e congelar versões (`conda-linux-64.lock`, `requirements-pip.lock`, `R/versions.lock`)
 - [x] Esqueleto do pacote `src/cityomics/` + CLI `cityomics` (typer) + cofre `sealed.py`
 - [x] `tests/test_privacy.py` (colunas proibidas e padrões de chave) + `tests/test_sealed.py` + `.env.example`
 - [x] README com política de retenção (publicação + 5 anos)
@@ -154,14 +154,14 @@ F0 specs + repo
 - [ ] (Etapa final) Registrar no OSF e acrescentar o DOI
 
 ### F1 — Ingestão de BO
-- [ ] `ingest/snapshot.py`: novo download de 2025–2026, cópia de 2022–2024, `snapshot.json` com sha256
-- [ ] `ingest/ssp.py`: harmonização de schema 2022 / 2023+ / 2026, fórmulas Excel, chave de BO
-- [ ] `ingest/celulares.py`: deduplicação por BO e VERSAO, só subtrações consumadas
-- [ ] Desfechos: celular; violência letal composta; CVLI estrito
-- [ ] Regra as-of (data do fato e data de registro)
-- [ ] `sealed.py` + cofre `data/sealed_2026/`
+- [x] `ingest/snapshot.py`: cópia quando o tamanho remoto bate, download caso contrário, `snapshot.json` com sha256
+- [x] `ingest/schema.py` + `ingest/ssp.py`: harmonização de schema 2022 / 2023+ / 2026, fórmulas Excel, chave de BO
+- [x] Celular: deduplicação por BO e VERSAO, só subtrações consumadas (em `ingest/ssp.py`)
+- [x] Desfechos: celular; violência letal composta; CVLI estrito (`data/interim/eventos_*.parquet`)
+- [x] Data do fato e data de registro em cada evento (a regra as-of em si é aplicada em `covariates/asof.py` e `features/lags.py`)
+- [x] `sealed.py` + cofre `data/sealed_2026/` (2026 é separado já na leitura)
 - [ ] `ingest/spsafe.py`, `ingest/cem.py` (histórico de violência letal)
-- [ ] Teste: totais mensais iguais aos da API SSP (±0,5%)
+- [x] Conferência com a tabela oficial da SSP (`cityomics ingest check`; ver `docs/F1_ingestao.md`)
 
 ### F2 — Unidades e reconciliação
 - [ ] Malha de setores 2022, distritos, grade de 200 m
