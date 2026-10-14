@@ -31,20 +31,42 @@ def load_manifest() -> dict:
 GEOSAMPA_WFS = "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs"
 
 
-def fetch_geosampa(layer: str, log=print) -> Path:
-    """Baixa uma camada do WFS do GeoSampa como GeoJSON em EPSG:31983 (uma vez) e registra."""
+def fetch_geosampa(layer: str, page_size: int = 100_000, log=print) -> Path:
+    """Baixa uma camada do WFS do GeoSampa como GeoJSON em EPSG:31983 (uma vez) e registra.
+    Camadas grandes (ex.: iluminação pública) são baixadas em páginas."""
     import requests
 
     name = layer.split(":")[-1]
     dest = external_dir() / "geosampa" / f"{name}.geojson"
     if not dest.exists():
         dest.parent.mkdir(parents=True, exist_ok=True)
-        params = {"service": "WFS", "version": "2.0.0", "request": "GetFeature", "typeNames": layer,
-                  "outputFormat": "application/json", "srsName": "EPSG:31983"}
-        log(f"GeoSampa WFS: {layer}")
-        r = requests.get(GEOSAMPA_WFS, params=params, timeout=600)
-        r.raise_for_status()
-        dest.write_bytes(r.content)
+        base = {"service": "WFS", "version": "2.0.0", "request": "GetFeature", "typeNames": layer,
+                "outputFormat": "application/json", "srsName": "EPSG:31983"}
+        hits = requests.get(GEOSAMPA_WFS, params=dict(base, resultType="hits"), timeout=300)
+        import re as _re
+        m = _re.search(r'numberMatched="(\d+)"', hits.text)
+        if m and int(m.group(1)) <= 30_000:
+            page_size = 0  # cabe numa única resposta: sem paginação
+        features, start, collection = [], 0, None
+        while True:
+            params = dict(base, count=page_size, startIndex=start, sortBy="id") if page_size else base
+            log(f"GeoSampa WFS: {layer} (a partir de {start:,})")
+            r = requests.get(GEOSAMPA_WFS, params=params, timeout=900)
+            if r.status_code == 400 and "sortBy" in params:  # camada sem campo id
+                params.pop("sortBy")
+                r = requests.get(GEOSAMPA_WFS, params=params, timeout=900)
+            r.raise_for_status()
+            page = r.json()
+            collection = collection or {k: v for k, v in page.items() if k != "features"}
+            got = page.get("features", [])
+            features += got
+            total = page.get("numberMatched") or page.get("totalFeatures")
+            # o servidor limita cada página (30 mil feições), então avança pelo que veio
+            if not page_size or not got or (isinstance(total, int) and len(features) >= total):
+                break
+            start += len(got)
+        collection["features"] = features
+        dest.write_text(json.dumps(collection))
     manifest = load_manifest()
     key = f"geosampa/{dest.name}"
     if key not in manifest:
