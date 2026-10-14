@@ -1,0 +1,311 @@
+{
+  "specName": "cityomics",
+  "timestamp": "2026-10-14",
+  "status": "spec-written",
+  "specFiles": [
+    "spec-overview.md",
+    "spec-dados.md",
+    "spec-benchmark.md",
+    "spec-atlas.md"
+  ],
+  "qaLog": [
+    {
+      "area": "Ferramentas",
+      "question": "O que são JEV/Laya e onde entram?",
+      "answer": "Links: typesafe.ai Jev, awesome-typesafe-jev, laya-ai.com"
+    },
+    {
+      "area": "Ferramentas",
+      "question": "Papel do JEV na Etapa 1?",
+      "answer": "Camada final + baseline e também 'decisão celular' na transcriptômica espacial"
+    },
+    {
+      "area": "Etapa 2",
+      "question": "O que é o 'próximo passo' da unidade?",
+      "answer": "Desfecho + transição"
+    },
+    {
+      "area": "Desfecho",
+      "question": "Quais desfechos?",
+      "answer": "Roubo/furto de celular; CVLI (genes = features, crimes = desfechos)"
+    },
+    {
+      "area": "Genes",
+      "question": "Separar genes de desfecho?",
+      "answer": "Genes = covariáveis; crime = desfecho + modalidade extra"
+    },
+    {
+      "area": "Privacidade",
+      "question": "Regra de envio ao Jev?",
+      "answer": "Só agregados"
+    },
+    {
+      "area": "Publicação",
+      "question": "Venue?",
+      "answer": "Um artigo de ciências urbanas e outro de data science"
+    },
+    {
+      "area": "Publicação",
+      "question": "Divisão dos artigos?",
+      "answer": "Benchmark vs Atlas"
+    },
+    {
+      "area": "Stack",
+      "question": "Linguagem?",
+      "answer": "Python + R pontual"
+    },
+    {
+      "area": "Avaliação",
+      "question": "Proteção da validação 2026?",
+      "answer": "Pré-registro + janela prospectiva"
+    },
+    {
+      "area": "Ética",
+      "question": "Enquadramento?",
+      "answer": "Prevenção + auditoria"
+    },
+    {
+      "area": "Covariáveis",
+      "question": "Seleção de covariáveis?",
+      "answer": "Literatura + dados, só treino; T1+T2"
+    },
+    {
+      "area": "Unidade",
+      "question": "Unidade espacial?",
+      "answer": "Unidades orgânicas, não hexágonos; lote -> setor -> distrito"
+    },
+    {
+      "area": "Privacidade",
+      "question": "Protocolo LGPD?",
+      "answer": "Protocolo completo"
+    },
+    {
+      "area": "Histórico",
+      "question": "Estender pré-2022?",
+      "answer": "Só CVLI e trajetórias"
+    },
+    {
+      "area": "Geocodificação",
+      "question": "Mudança de 2026?",
+      "answer": "Reconciliação hierárquica"
+    },
+    {
+      "area": "Etapa 2",
+      "question": "Módulos opcionais do atlas?",
+      "answer": "Comunicação, MISTy, imagem — como suplementar"
+    },
+    {
+      "area": "Processo",
+      "question": "Split + red-team?",
+      "answer": "Dividir + red-team"
+    }
+  ],
+  "coverageMap": {
+    "Problema": "done",
+    "Dados BO": "done",
+    "Covariáveis": "done",
+    "Unidade espacial": "done",
+    "Desfecho": "done",
+    "Genes vs desfecho": "done",
+    "Métodos": "done",
+    "Avaliação": "done",
+    "Modelo de decisão": "done",
+    "Etapa 2": "done",
+    "Ética": "done",
+    "Privacidade": "done",
+    "Histórico": "done",
+    "Geocodificação": "done"
+  },
+  "capturedAtCommit": null,
+  "baseline": {
+    "derivedFrom": "greenfield + auditoria de /home/MarcosToquetao/doutorado/projects/MapaSegurancaSP",
+    "capturedAtCommit": null,
+    "externalRepo": {
+      "path": "../MapaSegurancaSP",
+      "headCommit": "6072082"
+    },
+    "claims": [
+      {
+        "id": "C1",
+        "area": "Dados BO",
+        "claim": "SSP SPDadosCriminais disponível 2022–2026; 2019–2021 retornam 404",
+        "evidence": "pipeline/01_download.py"
+      },
+      {
+        "id": "C2",
+        "area": "Dados BO",
+        "claim": "2026 no disco cobre jan–jul",
+        "evidence": "data/raw/SPDadosCriminais_2026.xlsx"
+      },
+      {
+        "id": "C3",
+        "area": "Geocodificação",
+        "claim": "Cobertura de coordenadas ~80% (2022–25) e ~90% a partir de mai/2026",
+        "evidence": "auditoria"
+      },
+      {
+        "id": "C4",
+        "area": "Dados BO",
+        "claim": "Parquets processados do Mapa sem NOME_DELEGACIA (108k pares duplicados em 2022)",
+        "evidence": "data/processed/ocorrencias_*.parquet"
+      },
+      {
+        "id": "C5",
+        "area": "Privacidade",
+        "claim": "Sem nomes/CPF/placas; há NUM_BO, logradouro e coords; VD com atributos sensíveis",
+        "evidence": "auditoria"
+      }
+    ]
+  },
+  "driftLedger": [],
+  "previewUrl": "https://claude.ai/artifact/E3hczSG78EA18AkSHU3dRn",
+  "sourceIssue": null,
+  "feedbackRounds": [],
+  "redTeamStatus": "completed",
+  "redTeamFindings": [
+    {
+      "id": "Q1",
+      "dimension": "contradictory",
+      "severity": "major",
+      "title": "CVLI sem poder estatístico",
+      "resolution": "b) composto com tentativas",
+      "status": "resolved"
+    },
+    {
+      "id": "Q2",
+      "dimension": "wildcard",
+      "severity": "critical",
+      "title": "Deconvolução com composição conhecida",
+      "resolution": "a) atribuição",
+      "status": "resolved"
+    },
+    {
+      "id": "Q3",
+      "dimension": "data-integrity",
+      "severity": "major",
+      "title": "Lote herdando Censo do setor",
+      "resolution": "separar genes por escala",
+      "status": "resolved"
+    },
+    {
+      "id": "Q4",
+      "dimension": "contradictory",
+      "severity": "major",
+      "title": "Destino mensal trivial",
+      "resolution": "semestral",
+      "status": "resolved"
+    },
+    {
+      "id": "Q5",
+      "dimension": "dependency",
+      "severity": "critical",
+      "title": "Reprodutibilidade/vazamento do Jev",
+      "resolution": "adotar medidas",
+      "status": "resolved"
+    },
+    {
+      "id": "Q6",
+      "dimension": "failure-modes",
+      "severity": "major",
+      "title": "Horizonte de 9 meses com quebra de nível",
+      "resolution": "parâmetros congelados, entradas atualizadas",
+      "status": "resolved"
+    },
+    {
+      "id": "Q7",
+      "dimension": "operational",
+      "severity": "major",
+      "title": "2026 já visto",
+      "resolution": "a) 2026 validação + prospectivo confirmação",
+      "status": "resolved"
+    },
+    {
+      "id": "Q8",
+      "dimension": "data-integrity",
+      "severity": "major",
+      "title": "Reconciliação viesada em estações",
+      "resolution": "estratificar + regeocodificar",
+      "status": "resolved"
+    },
+    {
+      "id": "Q9",
+      "dimension": "contradictory",
+      "severity": "major",
+      "title": "IPTU anual no destino semestral",
+      "resolution": "a) depois refinado por Q14 b)",
+      "status": "resolved"
+    },
+    {
+      "id": "Q10",
+      "dimension": "scaling",
+      "severity": "minor",
+      "title": "Fine-tuning na GPU local",
+      "resolution": "Colab",
+      "status": "resolved"
+    },
+    {
+      "id": "Q11",
+      "dimension": "security",
+      "severity": "critical",
+      "title": "Chave de API",
+      "resolution": "adotar (i) e (ii)",
+      "status": "resolved"
+    },
+    {
+      "id": "Q12",
+      "dimension": "wildcard",
+      "severity": "major",
+      "title": "Falácia ecológica",
+      "resolution": "incluir validação pontual",
+      "status": "resolved"
+    },
+    {
+      "id": "Q13",
+      "dimension": "operational",
+      "severity": "minor",
+      "title": "Custo do Jev",
+      "resolution": "levou a Q15",
+      "status": "resolved"
+    },
+    {
+      "id": "Q14",
+      "dimension": "data-integrity",
+      "severity": "critical",
+      "title": "Vetores nulos no tipo semestral",
+      "resolution": "b) estoques + IPTU defasado",
+      "status": "resolved"
+    },
+    {
+      "id": "Q15",
+      "dimension": "dependency",
+      "severity": "major",
+      "title": "Só Laya?",
+      "resolution": "Só Laya, FT principal",
+      "status": "resolved"
+    },
+    {
+      "id": "Q16",
+      "dimension": "security",
+      "severity": "major",
+      "title": "Colab",
+      "resolution": "todas as análises GPU; só dados anônimos",
+      "status": "resolved"
+    },
+    {
+      "id": "Q17",
+      "dimension": "scaling",
+      "severity": "minor",
+      "title": "Janela do destino",
+      "resolution": "2012-S1",
+      "status": "resolved"
+    },
+    {
+      "id": "Q18",
+      "dimension": "contradictory",
+      "severity": "major",
+      "title": "Pré-registro dependia de F3 mas precisa ocorrer antes de nov/2026",
+      "resolution": "F4 depende só de F0 (D32)",
+      "status": "resolved"
+    }
+  ]
+}

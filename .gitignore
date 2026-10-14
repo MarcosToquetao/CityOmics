@@ -1,0 +1,35 @@
+# Dados (microdados de BO, covariáveis brutas, snapshots) — nunca versionar (D14)
+data/
+*.parquet
+*.xlsx
+*.xls
+*.csv.gz
+*.h5ad
+*.h5mu
+*.gpkg
+*.shp
+*.dbf
+*.shx
+*.prj
+
+# Segredos (D28)
+.env
+.env.*
+!.env.example
+
+# Python / ambiente
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+
+# R
+.Rhistory
+.RData
+renv/library/
+
+# Cache local do --verify
+.*.verify-cache.json
