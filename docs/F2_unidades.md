@@ -41,8 +41,48 @@ As tabelas bairro → distrito (1.745 bairros) e delegacia → distrito (69 DPs)
 
 Arquivo `data/processed/alvos/letal_distrito_trimestre.parquet`. São 1.170 a 1.313 eventos compostos por ano atribuídos a distrito (565 a 611 no CVLI estrito), média de 3,2 por célula.
 
+## Lotes fiscais (células do atlas)
+
+Reprodução:
+
+```bash
+cityomics units lotes --download
+```
+
+```bash
+cityomics covariates iptu --download
+```
+
+- **Fonte:** novo GeoSampa, camada "Lote" (id 352). O download segue as mesmas chamadas da interface (`Download/Nas/Tree` e `Download/Download`; `cityomics.geosampa`). São 96 GeoPackages por distrito, atualizados em 2026-10-11, com 557 MB.
+- **Células:** 1.687.685 lotes fiscais e 1.712 favelas do GeoSampa (HABISP, WFS) como pseudo-lotes, que somam 25,3 km². A área mediana do lote é de 175 m². Cada célula recebe o setor 2022 que contém seu ponto representativo; só 0,01% ficou sem setor.
+- **Chave:** `sql_base` = setor fiscal (3) + quadra (3) + lote (4). Há 13.580 lotes com código de condomínio 01, 7.387 com 02, e assim por diante.
+
+## Cadastro IPTU/TPCL por lote (1995–2026)
+
+- **Fonte:** download genérico da mesma camada (`IPTU_<ano>.zip`), 32 arquivos com 1,92 GB.
+- **Agregação:** uma linha por imóvel tributado (3,9 milhões em 2026), agregada por lote em `data/interim/iptu/iptu_lote_<ano>.parquet`. Imóveis comuns usam a chave do SQL; unidades de condomínio vão para o lote do condomínio (setor + quadra + código do condomínio).
+- **Atributos:** número de unidades, áreas, pavimentos, ano de construção, valores do m² e frações de uso (residencial, comércio, serviços, indústria, terreno) e de padrão construtivo (baixo, médio, alto).
+
+| Ano | Imóveis ligados a lote | Lotes atuais com IPTU | Lotes no ano |
+|---|---|---|---|
+| 1995 | 99,4% | 81,4% | 1.543.074 |
+| 2000 | 99,3% | 85,2% | 1.563.425 |
+| 2005 | 99,2% | 88,4% | 1.583.370 |
+| 2010 | 99,2% | 91,5% | 1.609.574 |
+| 2012 | 99,2% | 93,2% | 1.625.777 |
+| 2015 | 99,0% | 94,4% | 1.630.244 |
+| 2020 | 99,0% | 96,1% | 1.638.984 |
+| 2021 | 99,0% | 95,0% | 1.613.686 |
+| 2025 | 99,0% | 97,7% | 1.647.826 |
+| 2026 | 99,0% | 98,2% | 1.649.545 |
+
+O relatório completo, ano a ano, está em `data/interim/iptu/relatorio_ligacao.json`.
+
+- **Nascimentos e mortes de células:** a cobertura dos lotes atuais cresce com o tempo porque lotes nascem e desaparecem por desmembramento e unificação. Para o destino celular (D23), isso é um evento a modelar, e não uma falha.
+- **2021:** o cadastro desse ano tem cerca de 25 mil lotes a menos que 2020 e 2022. É uma peculiaridade da fonte, a tratar como possível quebra.
+- **Leitura:** o CSV é lido sem tratamento de aspas, porque há endereços com aspas soltas (2024). Ficam no máximo 6 linhas irregulares por ano, que são truncadas.
+
 ## Pendências da F2
 
-- **Lotes fiscais e IPTU/TPCL:** só disponíveis pela interface do GeoSampa (sem WFS nem link direto). O WFS tem `quadra_fiscal`, que permite localizar o lote pelo código SQL (setor + quadra) quando houver o cadastro.
 - **Novo geocoding** pelo CNEFE dos registros com logradouro e sem coordenada.
 - **Grade estatística de 200 m** (ponte 2010 ↔ 2022, F3).

@@ -87,5 +87,39 @@ def units_build() -> None:
     build.run(log=typer.echo)
 
 
+@units_app.command("lotes")
+def units_lotes(download: bool = typer.Option(False, "--download", help="Baixa os GPKG de lotes do GeoSampa.")) -> None:
+    """Lotes fiscais + pseudo-lotes de favela, com setor 2022 pelo centroide."""
+    from cityomics import geosampa
+    from cityomics.units import lotes
+
+    if download:
+        geosampa.fetch_lotes(log=typer.echo)
+    lotes.build_lotes(log=typer.echo)
+
+
+cov_app = typer.Typer(help="F3: covariáveis.")
+app.add_typer(cov_app, name="covariates")
+
+
+@cov_app.command("iptu")
+def covariates_iptu(
+    years: list[int] = typer.Argument(None),
+    download: bool = typer.Option(False, "--download", help="Baixa os zips do IPTU do GeoSampa."),
+) -> None:
+    """Agrega o cadastro IPTU anual por lote."""
+    from cityomics import geosampa
+    from cityomics.covariates import iptu
+    from cityomics.units import lotes
+
+    years = years or list(range(1995, 2027))
+    if download:
+        geosampa.fetch_iptu(years, log=typer.echo)
+    look = iptu.condo_lookup_from(lotes.load_lotes())
+    for year in years:
+        out, matched = iptu.build_year(year, look)
+        typer.echo(f"{year}: {out.height:,} lotes | imóveis ligados a lote: {matched:.1%}")
+
+
 if __name__ == "__main__":
     app()

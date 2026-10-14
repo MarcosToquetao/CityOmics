@@ -166,7 +166,7 @@ F0 specs + repo
 ### F2 — Unidades e reconciliação
 - [x] Malha de setores 2022 e distritos (`units/setores.py`)
 - [ ] Grade estatística de 200 m
-- [ ] Lotes GeoSampa + IPTU/TPCL anual + pseudo-lotes FCU (verificar a contagem de lotes)
+- [x] Lotes GeoSampa (1.687.685) + pseudo-lotes de favela (1.712) com setor 2022 (`units/lotes.py`)
 - [x] `assign.py`: ponto → setor/distrito; sem coordenada, distrito pelo bairro ou pela delegacia
 - [ ] Ponto → lote mais próximo (depende dos lotes)
 - [ ] Novo geocoding (CNEFE/OSM) dos registros com logradouro e sem coordenadas
@@ -174,7 +174,8 @@ F0 specs + repo
 - [x] Restringir o estrato de trilhos aos setores a até 250 m de estação (WFS `estacao_metro`, `estacao_trem`)
 
 ### F3 — Covariáveis
-- [ ] T1: Censo 2010/2022 (grade + Δ), IPVS, ITBI, IPTU, VIIRS C2, Metrô, OSM/ohsome, clima e calendário
+- [x] IPTU/TPCL anual agregado por lote, 1995–2026 (`covariates/iptu.py`)
+- [ ] T1: Censo 2010/2022 (grade + Δ), IPVS, ITBI, VIIRS C2, Metrô, OSM/ohsome, clima e calendário
 - [ ] T2: CNPJ por CNAE (estoques e fluxos), SP156, alvarás, BCB
 - [ ] `asof.py` com defasagens de publicação + teste
 - [ ] Atualização dasimétrica da população
