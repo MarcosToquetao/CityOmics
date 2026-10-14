@@ -75,5 +75,17 @@ def ingest_check() -> None:
         typer.echo(f"\nDiferenças acima de {check.TOLERANCE_PCT}% marcadas em 'alerta'.", err=True)
 
 
+units_app = typer.Typer(help="F2: unidades, atribuição dos eventos e reconciliação.")
+app.add_typer(units_app, name="units")
+
+
+@units_app.command("build")
+def units_build() -> None:
+    """Setores 2022, distritos, atribuição dos eventos e alvos agregados."""
+    from cityomics.units import build
+
+    build.run(log=typer.echo)
+
+
 if __name__ == "__main__":
     app()

@@ -164,11 +164,14 @@ F0 specs + repo
 - [x] Conferência com a tabela oficial da SSP (`cityomics ingest check`; ver `docs/F1_ingestao.md`)
 
 ### F2 — Unidades e reconciliação
-- [ ] Malha de setores 2022, distritos, grade de 200 m
+- [x] Malha de setores 2022 e distritos (`units/setores.py`)
+- [ ] Grade estatística de 200 m
 - [ ] Lotes GeoSampa + IPTU/TPCL anual + pseudo-lotes FCU (verificar a contagem de lotes)
-- [ ] `assign.py`: ponto → setor/distrito/lote mais próximo
+- [x] `assign.py`: ponto → setor/distrito; sem coordenada, distrito pelo bairro ou pela delegacia
+- [ ] Ponto → lote mais próximo (depende dos lotes)
 - [ ] Novo geocoding (CNEFE/OSM) dos registros com logradouro e sem coordenadas
-- [ ] `reconcile.py` estratificado por tipo de local + teste da invariante
+- [x] `reconcile.py` estratificado por tipo de local + teste da invariante (alvos em `data/processed/alvos/`)
+- [ ] Restringir o estrato de trilhos aos setores com estação (WFS `estacao_metro`, `estacao_trem`)
 
 ### F3 — Covariáveis
 - [ ] T1: Censo 2010/2022 (grade + Δ), IPVS, ITBI, IPTU, VIIRS C2, Metrô, OSM/ohsome, clima e calendário
