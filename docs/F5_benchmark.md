@@ -39,3 +39,23 @@ Leituras:
 - **Núcleo teórico (71 variáveis) perde pouco** para o conjunto completo (0,608 contra 0,602 em CRPS; log score igual).
 - **Excitação no Hawkes:** a própria vizinhança quase não contribui (pesos ≈ 0,003 contra ≈ 0,13 por lag próprio), ou seja, o contágio espacial entre setores vizinhos não aparece na escala mensal.
 - **PAI.** Todos os modelos fortes ficam em PAI a 1% ≈ 28, praticamente igual: o ranking dos hotspots é dominado pelos setores de estações e terminais.
+
+## Famílias de outras áreas em 2025 (ajuste 2023–2024, h = 1)
+
+| Modelo (origem) | CRPS | Log score | Brier | ECE | PAI 1% | PAI 5% |
+|---|---|---|---|---|---|---|
+| GNN espaço-temporal (grafo de 8 vizinhos, núcleo teórico) | 0,597 | 0,549 | 0,110 | 0,027 | 28,0 | 10,5 |
+| LightGBM + near-repeat (completo) | 0,603 | 0,548 | 0,109 | 0,026 | 28,1 | 10,6 |
+| GWR por distrito (geoeconomia) | 0,607 | 0,556 | 0,111 | 0,025 | 28,0 | 10,4 |
+| Painel espacial (econometria) | 0,615 | 0,557 | 0,110 | 0,021 | 27,8 | 10,4 |
+| BYM2 (epidemiologia, INLA) | 0,636 | 0,557 | 0,110 | 0,017 | 27,5 | 10,4 |
+| SPDE/LGCP aproximado (INLA) | 0,656 | 0,580 | 0,115 | 0,016 | 25,4 | 10,0 |
+| Chronos-Bolt small, zero-shot (séries temporais) | 0,669 | 0,604 | 0,121 | 0,039 | 25,5 | 9,7 |
+| MaxEnt, background uniforme (ecologia) | 0,709 | 0,627 | 0,123 | 0,019 | 20,7 | 8,7 |
+
+Leituras:
+- **GNN** é o melhor em CRPS (0,597), mas a diferença para o Hawkes e o LightGBM (≈ 0,600–0,602) é de 0,5% e provavelmente cabe no intervalo do bootstrap por distrito; o teste formal fica para o ensemble.
+- **Near-repeat** (janelas de 30/90/180 dias em 500 m e 1 km) não melhora o LightGBM (0,6034 contra 0,6020): na escala mensal por setor a vitimização repetida já está absorvida pelos lags.
+- **Modelos bayesianos espaciais** são bem calibrados (ECE 0,016–0,017, os menores), mas pior em CRPS: o efeito aleatório espacial encolhe demais as taxas dos setores de estação.
+- **Chronos zero-shot** perde para a média histórica: séries mensais por setor têm contagens baixas e ruído de Poisson dominante, e o modelo não conhece a covariação espacial.
+- **MaxEnt** com background uniforme é fraco porque trata crime como presença sem esforço amostral; o desvio (background de grupo-alvo, como no pré-registro) fica declarado em `prereg/AMENDMENTS.md` como pendência.
