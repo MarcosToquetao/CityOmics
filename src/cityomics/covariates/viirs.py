@@ -86,7 +86,7 @@ def read_tile(path: Path) -> np.ndarray:
         ds = found[BANDA]
         raw = ds[...].astype("float64")
         scale = float(np.ravel(ds.attrs.get("scale_factor", [0.1]))[0])
-        bad = raw == FILL
+        bad = (raw == FILL) | (raw < 0)      # preenchimento (65535 ou -9999) e radiância negativa
         q = found.get(BANDA + "_Quality")
         if q is not None:
             bad |= q[...] == 2        # 2 = sem qualidade (preenchimento)
@@ -139,7 +139,9 @@ def build(setores, inicio: str = "2015-01-01", workers: int = 6, log=print) -> p
         v[ok] = arr[row[ok], col[ok]]
         rows.append(pl.DataFrame({"cd_setor": setores["cd_setor"].to_list(), "mes": g["mes"], "luz_noturna": v}))
         log(f"{g['mes']}: mediana {np.nanmedian(v):.2f}")
-    out = pl.concat(rows).with_columns(pl.col("luz_noturna").fill_nan(None))
+    out = pl.concat(rows).with_columns(pl.col("luz_noturna").fill_nan(None)).sort("cd_setor", "mes")
+    # pixel sem dado ou ruim num mês: mantém o último valor válido do setor (só informação passada)
+    out = out.with_columns(pl.col("luz_noturna").forward_fill().over("cd_setor"))
     d = processed_dir() / "covariaveis"
     d.mkdir(parents=True, exist_ok=True)
     out.write_parquet(d / "setor_viirs_mes.parquet")

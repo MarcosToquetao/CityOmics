@@ -26,10 +26,10 @@ CROSS = [m for m in MODELS if m not in BASELINES] + ["ensemble"]
 SHARE = 0.01
 
 
-def load(table: pl.DataFrame):
+def load(table: pl.DataFrame, tag: str = "dev"):
     d = processed_dir() / "modelo"
-    val, ev = pl.read_parquet(d / "pred_dev_val.parquet"), pl.read_parquet(d / "pred_dev_eval.parquet")
-    res = json.loads((d / "resultados_benchmark_dev.json").read_text())
+    val, ev = pl.read_parquet(d / f"pred_{tag}_val.parquet"), pl.read_parquet(d / f"pred_{tag}_eval.parquet")
+    res = json.loads((d / f"resultados_benchmark_{tag}.json").read_text())
     w = np.array([res["pesos"][m] for m in MODELS])
     mu_val = np.column_stack([val[f"mu_{m}"].to_numpy() for m in MODELS]) @ w
     mu = {m: ev[f"mu_{m}"].to_numpy() for m in MODELS}
@@ -52,8 +52,8 @@ def in_hotspot(ev: pl.DataFrame, mu: np.ndarray) -> np.ndarray:
     return out
 
 
-def run(table: pl.DataFrame, n_boot: int = 2000, log=print) -> dict:
-    ev, mu, phi, dist = load(table)
+def run(table: pl.DataFrame, n_boot: int = 2000, tag: str = "dev", log=print) -> dict:
+    ev, mu, phi, dist = load(table, tag)
     y = ev["y"].to_numpy().astype("float64")
     crps = {m: scores.crps_nb(y, mu[m], phi[m]) for m in mu}
     brier = {m: scores.brier(scores.prob_ge1(mu[m], phi[m]), (y >= 0.5).astype("float64")) for m in mu}
@@ -93,7 +93,7 @@ def run(table: pl.DataFrame, n_boot: int = 2000, log=print) -> dict:
     h2_proxy = {m: inference.cluster_bootstrap_diff(brier[m], brier[ref], dist, n_boot) for m in ["ensemble", "gnn", "lgbm_completo"]}
     out = {"selecao": best, "crps_medio": mean_crps, "pai1_mensal": month_pai, "h1a": {**h1a, **h1["H1a"]}, "h1b": {**h1b, **h1["H1b"]},
            "contra_melhor_baseline": vs_base, "finalistas": pares, "brier_contra_baseline": h2_proxy, "n_boot": n_boot}
-    (REPO_ROOT / "prereg" / "selection_dev.json").write_text(json.dumps(out, indent=2, ensure_ascii=False))
+    (REPO_ROOT / "prereg" / f"selection_{tag}.json").write_text(json.dumps(out, indent=2, ensure_ascii=False))
     sel_path = REPO_ROOT / "prereg" / "selection.json"
     sel = json.loads(sel_path.read_text()) if sel_path.exists() else {}
     sel.update(best)
