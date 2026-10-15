@@ -36,3 +36,12 @@ def test_detects_forbidden_parquet_column(tmp_path):
 def test_processed_dir_is_clean():
     findings = privacy.scan_tables()
     assert not findings, "\n".join(map(str, findings))
+
+
+def test_no_large_tracked_files():
+    import subprocess
+
+    files = subprocess.run(["git", "ls-files", "-z"], cwd=REPO_ROOT, capture_output=True, text=True).stdout
+    big = [f for f in files.split("\0") if f and (REPO_ROOT / f).exists()
+           and (REPO_ROOT / f).stat().st_size > 10_000_000]
+    assert not big, f"arquivos versionados com mais de 10 MB: {big}"
