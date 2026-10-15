@@ -37,9 +37,22 @@ from laya.train import TrainConfig, finetune
 BASE = "convaiinnovations/laya-typed-decisions"   # D24: checkpoint typed-decisions (ModernBERT-large, contexto 1024)
 model_dir = snapshot_download(BASE, local_dir="/content/laya_base")
 _fix_tokenizer_config(model_dir)
-cfg = TrainConfig(epochs=3, micro_batch=4, grad_accum=8, calib_max=2000, seed=42, max_len=1024, head_max_len=256,
+SMOKE = True   # True: 10 mil estados, 1 época (diagnóstico, poucos minutos). False: treino completo
+src = DATA / "train.jsonl"
+if SMOKE:
+    with open(src) as fi, open(DATA / "train_smoke.jsonl", "w") as fo:
+        for i, line in enumerate(fi):
+            if i >= 10_000:
+                break
+            fo.write(line)
+    src = DATA / "train_smoke.jsonl"
+# Rótulos de contagem têm muito acaso: perda só de entropia cruzada, taxas menores e suavização evitam
+# que o modelo fique confiante demais (perda alta em acertos raros). Mesmo batch efetivo de 32.
+cfg = TrainConfig(epochs=1 if SMOKE else 3, micro_batch=16, grad_accum=2, calib_max=2000, seed=42, max_len=1024, head_max_len=256,
+                  loss="soft-ce", encoder_lr=1e-5, head_lr=5e-5, label_smoothing=0.05, log_every=200,
                   gradient_checkpointing=True, amp=True)
-summary = finetune(data=str(DATA / "train.jsonl"), model_dir=model_dir, output_dir="/content/laya_cityomics", config=cfg, device="cuda")
+OUT = "/content/drive/MyDrive/laya_cityomics" if not SMOKE else "/content/laya_smoke"   # monte o Drive antes do treino completo
+summary = finetune(data=str(src), model_dir=model_dir, output_dir=OUT, config=cfg, device="cuda")
 print(summary["temperature"], summary["train_items"], summary["calibration_items"])
 
 # %% [markdown]
@@ -67,14 +80,14 @@ def infer(model_path, jsonl, out_csv, batch_size=64):
 for name in ["recal", "eval"]:
     f = DATA / f"score_{name}.jsonl"
     if f.exists():
-        infer("/content/laya_cityomics", f, f"/content/laya_ft_{name}.csv")
+        infer(OUT, f, f"/content/laya_ft_{name}.csv")
         infer(model_dir, f, f"/content/laya_zs_{name}.csv")   # referência zero-shot
 
 # %% [markdown]
 # ## 4. Baixar as saídas (probabilidades por state_id) e o hash dos pesos
 
 # %%
-h = hashlib.sha256(open("/content/laya_cityomics/model.safetensors", "rb").read()).hexdigest()
+h = hashlib.sha256(open(f"{OUT}/model.safetensors", "rb").read()).hexdigest()
 print("sha256 dos pesos ajustados:", h)
 from google.colab import files
 for p in Path("/content").glob("laya_*_*.csv"):
