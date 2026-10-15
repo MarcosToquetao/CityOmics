@@ -1,4 +1,1 @@
-"""Avaliação (spec-benchmark §4).
-
-Módulos previstos: hotspot (hit rate/PAI/PEI), scores (log score, CRPS, Brier), calibration, dm_test, fairness.
-"""
+"""Avaliação do benchmark (spec-benchmark §4; prereg §5.3–5.4)."""

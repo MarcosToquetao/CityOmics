@@ -210,7 +210,7 @@ The cellphone outcome has two to three orders of magnitude more cells, so no pow
   - no data are sent to hosted language-model APIs (D7, D24, D30).
 - **Publication:** public outputs are aggregated, and lethal violence is mapped only as smoothed rates.
 - **Retention:** raw microdata are deleted five years after the last publication (D14).
-- **Ethics review:** [fill in: institutional ethics committee decision or exemption, since the source data are public administrative records].
+- **Ethics review:** exempt from ethics committee review (declared by the author, 2026-10-15), because all sources are public administrative records or aggregated open data and no individual is identified or contacted.
 
 ---
 

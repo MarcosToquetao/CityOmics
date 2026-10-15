@@ -147,7 +147,8 @@ F0 specs + repo
 
 ### F4 — Pré-registro (rascunho pronto; congelamento antes de abrir 2026; OSF na etapa final, D33)
 - [x] Redigir o pré-registro a partir de spec-benchmark §5 e spec-atlas §5 (`prereg/preregistration.md`)
-- [ ] Preencher autores, afiliação e parecer/dispensa do comitê de ética
+- [x] Dispensa do comitê de ética declarada (2026-10-15)
+- [ ] Autores e afiliação (o autor preenche à mão, etapa final)
 - [x] Análise de poder da violência letal (proxy DP × trimestre; `prereg/analysis/`)
 - [x] Declarar a exposição prévia a 2026 (site do MapaSegurancaSP)
 - [x] Ferramenta de congelamento (`cityomics freeze check|commit`, `freeze.py`) e cofre exigindo manifesto completo; núcleo de covariáveis fixado (`prereg/core_covariates.json`); emendas A1–A9
