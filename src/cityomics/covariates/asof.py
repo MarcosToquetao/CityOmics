@@ -163,6 +163,10 @@ def build(setores: list[str], ms: list[str] | None = None, log=print) -> pl.Data
     p = p.join(_censo_interp(ms), on=["cd_setor", "mes"], how="left")
     delta = pl.read_parquet(cov / "setor_censo_delta.parquet")
     p = p.join(delta.rename({c: f"censo_{c}" for c in delta.columns if c != "cd_setor"}), on="cd_setor", how="left")
+    # população anual dasimétrica (IPTU do ano, emitido no começo do ano)
+    pa = pl.read_parquet(cov / "setor_pop_ano.parquet").with_columns(pl.col("ano").cast(pl.Int32))
+    p = p.with_columns(pl.col("mes").str.slice(0, 4).cast(pl.Int32).alias("ano")) \
+        .join(pa, on=["cd_setor", "ano"], how="left").drop("ano")
 
     # estáticos
     for nome in ("censo2022", "ipvs", "infra", "osm"):

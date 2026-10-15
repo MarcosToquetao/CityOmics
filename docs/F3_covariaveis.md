@@ -129,3 +129,10 @@
 - **Estoque em 2026-09:** cerca de 2,1 milhões de ativos, a maior parte em outros serviços (731 mil), comércio varejista (352 mil) e educação e saúde (218 mil).
 - **Artefato de 2018:** as saídas anuais saltam para 361 mil em 2018 (contra 72 mil em 2017 e 116 mil em 2019), o que parece uma baixa de ofício em massa de empresas inativas. Saídas dessa onda não medem fechamento real de negócio; nos modelos, preferir estoques e entradas, ou tratar 2018 à parte.
 - **Saída:** `setor_cnpj_mes.parquet` (setor × mês × grupo, com estoque, entradas e saídas). Defasagem de 1 mês no painel.
+
+## População anual dasimétrica (`covariates/populacao.py`)
+
+- **Método:** `pop(a) = pop_2022 × unidades_residenciais(a) / unidades_residenciais(2022)`, com unidades residenciais do IPTU (`n_unidades` × `uso_residencial`) somadas por setor em cada ano. A razão fica entre 0,25 e 4; setores com menos de 3 unidades residenciais em 2022 mantêm a população de 2022. Depois de 2026 vale o IPTU de 2026.
+- **Total da cidade:** 10,92 milhões em 2015, 11,45 milhões em 2022 (bate com o Censo) e 12,12 milhões em 2026. O crescimento pós-2022 vem só de oferta de unidades; não captura mudança de moradores por domicílio nem vacância.
+- **Limites:** favelas (pseudo-lotes) e cortiços ficam subestimados no IPTU. Anos anteriores a 2022 também podem ser lidos pela interpolação 2010–2022 do painel (`censo_interp_pop`); as duas séries servem de denominador alternativo (sensibilidade).
+- **Saída:** `setor_pop_ano.parquet` (setor × ano), entra no painel como `pop_dasi` e `unid_res_ano`.

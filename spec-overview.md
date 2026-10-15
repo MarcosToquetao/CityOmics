@@ -189,7 +189,7 @@ F0 specs + repo
 - [x] CNPJ: estoques, entradas e saídas mensais por grupo de CNAE e setor (`covariates/cnpj.py`, 6,3 milhões de estabelecimentos)
 - [ ] Alvarás (opcional, contexto 2020+)
 - [x] `asof.py`: painel setor × mês com defasagens de publicação, janelas 3/6/12 e variação anual + testes (ITBI/CNPJ 1, SP156 3)
-- [ ] Atualização dasimétrica da população
+- [x] Atualização dasimétrica anual da população por unidades residenciais do IPTU (`covariates/populacao.py`)
 
 ### F5 — Benchmark (até 2025)
 - [ ] `eval/` (hit rate, PAI, PEI, CRPS, Brier, PIT, DM, equidade) testado em 2025
