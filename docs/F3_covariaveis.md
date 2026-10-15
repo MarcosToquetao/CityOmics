@@ -94,3 +94,13 @@
 - **Geocodificação:** 807 por número ou logradouro, 390 só por CEP e 100 sem CEP utilizável. O estoque usa só as 807 de nível fino. Os 390 de nível CEP ficam em `agencias_sp.parquet` com a marca para sensibilidade. A cobertura de 62% é uma lacuna conhecida.
 - **Viés de sobrevivência:** só agências em funcionamento aparecem; as fechadas somem. O estoque mensal (`setor_bcb_mes.parquet`, 2015-01 a 2026-09) **subestima o passado** e serve como contexto, não como série comparável no tempo.
 - **Caixas eletrônicos:** não há base aberta com endereço; ficam de fora. O OSM tem 974 bancos e caixas (`setor_osm.parquet`).
+
+## Painel as-of (`covariates/asof.py`)
+
+- **Regra:** a previsão do mês `m` é feita no início de `m`. Uma fonte com defasagem de `L` meses só entrega o mês `s` na linha `m` se `s + L < m`. Na prática, cada série é deslocada `1 + L` meses para frente antes de qualquer janela, de modo que somas e médias móveis só enxergam o passado disponível. O calendário é determinístico e entra sem deslocamento.
+- **Defasagens:** ITBI e CNPJ, 1; SP156, 3; BCB e clima, 0.
+- **Derivadas:** somas de 3, 6 e 12 meses para contagens e fluxos (SP156 por grupo, transações ITBI, entradas e saídas do CNPJ), médias de 3, 6 e 12 meses para preço por m² e fração financiada, variação em 12 meses para estoques (agências, estabelecimentos). Ausência de registro vale zero em contagens; estoques herdam o último valor.
+- **SP156:** as contagens são divididas pela cobertura de coordenadas do mês (`cobertura_coord`), para a mudança de cobertura de 2020 a 2022 não parecer mudança de desordem.
+- **Saída:** `painel_setor_mes.parquet`, de 2015-01 a 2027-03 (cobre a janela prospectiva), com todos os setores e as covariáveis estáticas (Censo, IPVS, infraestrutura, OSM) com prefixo.
+- **Testes:** o deslocamento move o mês na quantidade certa; mudar o valor de um mês ainda não publicado não altera a linha de `m` (inclusive nas janelas); janelas só olham para trás.
+- **Fora do painel por enquanto:** IPTU/tipos de lote (F6, emissão do ano corrente), VIIRS (falta o token Earthdata), Censo 2010 e população dasimétrica, Metrô.

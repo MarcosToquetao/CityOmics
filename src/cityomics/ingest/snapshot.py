@@ -40,10 +40,10 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
-def remote_size(url: str, attempts: int = 6) -> tuple[int, str | None]:
+def remote_size(url: str, attempts: int = 6, auth=None) -> tuple[int, str | None]:
     for attempt in range(1, attempts + 1):
         try:
-            r = requests.head(url, timeout=60, headers=HEADERS, allow_redirects=True)
+            r = requests.head(url, timeout=60, headers=HEADERS, allow_redirects=True, auth=auth)
             if r.status_code == 404:
                 raise FileNotFoundError(url)
             r.raise_for_status()
@@ -55,7 +55,7 @@ def remote_size(url: str, attempts: int = 6) -> tuple[int, str | None]:
     raise RuntimeError("inalcançável")
 
 
-def download(url: str, dest: Path, size: int, attempts: int = 8) -> None:
+def download(url: str, dest: Path, size: int, attempts: int = 8, auth=None) -> None:
     part = dest.with_suffix(".part")
     for attempt in range(1, attempts + 1):
         have = part.stat().st_size if part.exists() else 0
@@ -63,7 +63,7 @@ def download(url: str, dest: Path, size: int, attempts: int = 8) -> None:
             break
         headers = dict(HEADERS, **({"Range": f"bytes={have}-"} if have else {}))
         try:
-            with requests.get(url, stream=True, timeout=(30, 300), headers=headers) as r:
+            with requests.get(url, stream=True, timeout=(30, 300), headers=headers, auth=auth) as r:
                 r.raise_for_status()
                 mode = "ab" if have and r.status_code == 206 else "wb"
                 with part.open(mode) as fh:

@@ -186,7 +186,7 @@ F0 specs + repo
 - [x] Geocodificador local sobre o CNEFE 2022 (`geocode.py`, 5,69 milhões de endereços)
 - [x] BCB: agências por setor × mês (`covariates/bcb.py`)
 - [ ] T2: CNPJ por CNAE (estoques e fluxos) e alvarás
-- [ ] `asof.py` com defasagens de publicação + teste
+- [x] `asof.py`: painel setor × mês com defasagens de publicação, janelas 3/6/12 e variação anual + testes (ITBI/CNPJ 1, SP156 3)
 - [ ] Atualização dasimétrica da população
 
 ### F5 — Benchmark (até 2025)

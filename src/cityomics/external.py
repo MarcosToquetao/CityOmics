@@ -77,15 +77,15 @@ def fetch_geosampa(layer: str, page_size: int = 100_000, log=print) -> Path:
     return dest
 
 
-def fetch(url: str, group: str, filename: str | None = None, log=print) -> Path:
+def fetch(url: str, group: str, filename: str | None = None, log=print, auth=None) -> Path:
     """Baixa ``url`` para ``data/external/<group>/`` (se ainda não estiver lá) e registra."""
     filename = filename or url.rstrip("/").rsplit("/", 1)[-1]
     dest = external_dir() / group / filename
     dest.parent.mkdir(parents=True, exist_ok=True)
-    size, last_modified = remote_size(url)
+    size, last_modified = remote_size(url, auth=auth)
     if not (dest.exists() and (size == 0 or dest.stat().st_size == size)):
         log(f"{filename}: baixando {size / 1e6:.0f} MB")
-        download(url, dest, size)
+        download(url, dest, size, auth=auth)
     manifest = load_manifest()
     key = f"{group}/{filename}"
     if manifest.get(key, {}).get("size") != dest.stat().st_size:
