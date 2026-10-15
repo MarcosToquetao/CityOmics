@@ -49,3 +49,14 @@
 ## Lacunas registradas
 
 - **Demanda do Metrô:** a fonte pública cobre só as linhas 1, 2, 3 e 15. Faltam a Linha 4, a Linha 5 e a CPTM, e as médias mensais por estação só existem para alguns anos. Um fluxo calculado só com essa parte seria enviesado. Fica para depois, quando houver as linhas privadas e a CPTM.
+
+## OpenStreetMap (`covariates/osm.py`)
+
+- **Malha viária:** OSMnx, `network_type="drive"`, simplificada. São 122.550 nós e 304.081 arestas. Por setor: número de nós e interseções, fração de becos sem saída, grau médio, centralidade de intermediação média e máxima (amostra de 1.000 origens, ponderada pelo comprimento, semente fixa), km de vias e densidades. O cálculo leva cerca de 15 minutos.
+  - **Setores sem nó (5.793, os pequenos dentro de quarteirões):** a centralidade fica ausente. Na F5, será preenchida pelo nó mais próximo ou pela média dos vizinhos.
+- **Pontos de interesse (fotografia de 2026-10-15):** os três servidores Overpass recusaram consultas do tamanho da cidade. A extração foi feita do arquivo da Geofabrik (`sudeste-latest.osm.pbf`, 861 MB) com DuckDB `ST_ReadOSM`: nós com as tags de interesse e vias (prédios, parques) pelo centroide dos seus nós.
+  - **Volume:** 35.455 pontos no município, sendo 12.374 lojas, cerca de 1.000 bares e pubs, 974 bancos e 1.511 escolas.
+  - **Por setor:** contagem e densidade por categoria (bar e vida noturna, alimentação, banco e caixa eletrônico, farmácia, posto, educação, religioso, saúde, lazer e cultura, comércio, hospedagem, esporte e parque) e distância ao bar mais próximo.
+- **Saída:** `data/processed/covariaveis/setor_osm.parquet`, com 35 colunas.
+- **Sem série temporal de pontos de interesse:** o histórico do OSM (ohsome) não é usado, porque no Brasil a contagem de pontos cresce sobretudo com o esforço de mapeamento, não com a abertura de estabelecimentos. A série longitudinal de comércio virá do CNPJ.
+- Dados © colaboradores do OpenStreetMap (ODbL).
