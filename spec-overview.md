@@ -169,7 +169,7 @@ F0 specs + repo
 - [x] Lotes GeoSampa (1.687.685) + pseudo-lotes de favela (1.712) com setor 2022 (`units/lotes.py`)
 - [x] `assign.py`: ponto → setor/distrito; sem coordenada, distrito pelo bairro ou pela delegacia
 - [ ] Ponto → lote mais próximo (depende dos lotes)
-- [ ] Novo geocoding (CNEFE/OSM) dos registros com logradouro e sem coordenadas
+- [ ] Novo geocoding (CNEFE/OSM) dos registros com logradouro e sem coordenadas (geocodificador pronto em `geocode.py`; falta aplicar aos BOs)
 - [x] `reconcile.py` estratificado por tipo de local + teste da invariante (alvos em `data/processed/alvos/`)
 - [x] Restringir o estrato de trilhos aos setores a até 250 m de estação (WFS `estacao_metro`, `estacao_trem`)
 
@@ -183,7 +183,9 @@ F0 specs + repo
 - [ ] T1: Censo 2010 (grade + Δ) e VIIRS C2 (precisa de token Earthdata)
 - [ ] Demanda do Metrô (fonte pública incompleta: faltam Linha 4, Linha 5 e CPTM)
 - [x] SP156 2015–2026-T3 por setor × mês × grupo (`covariates/sp156.py`)
-- [ ] T2: CNPJ por CNAE (estoques e fluxos), alvarás, BCB
+- [x] Geocodificador local sobre o CNEFE 2022 (`geocode.py`, 5,69 milhões de endereços)
+- [x] BCB: agências por setor × mês (`covariates/bcb.py`)
+- [ ] T2: CNPJ por CNAE (estoques e fluxos) e alvarás
 - [ ] `asof.py` com defasagens de publicação + teste
 - [ ] Atualização dasimétrica da população
 

@@ -81,3 +81,16 @@
 - **Cobertura de coordenadas varia no tempo:** cerca de 95% até 2019, 10 a 50% entre 2020-T2 e 2021, e 43 a 63% desde 2022. Os arquivos de 2020-T4 e 2021-T1 misturam layouts de colunas; as linhas fora do layout principal não têm data legível nem coordenada e saem da agregação. Por isso a contagem por setor muda de nível com a cobertura. Na F5, as contagens entram **normalizadas pela cobertura do mês** (coluna `cobertura_coord`) ou só a partir de 2022, quando a cobertura é estável.
 - **Datas após o corte:** cerca de 27 mil pedidos têm data entre out e dez/2026, posterior ao snapshot; são tratados como erro de data e removidos.
 - **Viés de denúncia:** bairros com mais renda e conectividade registram mais pedidos. SP156 é covariável e contexto, não medida direta de desordem.
+
+## CNEFE e geocodificador (`geocode.py`)
+
+- **Fonte:** CNEFE do Censo 2022, arquivo do município de São Paulo (IBGE, 186 MB). São 5.689.391 endereços com coordenada e código de setor 2022. O código de setor do CNEFE traz o sufixo `P`/`N`; ele é removido para casar com a nossa malha (97,0% dos endereços caem em setores da malha; o resto está em setores fora da malha usada).
+- **Níveis:** `numero` (CEP + número), `logradouro` (nome normalizado + número, com abreviações como AV, R, PCA expandidas) e `cep` (centroide dos pontos do CEP). A saída marca o nível para o chamador descartar os grossos.
+- **Privacidade:** roda local; nenhum endereço sai da máquina. Saída intermediária em `data/interim/geocode/` (fora do git).
+
+## BCB: agências bancárias (`covariates/bcb.py`)
+
+- **Fonte:** serviço Olinda `Informes_Agencias` do BCB, posição de 14/10/2026: 1.297 agências no município, com endereço, CEP e data de início.
+- **Geocodificação:** 807 por número ou logradouro, 390 só por CEP e 100 sem CEP utilizável. O estoque usa só as 807 de nível fino. Os 390 de nível CEP ficam em `agencias_sp.parquet` com a marca para sensibilidade. A cobertura de 62% é uma lacuna conhecida.
+- **Viés de sobrevivência:** só agências em funcionamento aparecem; as fechadas somem. O estoque mensal (`setor_bcb_mes.parquet`, 2015-01 a 2026-09) **subestima o passado** e serve como contexto, não como série comparável no tempo.
+- **Caixas eletrônicos:** não há base aberta com endereço; ficam de fora. O OSM tem 974 bancos e caixas (`setor_osm.parquet`).
