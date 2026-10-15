@@ -24,7 +24,7 @@ from cityomics.eval import scores
 from cityomics.paths import REPO_ROOT
 
 ID_COLS = {"cd_setor", "mes", "cd_dist", "y", "y_geo"}
-HIST_PREFIXES = ("h_", "nb_h_")
+HIST_PREFIXES = ("h_", "nb_h_", "nr_w")      # tudo que vem do histórico de crime (ablação D6)
 
 
 def feature_sets(columns: list[str]) -> dict[str, list[str]]:

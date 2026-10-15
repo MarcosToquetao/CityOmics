@@ -87,10 +87,10 @@ def build(events: pl.DataFrame, setores: list[str], distritos: dict[str, str], m
             dg = _lag_value(cum_dg, mi, f0, lag)[sd]
             cov = (dg + 1.0) / (dt + 1.25)
             est[lag] = (g / cov).astype("float32")
+            cols[f"h_int_l{lag}"] = est[lag]          # série as-of completa (Chronos usa os 12 lags)
             if lag in LAGS:
                 cols[f"h_geo_l{lag}"] = g
                 cols[f"h_dist_l{lag}"] = dt
-                cols[f"h_int_l{lag}"] = est[lag]
         for w in JANELAS:
             cols[f"h_int_s{w}"] = np.sum([est[l] for l in range(1, w + 1)], axis=0)
         frames.append(pl.DataFrame(cols))
