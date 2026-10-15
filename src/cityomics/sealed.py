@@ -7,7 +7,8 @@ duas chaves iguais:
    - o DOI do registro no OSF (``10.17605/OSF.IO/XXXXX``), quando houver;
    - ``FREEZE-<sha>``, o commit de congelamento que registra os hashes dos modelos e a
      seleção dos melhores da classe (D33: o registro no OSF ficou para a etapa final).
-     O commit precisa existir no histórico do repositório.
+     O commit precisa existir no histórico e conter ``prereg/FREEZE_MANIFEST.json`` completo
+     (``cityomics.freeze``): um commit qualquer não abre o cofre.
 2. A variável de ambiente ``CITYOMICS_UNSEAL_KEY`` com o mesmo valor, o que torna a
    abertura uma decisão explícita da sessão, e não um efeito colateral de um import.
 
@@ -58,6 +59,17 @@ def _commit_exists(sha: str) -> bool:
     return out is not None and out.returncode == 0
 
 
+def _commit_has_manifest(sha: str) -> bool:
+    """O commit de congelamento precisa conter um manifesto completo (``prereg/FREEZE_MANIFEST.json``)."""
+    out = _git("show", f"{sha.lower()}:prereg/FREEZE_MANIFEST.json")
+    if out is None or out.returncode != 0:
+        return False
+    try:
+        return json.loads(out.stdout).get("complete") is True
+    except ValueError:
+        return False
+
+
 def registered_key() -> str | None:
     """Chave válida gravada em ``prereg/UNSEAL_KEY`` (primeira linha não comentada), ou None."""
     path = unseal_key_file()
@@ -71,7 +83,7 @@ def registered_key() -> str | None:
         if _DOI_RE.match(key):
             return key
         freeze = _FREEZE_RE.match(key)
-        if freeze and _commit_exists(freeze.group(1)):
+        if freeze and _commit_exists(freeze.group(1)) and _commit_has_manifest(freeze.group(1)):
             return key
         return None
     return None

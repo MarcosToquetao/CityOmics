@@ -150,7 +150,8 @@ F0 specs + repo
 - [ ] Preencher autores, afiliação e parecer/dispensa do comitê de ética
 - [x] Análise de poder da violência letal (proxy DP × trimestre; `prereg/analysis/`)
 - [x] Declarar a exposição prévia a 2026 (site do MapaSegurancaSP)
-- [ ] Commit de congelamento antes de abrir 2026: hashes dos modelos + melhores da classe → `prereg/UNSEAL_KEY`
+- [x] Ferramenta de congelamento (`cityomics freeze check|commit`, `freeze.py`) e cofre exigindo manifesto completo; núcleo de covariáveis fixado (`prereg/core_covariates.json`); emendas A1–A9
+- [ ] Rodar o congelamento antes de abrir 2026: hashes dos modelos + melhores da classe → `prereg/UNSEAL_KEY` (depende da F5)
 - [ ] (Etapa final) Registrar no OSF e acrescentar o DOI
 
 ### F1 — Ingestão de BO

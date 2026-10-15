@@ -3,6 +3,9 @@
 | Arquivo | Conteúdo |
 |---|---|
 | `preregistration.md` | Rascunho do pré-registro no modelo do OSF para dados secundários, em inglês |
+| `core_covariates.json` | Núcleo teórico de covariáveis, fixado antes de qualquer modelo |
+| `selection.json` | (a criar na F5) identidades dos melhores da classe, escolhidas só com 2025 |
+| `FREEZE_MANIFEST.json` | (gerado por `cityomics freeze commit`) hashes de entradas, locks, modelos e seleção |
 | `AMENDMENTS.md` | Emendas datadas, permitidas até a primeira abertura do cofre de 2026 |
 | `analysis/` | Análise de poder da violência letal (código e saída; só dados de 2022–2025) |
 | `UNSEAL_KEY` | Chave do cofre de 2026: `FREEZE-<sha>` do commit de congelamento e, na etapa final, o DOI do OSF |
@@ -14,6 +17,13 @@ O registro no OSF fica para a etapa final, junto com os artigos. Até lá:
 - o rascunho evolui aqui, com mudanças anotadas em `AMENDMENTS.md`;
 - **antes de abrir os dados de 2026**, um commit de congelamento registra os hashes dos modelos e a seleção dos melhores da classe, e `UNSEAL_KEY` recebe `FREEZE-<sha>` desse commit;
 - 2026 entra no artigo como teste retrospectivo lacrado, e a janela prospectiva (nov/2026–mar/2027) como o teste totalmente limpo.
+
+## Como congelar (antes de abrir 2026)
+
+1. Termine a F5 com os modelos finais salvos em `data/models/frozen/` e crie `prereg/selection.json` com as chaves `best_baseline_crps`, `best_baseline_pai1`, `best_crossdomain_crps`, `best_crossdomain_pai1`, `laya_ft`, `lightgbm_compressed_state` e `markov_fate_baseline`, escolhidas só com 2025.
+2. Rode `cityomics freeze check`: lista o que falta (árvore limpa, testes, cofre nunca aberto, entradas, núcleo de covariáveis, seleção, modelos).
+3. Rode `cityomics freeze commit --confirm`: grava `FREEZE_MANIFEST.json`, faz o commit de congelamento e grava `UNSEAL_KEY` com `FREEZE-<sha>`.
+4. O cofre só abre se o commit da chave contiver o manifesto completo e `CITYOMICS_UNSEAL_KEY` repetir a chave.
 
 ## Como registrar (etapa final)
 

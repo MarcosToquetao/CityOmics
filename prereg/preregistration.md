@@ -1,7 +1,7 @@
 # Pre-registration — Borrowed-science forecasting of urban crime in São Paulo, and a spatial-omics atlas of the city
 
 **Template:** OSF *Preregistration for secondary data analysis* (van den Akker et al., 2021), adapted.
-**Status:** DRAFT v0.1 (2026-10-14). **Registration timing (D33):** this plan will be registered on OSF at the final stage of the project. Before the 2026 vault is opened, a freeze commit records frozen-model hashes and best-in-class selections; that commit is the software key to the vault. Consequently, the 2026 validation is reported as a **sealed retrospective hold-out**, and the prospective window (§5.5) is the fully clean test.
+**Status:** DRAFT v0.2 (2026-10-15; v0.1 of 2026-10-14 plus the amendments A1–A9 listed in `prereg/AMENDMENTS.md`). **Registration timing (D33):** this plan will be registered on OSF at the final stage of the project. Before the 2026 vault is opened, a freeze commit records frozen-model hashes and best-in-class selections; that commit is the software key to the vault. Consequently, the 2026 validation is reported as a **sealed retrospective hold-out**, and the prospective window (§5.5) is the fully clean test.
 **Authors:** [fill in: name(s), affiliation, supervisor]
 **Project repository:** https://github.com/MarcosToquetao/CityOmics (private until publication). Design documents: `spec-overview.md`, `spec-dados.md`, `spec-benchmark.md`, `spec-atlas.md`. Decision IDs (Dn) refer to the Decisions Log in `spec-overview.md`.
 
@@ -48,9 +48,9 @@ Borrowed-science forecasting of urban crime in São Paulo: a pre-registered benc
 | SSP-SP *SPDadosCriminais* | Police occurrence records (BO × offence), state of São Paulo, filtered to the capital by place of occurrence | 2022–2026 |
 | SSP-SP *CelularesSubtraidos* | Cellphone robbery/theft records (object × BO) | 2022–2026 |
 | SPSafe (doi:10.5753/dsw.2023.233945); CEM-USP police-district series | Historical lethal violence | 2003–2022 / 2000–2020 |
-| IBGE Census 2010/2022 (tract aggregates, 200 m grid, CNEFE, FCU), IPVS, GeoSampa (lots, IPTU/TPCL cadastre), ITBI transactions, CNPJ establishments, VIIRS Black Marble C2, Metrô ridership, OpenStreetMap/ohsome, SP156 complaints, BCB branches/ATMs, INMET/CGE weather, calendar | Covariates ("genes") | Per source (spec-dados §3) |
+| IBGE Census 2010 and 2022 (tract aggregates; 2010 converted to 2022 tracts dasymetrically by CNEFE residential addresses), CNEFE 2022 (geocoder), IPVS 2022, GeoSampa (lots, IPTU/TPCL cadastre, equipment layers), ITBI transactions, CNPJ establishments (Receita Federal, 2026-09 snapshot), VIIRS Black Marble C2 (if available at freeze), OpenStreetMap (static 2026 snapshot), SP156 complaints (2015–2026-Q3), BCB branches (current snapshot), ERA5 reanalysis weather, calendar | Covariates ("genes") | Per source (spec-dados §3; `docs/F3_covariaveis.md`) |
 
-Download dates and SHA-256 checksums of every raw file will be frozen in `data/snapshot.json` (D18). Its hash will be reported in an amendment.
+Download dates and SHA-256 checksums of every raw file are kept in `data/snapshot.json` (BO) and `data/external/manifest.json` (external sources). The hashes of these files, of the covariate panel and of the outcome tables are recorded in `prereg/FREEZE_MANIFEST.json` at the freeze commit.
 
 ### 2.2 Units of analysis (D13)
 - **Lot** (fiscal lot, IPTU; favelas as FCU pseudo-lots): atlas "cell", fate target.
@@ -58,7 +58,7 @@ Download dates and SHA-256 checksums of every raw file will be frozen in `data/s
 - **District** (96): lethal-violence outcome.
 
 ### 2.3 Outcomes
-- **Cellphone:** consummated robbery or theft of cellphones in the capital, deduplicated by BO (key: police station, BO year, BO number, highest version). Counted by date of occurrence and assigned to tracts. Non-geocoded records are allocated by place-type-stratified hierarchical reconciliation (D16, D27).
+- **Cellphone:** consummated robbery or theft of cellphones in the capital, deduplicated by BO (key: police station, BO year, BO number, highest version). Counted by date of occurrence and assigned to tracts. Non-geocoded records are allocated by place-type-stratified hierarchical reconciliation (D16, D27). **Primary observation:** the reconciled count per tract-month (`n_total`, real-valued, preserving the district total). **Sensitivity:** geocoded-only count (`n_geo`, integer).
 - **Lethal violence (composite, D20):** intentional homicide + attempted homicide + robbery-homicide (latrocínio) + bodily injury followed by death. Traffic-related categories are excluded. **Strict CVLI** omits attempts.
 - **Lot type at semester s:** Leiden cluster of native lot features. These are stocks of active establishments by economic activity, last ITBI price per m² carried forward, time since last transaction, SP156 complaints nearby, and the previous year's IPTU attributes as lagged context (D23). Clusters are fitted on semesters up to 2025-S2 and projected onto 2026-S1.
 
@@ -88,11 +88,13 @@ We declare the following exposure honestly. It is the reason for the prospective
 
 ### 4.1 Predictors
 - **Covariate pool T1 + T2:** ~150–300 variables (spec-dados §3).
-- **Pre-specified theory-driven core (D12):**
-  - routine activity: Metrô ridership potential, commercial and bar establishments (CNPJ), OSM POIs;
-  - social disorganization: IPVS, head-of-household income, Census Δ2010→2022;
-  - CPTED: street lighting in the census surroundings module, VIIRS radiance, sidewalks;
-  - land market: ITBI volume and price.
+- **Pre-specified theory-driven core (D12):** the exact variable list is frozen in `prereg/core_covariates.json` (names are columns of the covariate panel):
+  - routine activity: distance to rail stations and bus terminals, bus-stop density, bar/retail/financial establishment stocks (CNPJ), bank branches (BCB), nightlife and commerce POIs (OSM), dasymetric population;
+  - social disorganization: IPVS, head-of-household income (Census 2010→2022 interpolation), income inequality, young-male share, illiteracy, vacancy, distance to favelas, tenements;
+  - CPTED: street lighting and sidewalk share in the Census surroundings module, lighting-point density, street-network connectivity, SP156 lighting/rubble/abandoned-property complaints, VIIRS radiance (only if available at freeze);
+  - land market: ITBI volume, price per m² and financed share; real-estate construction entries (CNPJ);
+  - temporal context: business days, weekends, holidays, Carnaval, 13th-salary month, rainfall, temperature.
+  - **Excluded by design:** CNPJ exits (2018 mass deregistration artifact), police-station and PM/GCM-base distances (endogenous; sensitivity only), Metrô ridership (incomplete public source).
 - **Data-driven selection:** SHAP/permutation importance and stability selection, run on 2022–2025 only with spatially and temporally blocked CV.
 - **All availability-dated (as-of):** a record or covariate feeds month m only if it was available before the start of m, using the registration date for BOs and the publication lag for covariates.
 
@@ -105,7 +107,7 @@ We declare the following exposure honestly. It is the reason for the prospective
 - **Forecast protocol (D25):** parameters stay frozen through 2026. Model inputs (lags, rolling covariates) are updated each month with data available before that month. No refitting.
 
 ### 4.3 Sample sizes
-- **Cellphone:** ~27,000 tracts × 9 months ≈ 243,000 tract-months (validation) and ≈ 135,000 (prospective, 5 months). Around 160,000 BOs per year.
+- **Cellphone:** 27,301 tracts × 9 months ≈ 245,700 tract-months (validation) and ≈ 136,500 (prospective, 5 months). Around 160,000 BOs per year.
 - **Lethal violence:** 96 districts × 3 quarters = 288 district-quarters (validation). Composite ~1,180–1,320 events per year in 2022–2025.
 - **Lot fate:** all fiscal lots (~1.5 million, to be confirmed) for baselines. For Laya, all lots that change type plus an equal-size stratified sample of non-changers, with inverse-probability weights.
 
@@ -170,8 +172,9 @@ The cellphone outcome has two to three orders of magnitude more cells, so no pow
 - Only then is the vault opened.
 
 ### 5.3 Metrics
-- **Probabilistic:** CRPS (NB closed form), log score, Brier for P(≥ 1) with decomposition. Scores are also reported on non-zero cells only.
-- **Operational:** hit rate, PAI and PEI at 0.5/1/2/5/10% of area.
+- **Predictive distribution:** every model delivers, per tract-month, a mean μ and a negative-binomial (NB2) distribution. Models without their own dispersion use one global dispersion per model, fitted by maximum likelihood on the 2025 tuning period (not on 2026).
+- **Probabilistic:** CRPS of the NB predictive against the real-valued observation, computed as Σₖ (F(k) − 1{k ≥ y})² over the integer support; log score on the rounded count; Brier for P(count ≥ 1) against the indicator 1{n_total ≥ 0.5}, with decomposition. Scores are also reported on non-zero cells only. Sensitivity: the same metrics on `n_geo`.
+- **Operational:** hit rate, PAI and PEI at 0.5/1/2/5/10% of city area. Tracts are ranked by predicted mean per km² and added until the cumulative area share reaches the target; PAI = (share of observed `n_total` captured) / (area share).
 - **Calibration:** randomized PIT histograms, reliability diagrams, ECE (overall and by group).
 - **Fate:** P(change) Brier/AUC; among changers, log-loss and macro-F1. Reported separately for activity-driven and cadastre-driven transitions (D23).
 

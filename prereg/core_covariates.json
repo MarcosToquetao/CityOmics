@@ -1,0 +1,36 @@
+{
+  "version": "0.1",
+  "date": "2026-10-15",
+  "note": "Núcleo teórico pré-especificado (D12). Nomes são colunas de data/processed/covariaveis/painel_setor_mes.parquet. Sufixos _s<w> (soma), _m<w> (média) e _yoy (variação em 12 meses) são derivados de covariates/asof.py. Nenhuma variável foi escolhida olhando desfecho. luz_noturna só entra se o VIIRS estiver no painel no congelamento.",
+  "groups": {
+    "atividade_rotineira": [
+      "infra_dist_estacao_trilhos_m", "infra_dist_terminal_onibus_m", "infra_dens_ponto_onibus_km2",
+      "cnpj_estoque_bar_restaurante", "cnpj_estoque_comercio_varejista", "cnpj_estoque_financeiro", "agencias_estoque",
+      "osm_dens_poi_bar_noturno_km2", "osm_dens_poi_banco_atm_km2", "osm_dens_poi_alimentacao_km2",
+      "osm_dens_poi_comercio_km2", "osm_dist_bar_noturno_m", "pop_dasi", "censo2022_dens_pop_km2"
+    ],
+    "desorganizacao_social": [
+      "ipvs_ipvs_codigo", "censo_interp_renda_media_resp", "censo2022_cv_renda_resp", "censo_d_renda_rel",
+      "censo_interp_frac_homens_15_29", "censo_interp_taxa_analfabetismo_15", "censo2022_frac_dom_nao_ocupados",
+      "censo2022_moradores_por_dom", "censo_g_pop", "infra_dist_favela_m", "censo2022_frac_cortico"
+    ],
+    "cpted": [
+      "censo2022_frac_faces_iluminacao", "infra_dens_iluminacao_km2", "censo2022_frac_faces_calcada",
+      "censo2022_frac_faces_pavimentadas", "osm_dens_intersecoes_km2", "osm_betweenness_media", "osm_frac_becos",
+      "sp156_iluminacao_s6", "sp156_limpeza_entulho_s6", "sp156_imovel_abandonado_s12", "luz_noturna"
+    ],
+    "mercado_imobiliario": [
+      "n_transacoes_s12", "preco_m2_mediana_m12", "frac_financiada_m12", "cnpj_entradas_construcao_imobiliario_s12"
+    ],
+    "contexto_temporal": [
+      "dias_uteis", "dias_fim_de_semana", "dias_feriado", "dias_carnaval", "tem_decimo_terceiro", "n_sextas",
+      "n_sabados", "chuva_total_mm", "temp_media"
+    ]
+  },
+  "excluded_by_design": {
+    "cnpj_saidas_*": "onda de baixa de ofício em 2018 contamina as saídas; usar estoques e entradas",
+    "metro_demanda": "fonte pública incompleta (linhas 1, 2, 3, 15); substituída pela distância a estações de trilhos",
+    "infra_dist_delegacia_m, infra_dist_base_pm_m, infra_dist_base_gcm_m": "endogeneidade (instaladas onde há crime); só em sensibilidade"
+  },
+  "optional_columns": ["luz_noturna"]
+}

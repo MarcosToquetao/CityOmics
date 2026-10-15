@@ -55,11 +55,39 @@ def test_freeze_key_requires_existing_commit(vault, monkeypatch):
     assert sealed.registered_key() is None
 
 
-def test_opens_with_freeze_commit(vault, monkeypatch):
-    key = f"FREEZE-{head_sha()}"
+def _repo_with_manifest(tmp_path, content):
+    repo = tmp_path / "repo"
+    (repo / "prereg").mkdir(parents=True)
+    run = lambda *a: subprocess.run(["git", *a], cwd=repo, capture_output=True, text=True, check=True).stdout.strip()  # noqa: E731
+    run("init", "-q")
+    run("config", "user.email", "t@t")
+    run("config", "user.name", "t")
+    (repo / "prereg" / "FREEZE_MANIFEST.json").write_text(content)
+    run("add", ".")
+    run("commit", "-q", "-m", "freeze")
+    return repo, run("rev-parse", "--short", "HEAD")
+
+
+def test_opens_with_freeze_commit_that_has_manifest(vault, monkeypatch, tmp_path):
+    repo, sha = _repo_with_manifest(tmp_path, json.dumps({"complete": True}))
+    monkeypatch.setattr(sealed, "REPO_ROOT", repo)
+    key = f"FREEZE-{sha.upper()}"
     vault.write_text(key.lower())
     monkeypatch.setenv(sealed.ENV_FLAG, key)
     assert sealed.open_sealed("celular_2026.parquet", "avaliação F7").read_bytes() == b"conteudo"
+
+
+def test_freeze_commit_without_complete_manifest_is_rejected(vault, monkeypatch, tmp_path):
+    repo, sha = _repo_with_manifest(tmp_path, json.dumps({"complete": False}))
+    monkeypatch.setattr(sealed, "REPO_ROOT", repo)
+    vault.write_text(f"FREEZE-{sha.upper()}")
+    assert sealed.registered_key() is None
+
+
+def test_arbitrary_commit_does_not_open_the_vault(vault, monkeypatch):
+    vault.write_text(f"FREEZE-{head_sha().upper()}")     # HEAD real não tem manifesto completo
+    monkeypatch.setenv(sealed.ENV_FLAG, f"FREEZE-{head_sha().upper()}")
+    assert sealed.registered_key() is None
 
 
 def test_opens_with_doi_and_logs(vault, monkeypatch):

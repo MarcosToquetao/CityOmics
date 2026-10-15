@@ -123,3 +123,31 @@ def covariates_iptu(
 
 if __name__ == "__main__":
     app()
+
+
+freeze_app = typer.Typer(help="F4: congelamento do plano antes de abrir 2026.")
+app.add_typer(freeze_app, name="freeze")
+
+
+@freeze_app.command("check")
+def freeze_check(skip_tests: bool = typer.Option(False, "--skip-tests", help="Não roda o pytest.")) -> None:
+    """Lista o que falta para congelar o plano."""
+    from cityomics import freeze
+
+    problems = freeze.check(run_tests=not skip_tests)
+    for p in problems:
+        typer.echo(f"- {p}", err=True)
+    if problems:
+        raise typer.Exit(code=1)
+    typer.echo("Pronto para congelar.")
+
+
+@freeze_app.command("commit")
+def freeze_commit(confirm: bool = typer.Option(False, "--confirm", help="Confirma o congelamento (irreversível).")) -> None:
+    """Grava o manifesto, faz o commit de congelamento e grava prereg/UNSEAL_KEY."""
+    from cityomics import freeze
+
+    if not confirm:
+        typer.echo("Use --confirm: depois do congelamento a seleção de modelos não pode mais mudar.", err=True)
+        raise typer.Exit(code=2)
+    typer.echo(freeze.freeze(log=typer.echo))
