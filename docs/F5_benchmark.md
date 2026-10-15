@@ -59,3 +59,33 @@ Leituras:
 - **Modelos bayesianos espaciais** são bem calibrados (ECE 0,016–0,017, os menores), mas pior em CRPS: o efeito aleatório espacial encolhe demais as taxas dos setores de estação.
 - **Chronos zero-shot** perde para a média histórica: séries mensais por setor têm contagens baixas e ruído de Poisson dominante, e o modelo não conhece a covariação espacial.
 - **MaxEnt** com background uniforme é fraco porque trata crime como presença sem esforço amostral; o desvio (background de grupo-alvo, como no pré-registro) fica declarado em `prereg/AMENDMENTS.md` como pendência.
+
+## Rodada consolidada com ensemble (`benchmark_run.run(table, "dev")`)
+
+Mesma tabela de modelagem, mesmo protocolo para todos (ajuste 2023-01..2024-12, avaliação 2025, h = 1). O ensemble tem pesos ajustados em 2024-07..12 por modelos treinados até 2024-06 (`models/ensemble.py`), depois reaplicados aos modelos da janela de avaliação. Os números diferem na terceira casa dos da seção anterior porque os modelos foram reajustados nesta rodada.
+
+| Modelo | CRPS | Log score | Brier | ECE | PAI 1% | PAI 5% |
+|---|---|---|---|---|---|---|
+| GNN | 0,5945 | 0,5494 | 0,1096 | 0,029 | 28,2 | 10,5 |
+| LightGBM sem histórico de crime | 0,5997 | 0,5785 | 0,1154 | 0,055 | 26,8 | 10,2 |
+| Hawkes discreto | 0,5998 | 0,5729 | 0,1151 | 0,037 | 27,7 | 10,2 |
+| **Ensemble** | 0,6000 | **0,5426** | **0,1081** | 0,025 | **28,3** | **10,6** |
+| LightGBM completo | 0,6026 | 0,5474 | 0,1090 | 0,026 | 28,0 | 10,6 |
+| LightGBM núcleo teórico | 0,6058 | 0,5472 | 0,1089 | 0,022 | 28,3 | 10,5 |
+| GWR por distrito | 0,6069 | 0,5556 | 0,1107 | 0,025 | 28,0 | 10,4 |
+| Painel espacial | 0,6147 | 0,5569 | 0,1104 | 0,021 | 27,9 | 10,4 |
+| GLM de contagem | 0,6193 | 0,5599 | 0,1108 | 0,024 | 27,6 | 10,4 |
+| Média histórica | 0,6193 | 0,5627 | 0,1114 | 0,022 | 27,6 | 10,3 |
+| BYM2 | 0,6362 | 0,5566 | 0,1102 | 0,017 | 27,5 | 10,4 |
+| SPDE | 0,6558 | 0,5798 | 0,1151 | 0,016 | 25,4 | 10,0 |
+| Chronos zero-shot | 0,6697 | 0,6037 | 0,1211 | 0,038 | 25,5 | 9,7 |
+| MaxEnt | 0,7091 | 0,6268 | 0,1235 | 0,019 | 20,7 | 8,7 |
+| STKDE | 0,7726 | 0,6701 | 0,1387 | 0,018 | 13,2 | 7,3 |
+
+Pesos do ensemble: BYM2 0,28, GNN 0,23, LightGBM núcleo 0,22, LightGBM completo 0,20, LightGBM sem crime 0,03, Chronos 0,02, Hawkes 0,01.
+
+Leituras:
+- **O ensemble vence em log score, Brier e PAI, mas não em CRPS**: o GNN sozinho tem o menor CRPS (0,5945 contra 0,6000). O CRPS de contagens com cauda pesada premia o ajuste dos setores de estação, que o GNN captura melhor. Qual métrica decide é questão do pré-registro (o primário é CRPS), então o ensemble não pode ser apresentado como melhor modelo; ele é o melhor probabilístico em log score e calibração.
+- **O BYM2 entra com o maior peso (0,28) apesar do pior CRPS individual**: ele é o mais bem calibrado e complementar aos modelos de árvore, o que o ensemble usa.
+- **O ganho total sobre o baseline continua pequeno**: o melhor CRPS (GNN) é 4% menor que o do GLM/média histórica, e o log score do ensemble 3% menor.
+- Falta o teste formal (bootstrap por distrito com Holm) entre os candidatos principais; ele sai na rodada de seleção para o congelamento.
