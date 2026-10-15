@@ -36,3 +36,6 @@ renv/library/
 
 # Cache de bibliotecas (ex.: respostas da Overpass gravadas pelo OSMnx)
 cache/
+
+# Saída da skill graphify
+graphify-out/

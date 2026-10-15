@@ -179,9 +179,11 @@ F0 specs + repo
 - [x] ITBI 2006–2026 por lote e por setor × mês (`covariates/itbi.py`)
 - [x] Infraestrutura e equipamentos por setor, GeoSampa (`covariates/infra.py`)
 - [x] OSM: malha viária (centralidade, interseções) e pontos de interesse por setor (`covariates/osm.py`)
-- [ ] T1: Censo 2010 (grade + Δ), IPVS, VIIRS C2 (precisa de token Earthdata), clima e calendário
+- [x] IPVS 2022 (`covariates/ipvs.py`), clima ERA5 (`clima.py`) e calendário (`calendario.py`)
+- [ ] T1: Censo 2010 (grade + Δ) e VIIRS C2 (precisa de token Earthdata)
 - [ ] Demanda do Metrô (fonte pública incompleta: faltam Linha 4, Linha 5 e CPTM)
-- [ ] T2: CNPJ por CNAE (estoques e fluxos), SP156, alvarás, BCB
+- [x] SP156 2015–2026-T3 por setor × mês × grupo (`covariates/sp156.py`)
+- [ ] T2: CNPJ por CNAE (estoques e fluxos), alvarás, BCB
 - [ ] `asof.py` com defasagens de publicação + teste
 - [ ] Atualização dasimétrica da população
 

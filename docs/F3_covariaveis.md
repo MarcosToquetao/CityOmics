@@ -60,3 +60,24 @@
 - **Saída:** `data/processed/covariaveis/setor_osm.parquet`, com 35 colunas.
 - **Sem série temporal de pontos de interesse:** o histórico do OSM (ohsome) não é usado, porque no Brasil a contagem de pontos cresce sobretudo com o esforço de mapeamento, não com a abertura de estabelecimentos. A série longitudinal de comércio virá do CNPJ.
 - Dados © colaboradores do OpenStreetMap (ODbL).
+
+## IPVS 2022 (`covariates/ipvs.py`)
+
+- **Fonte:** base cartográfica do IPVS 2022 da Fundação Seade (grupos 1 a 6, de baixíssima a muito alta vulnerabilidade), por setor do Censo 2022.
+- **Saída:** `setor_ipvs.parquet` com `ipvs_codigo`, `ipvs_grupo` e `ipvs_alta` (grupos 5 e 6). São 27.301 setores, 25.875 classificados; os 1.426 "não classificados" (0,6% da população) ficam ausentes.
+- **Redundância:** o índice vem do mesmo Censo 2022 (renda, escolaridade, estrutura etária). Vale como resumo composto e referência clássica, mas não traz informação independente da renda e do analfabetismo de `censo.py`. Variável estática.
+
+## Clima e calendário (`covariates/clima.py`, `covariates/calendario.py`)
+
+- **Clima:** reanálise ERA5 pela API de arquivo do Open-Meteo, para um ponto central da cidade, de 2015 a 2026-09-30 (4.291 dias). Temperatura, chuva, vento e radiação, em dia e em mês (dias de chuva forte, dias muito quentes, dias frios). É série da cidade inteira, não por setor.
+  - **Chuva subestimada:** a média anual da reanálise (1.233 mm) fica abaixo da normal da estação (cerca de 1.450 mm). Serve para variação no tempo, não para nível absoluto.
+- **Calendário:** calculado por regra, 2015 a 2027. Feriados nacionais, estaduais e municipais, Carnaval, Sexta-feira Santa, Corpus Christi, 5º dia útil, dia 20 e 13º salário. Jogos de clubes e blocos de rua ficam de fora, por falta de fonte aberta completa.
+
+## SP156 (`covariates/sp156.py`)
+
+- **Fonte:** 47 arquivos trimestrais e semestrais de pedidos dos cidadãos (2015 a 2026-T3), 3,8 GB no total, do portal de dados abertos da Prefeitura. Anos de 2012 a 2014 ficam de fora. O processamento descarta logradouro, número, CEP e texto livre.
+- **Grupos de assunto:** regex sobre tema, assunto e serviço: iluminação, limpeza e entulho, veículo abandonado, árvore e poda, calçada e via, comércio irregular e ruído, imóvel abandonado, população em situação de rua e "outros".
+- **Saídas:** `pedidos_<período>.parquet` (um protocolo por linha, sem endereço), `sp156_setor_mes.parquet` (setor 2022 × mês × grupo, 4,37 milhões de linhas, 26.991 setores) e `sp156_cobertura_mes.parquet` (pedidos datados e com coordenada por mês).
+- **Cobertura de coordenadas varia no tempo:** cerca de 95% até 2019, 10 a 50% entre 2020-T2 e 2021, e 43 a 63% desde 2022. Os arquivos de 2020-T4 e 2021-T1 misturam layouts de colunas; as linhas fora do layout principal não têm data legível nem coordenada e saem da agregação. Por isso a contagem por setor muda de nível com a cobertura. Na F5, as contagens entram **normalizadas pela cobertura do mês** (coluna `cobertura_coord`) ou só a partir de 2022, quando a cobertura é estável.
+- **Datas após o corte:** cerca de 27 mil pedidos têm data entre out e dez/2026, posterior ao snapshot; são tratados como erro de data e removidos.
+- **Viés de denúncia:** bairros com mais renda e conectividade registram mais pedidos. SP156 é covariável e contexto, não medida direta de desordem.
