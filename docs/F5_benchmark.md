@@ -21,3 +21,21 @@ Resultados no período de tuning: **ajuste em 2024, avaliação em 2025, h = 1**
 | Hotspotting prospectivo | 0,772 | 0,669 | 0,139 | 0,021 | 13,6 | 7,4 |
 
 Leituras: a média de 12 meses e o GLM vencem de longe a persistência, o que mostra que a série mensal por setor é ruidosa e o sinal está na média longa. A largura de banda ótima do STKDE no ajuste ficou em 100 m (o menor da grade), ou seja, a suavização espacial não ajuda aqui. O PAI a 1% é alto (≈ 27) porque a observação reconciliada concentra os roubos de celular em setores de estações e terminais.
+
+## LightGBM e Hawkes em 2025 (ajuste 2023–2024, h = 1)
+
+| Modelo | CRPS | Log score | Brier | ECE | PAI 1% | PAI 5% |
+|---|---|---|---|---|---|---|
+| Hawkes discreto (fundo com núcleo teórico + excitação própria e vizinha) | 0,600 | 0,573 | 0,115 | 0,038 | 27,7 | 10,2 |
+| LightGBM completo (319 variáveis) | 0,602 | 0,549 | 0,109 | 0,027 | 27,9 | 10,5 |
+| LightGBM sem histórico de crime (298) | 0,603 | 0,592 | 0,115 | 0,055 | 26,8 | 10,3 |
+| LightGBM núcleo teórico + histórico (71) | 0,608 | 0,549 | 0,109 | 0,024 | 28,2 | 10,5 |
+| LightGBM só histórico (23) | 0,613 | 0,553 | 0,110 | 0,021 | 27,9 | 10,5 |
+| GLM de contagem (baseline) | 0,618 | 0,560 | 0,111 | 0,024 | 27,6 | 10,4 |
+
+Leituras:
+- **Ganho pequeno sobre o melhor baseline.** O CRPS do melhor modelo (0,600) é cerca de 3% menor que o do GLM (0,618), e o log score do LightGBM completo (0,549) 2% menor. O sinal já está quase todo na média longa de cada setor.
+- **Covariáveis sozinhas quase igualam o histórico.** O LightGBM sem nenhum histórico de crime tem CRPS praticamente igual ao completo (0,603 contra 0,602), embora pior em log score e calibração. As covariáveis mais importantes dele são SP156 de população em situação de rua, número de pontos de iluminação, bares e restaurantes (CNPJ) e densidade populacional, que funcionam como proxy do padrão de uso do espaço. Isso é a ablação D6: a circularidade com o histórico de crime não explica o desempenho.
+- **Núcleo teórico (71 variáveis) perde pouco** para o conjunto completo (0,608 contra 0,602 em CRPS; log score igual).
+- **Excitação no Hawkes:** a própria vizinhança quase não contribui (pesos ≈ 0,003 contra ≈ 0,13 por lag próprio), ou seja, o contágio espacial entre setores vizinhos não aparece na escala mensal.
+- **PAI.** Todos os modelos fortes ficam em PAI a 1% ≈ 28, praticamente igual: o ranking dos hotspots é dominado pelos setores de estações e terminais.
