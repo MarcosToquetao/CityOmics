@@ -48,7 +48,7 @@ if SMOKE:
     src = DATA / "train_smoke.jsonl"
 # Rótulos de contagem têm muito acaso: perda só de entropia cruzada, taxas menores e suavização evitam
 # que o modelo fique confiante demais (perda alta em acertos raros). Mesmo batch efetivo de 32.
-cfg = TrainConfig(epochs=1 if SMOKE else 3, micro_batch=16, grad_accum=2, calib_max=2000, seed=42, max_len=1024, head_max_len=256,
+cfg = TrainConfig(epochs=1 if SMOKE else 2, micro_batch=16, grad_accum=2, calib_max=2000, seed=42, max_len=1024, head_max_len=256,
                   loss="soft-ce", encoder_lr=1e-5, head_lr=5e-5, label_smoothing=0.05, log_every=200,
                   gradient_checkpointing=True, amp=True)
 OUT = "/content/drive/MyDrive/laya_cityomics" if not SMOKE else "/content/laya_smoke"   # monte o Drive antes do treino completo
