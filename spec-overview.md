@@ -180,7 +180,8 @@ F0 specs + repo
 - [x] Infraestrutura e equipamentos por setor, GeoSampa (`covariates/infra.py`)
 - [x] OSM: malha viária (centralidade, interseções) e pontos de interesse por setor (`covariates/osm.py`)
 - [x] IPVS 2022 (`covariates/ipvs.py`), clima ERA5 (`clima.py`) e calendário (`calendario.py`)
-- [ ] T1: Censo 2010 (grade + Δ) e VIIRS C2 (precisa de token Earthdata)
+- [x] Censo 2010 por setor, conversão dasimétrica para 2022 e Δ2010→2022 (`covariates/censo2010.py`); interpolação anual no painel
+- [ ] VIIRS C2: código pronto (`covariates/viirs.py`), falta o token Earthdata para baixar
 - [ ] Demanda do Metrô (fonte pública incompleta: faltam Linha 4, Linha 5 e CPTM)
 - [x] SP156 2015–2026-T3 por setor × mês × grupo (`covariates/sp156.py`)
 - [x] Geocodificador local sobre o CNEFE 2022 (`geocode.py`, 5,69 milhões de endereços)

@@ -58,6 +58,7 @@ def build_cnefe(log=print) -> pl.DataFrame:
         pl.concat_str([pl.col("NOM_TIPO_SEGLOGR"), pl.col("NOM_TITULO_SEGLOGR"), pl.col("NOM_SEGLOGR")],
                       separator=" ", ignore_nulls=True).alias("logradouro"),
         pl.col("NUM_ENDERECO").cast(pl.Int64, strict=False).alias("numero"),
+        pl.col("COD_ESPECIE").cast(pl.Int8, strict=False).alias("especie"),  # 1 = domicílio particular
         pl.col("LATITUDE").cast(pl.Float64, strict=False).alias("lat"),
         pl.col("LONGITUDE").cast(pl.Float64, strict=False).alias("lon"),
     ).filter(pl.col("lat").is_not_null() & pl.col("lon").is_not_null())

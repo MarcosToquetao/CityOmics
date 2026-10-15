@@ -104,3 +104,18 @@
 - **Saída:** `painel_setor_mes.parquet`, de 2015-01 a 2027-03 (cobre a janela prospectiva), com todos os setores e as covariáveis estáticas (Censo, IPVS, infraestrutura, OSM) com prefixo.
 - **Testes:** o deslocamento move o mês na quantidade certa; mudar o valor de um mês ainda não publicado não altera a linha de `m` (inclusive nas janelas); janelas só olham para trás.
 - **Fora do painel por enquanto:** IPTU/tipos de lote (F6, emissão do ano corrente), VIIRS (falta o token Earthdata), Censo 2010 e população dasimétrica, Metrô.
+
+## Censo 2010 e variação 2010→2022 (`covariates/censo2010.py`)
+
+- **Fonte:** agregados por setor do Censo 2010 (universo, município de SP, 176 MB, versão de 2026-06-15) e malha de setores de 2010 (18.363 setores). Em vez da grade estatística de 200 m (que só traz população e domicílios), usamos os setores de 2010, que trazem idade, cor ou raça, alfabetização e renda.
+- **Conversão para a malha de 2022 (dasimétrica):** cada setor de 2010 é cortado pelos setores de 2022 (68.796 pedaços); as **contagens** vão para cada pedaço na proporção dos endereços residenciais do CNEFE 2022 (espécie 1) dentro dele, e só depois viram taxas. Em 676 setores de 2010 sem endereço residencial vale a proporção da área. A população total é conservada (11.253.503).
+- **Limite:** onde a ocupação mudou muito entre 2010 e 2022 (loteamentos novos, demolições), a redistribuição por endereços de 2022 erra. Taxas com menos de 20 pessoas ou 5 domicílios redistribuídos ficam ausentes.
+- **Indicadores de 2010 na malha de 2022:** população, domicílios, moradores por domicílio, frações de homens de 15 a 29 anos, 15 a 24, 0 a 14 e 60 ou mais, razão de sexo, cor ou raça, analfabetismo a partir de 15 anos, renda média do responsável (nominal, R$ de 2010) e densidade.
+- **Variação (`setor_censo_delta.parquet`):** `d_` é a diferença de taxas, `g_` o log da razão (população e densidade), e `renda_rel_2010`/`renda_rel_2022` a renda do setor relativa à média da cidade, que é comparável apesar da inflação. As extremidades da distribuição (por exemplo, renda relativa com variação acima de 20) vêm de setores pequenos e devem ser winsorizadas nos modelos.
+- **Painel:** `asof.py` interpola cada ano de 2010 a 2022 de forma log-linear (população, fração de homens de 15 a 29, fração negra, analfabetismo, renda) e mantém o valor de 2022 depois. Para os anos de treino isso usa informação posterior (o Censo 2022 saiu em 2023+); é a nota de análise retrospectiva do spec-dados §3.3.
+
+## VIIRS Black Marble (`covariates/viirs.py`)
+
+- **Fonte:** produto VNP46A3 (mensal, versão 2 = Collection 2) da NASA LAADS DAAC, tile `h13v11`, grade de 15 segundos de arco (≈ 460 m). São 67 MB por mês (cerca de 9,5 GB de 2015-01 a 2026-08). A busca é pública (CMR), mas o download exige token gratuito da conta NASA Earthdata em `EARTHDATA_TOKEN` (`.env`).
+- **Status:** código pronto e testado em arquivo sintético; **ainda não executado**, porque o token não foi fornecido.
+- **Extração:** banda `AllAngle_Composite_Snow_Free`, fator 0,1, pixels de preenchimento ou qualidade 2 ausentes. Cada setor recebe o valor do pixel que contém o seu ponto representativo (medida de vizinhança, não do setor). Defasagem de 2 meses no painel.

@@ -35,3 +35,15 @@ def test_rolling_window_sums_only_past_and_yoy():
     assert p.filter(pl.col("mes") == "2024-05")["x_s3"][0] == 3
     y = asof.yoy(_painel(list(range(18)), 0), ["x"], "cd_setor")
     assert y.filter(pl.col("mes") == "2025-03")["x_yoy"][0] == 12
+
+
+def test_censo_interp_endpoints(tmp_path, monkeypatch):
+    cov = tmp_path / "covariaveis"
+    cov.mkdir()
+    cols = {"cd_setor": ["a"], "pop": [100.0], "frac_homens_15_29": [0.1], "frac_negra": [0.3],
+            "taxa_analfabetismo_15": [0.02], "renda_media_resp": [1000.0]}
+    pl.DataFrame(cols).write_parquet(cov / "setor_censo2010_em_2022.parquet")
+    pl.DataFrame(dict(cols, pop=[400.0])).write_parquet(cov / "setor_censo2022.parquet")
+    monkeypatch.setattr(asof, "processed_dir", lambda: tmp_path)
+    t = asof._censo_interp(["2010-05", "2016-05", "2022-05", "2026-01"]).sort("mes")
+    assert t["censo_interp_pop"].round(3).to_list() == [100.0, 200.0, 400.0, 400.0]   # t=0, 0.5 (geométrica), 1, 1

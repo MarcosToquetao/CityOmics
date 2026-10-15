@@ -39,6 +39,8 @@ dependencies:
   - squidpy
   - leidenalg
   - imagecodecs   # exigido pelo squidpy
+  - xlrd          # leitura dos dicionários .xls do Censo 2010
+  - h5py          # leitura do HDF5 do VIIRS Black Marble
   # utilidades
   - typer
   - pytest

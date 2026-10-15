@@ -9,7 +9,7 @@ Implementação: cada série mensal é deslocada ``1 + L`` meses para a frente (
 de qualquer janela, de modo que somas e médias móveis só enxergam o passado disponível.
 O calendário é determinístico e conhecido de antemão, então entra sem deslocamento.
 
-Defasagens (``LAG``): ITBI 1, CNPJ 1, SP156 3, BCB 0 (fotografia: ver ``bcb.py``), clima 0.
+Defasagens (``LAG``): ITBI 1, CNPJ 1, SP156 3, VIIRS 2, BCB 0 (fotografia: ver ``bcb.py``), clima 0.
 IPTU entra via ``iptu.py``/F6 (emissão do ano corrente) e o Censo 2022 é estático (análise
 retrospectiva declarada).
 
@@ -22,7 +22,7 @@ import polars as pl
 
 from cityomics.paths import interim_dir, processed_dir
 
-LAG = {"itbi": 1, "cnpj": 1, "sp156": 3, "bcb": 0, "clima": 0}
+LAG = {"itbi": 1, "cnpj": 1, "sp156": 3, "bcb": 0, "clima": 0, "viirs": 2}
 JANELAS = (3, 6, 12)
 MES_INI, MES_FIM = "2015-01", "2027-03"
 
@@ -75,6 +75,35 @@ def _wide(df: pl.DataFrame, val: str, prefix: str) -> pl.DataFrame:
     return w.rename({c: f"{prefix}_{c}" for c in w.columns if c not in ("cd_setor", "mes")})
 
 
+INTERP = ("pop", "frac_homens_15_29", "frac_negra", "taxa_analfabetismo_15", "renda_media_resp")
+
+
+def _censo_interp(ms: list[str]) -> pl.DataFrame:
+    """Valor anual de variáveis decenais: v(a) = v2010^(1−t) · v2022^t com t = (a − 2010)/12 (2010 ≤ a ≤ 2022);
+    depois de 2022 vale o de 2022; antes de 2010, o de 2010. Uso retrospectivo declarado: o Censo 2022
+    só saiu em 2023+, então para anos de treino a interpolação usa informação posterior (spec-dados §3.3)."""
+    cov = processed_dir() / "covariaveis"
+    a = pl.read_parquet(cov / "setor_censo2010_em_2022.parquet").select("cd_setor", *INTERP)
+    b = pl.read_parquet(cov / "setor_censo2022.parquet").select("cd_setor", *INTERP)
+    j = b.join(a, on="cd_setor", how="left", suffix="_10")
+    anos = sorted({int(m[:4]) for m in ms})
+    quadros = []
+    for ano in anos:
+        t = min(max((ano - 2010) / 12, 0.0), 1.0)
+        ex = []
+        for c in INTERP:
+            v22, v10 = pl.col(c), pl.col(f"{c}_10")
+            # log-linear exige positivos; com zero ou ausência em 2010 usa-se interpolação linear / valor de 2022
+            logl = ((v10.clip(lower_bound=1e-9).log() * (1 - t)) + (v22.clip(lower_bound=1e-9).log() * t)).exp()
+            lin = v10 * (1 - t) + v22 * t
+            ex.append(pl.when((v10 > 0) & (v22 > 0)).then(logl).when(v10.is_not_null() & v22.is_not_null()).then(lin)
+                      .otherwise(v22).alias(f"censo_interp_{c}"))
+        quadros.append(j.select("cd_setor", *ex).with_columns(pl.lit(ano).alias("_ano")))
+    anual = pl.concat(quadros)
+    meses_df = pl.DataFrame({"mes": ms}).with_columns(pl.col("mes").str.slice(0, 4).cast(pl.Int32).alias("_ano"))
+    return anual.join(meses_df, on="_ano").drop("_ano")
+
+
 def build(setores: list[str], ms: list[str] | None = None, log=print) -> pl.DataFrame:
     """Painel setor × mês. ``setores`` = códigos da malha; ``ms`` = meses de ``MES_INI`` a ``MES_FIM``."""
     ms = ms or meses()
@@ -115,14 +144,25 @@ def build(setores: list[str], ms: list[str] | None = None, log=print) -> pl.Data
     p = p.sort("cd_setor", "mes").with_columns([pl.col(c).fill_null(0) for c in cont])
     estoques = ["agencias_estoque"] + ([c for c in cn.columns if c.startswith("cnpj_estoque")] if cn is not None else [])
     p = p.with_columns([pl.col(c).forward_fill().over("cd_setor").fill_null(0) for c in estoques])
+    medias = ["preco_m2_mediana", "frac_financiada"]
+    vi_path = cov / "setor_viirs_mes.parquet"
+    if vi_path.exists():
+        vi = deslocar(pl.read_parquet(vi_path), LAG["viirs"])
+        p = p.join(vi, on=["cd_setor", "mes"], how="left")
+        medias.append("luz_noturna")
     p = janelas(p, cont, "cd_setor", "sum")
-    p = janelas(p, ["preco_m2_mediana", "frac_financiada"], "cd_setor", "mean")
+    p = janelas(p, medias, "cd_setor", "mean")
     p = yoy(p, estoques, "cd_setor")
 
     # calendário (sem defasagem) e clima (defasagem 0)
     cal = pl.read_parquet(cov / "calendario_mes.parquet").with_columns(pl.col("tem_decimo_terceiro").cast(pl.Int8))
     cli = deslocar(pl.read_parquet(cov / "clima_mes.parquet").drop("dias_com_dado"), LAG["clima"])
     p = p.join(cal, on="mes", how="left").join(cli, on="mes", how="left", suffix="_clima")
+
+    # Censo 2010→2022: interpolação log-linear por ano até 2022; depois de 2022 fica o valor de 2022
+    p = p.join(_censo_interp(ms), on=["cd_setor", "mes"], how="left")
+    delta = pl.read_parquet(cov / "setor_censo_delta.parquet")
+    p = p.join(delta.rename({c: f"censo_{c}" for c in delta.columns if c != "cd_setor"}), on="cd_setor", how="left")
 
     # estáticos
     for nome in ("censo2022", "ipvs", "infra", "osm"):
