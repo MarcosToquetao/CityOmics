@@ -1,0 +1,2483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CityOmics — Complete Call Flow &amp; Architecture Documentation</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+:root {
+  --bg: #0f172a; --surface: #1e293b; --border: #334155;
+  --text: #e2e8f0; --muted: #94a3b8; --accent: #38bdf8;
+  --warn: #fbbf24; --err: #f87171; --ok: #34d399;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+.container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+h1 { font-size: 2.4rem; margin-bottom: 8px; background: linear-gradient(135deg, var(--accent), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+h2 { font-size: 1.7rem; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+h3 { font-size: 1.25rem; margin: 32px 0 12px; color: var(--accent); }
+h4 { font-size: 1.05rem; margin: 20px 0 8px; color: var(--warn); }
+p { margin: 8px 0; color: var(--muted); }
+.subtitle { color: var(--muted); font-size: 1.1rem; margin-bottom: 32px; }
+.mermaid { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 20px 0; overflow-x: auto; position: relative; }
+.mermaid.is-enhanced { padding: 0; overflow: hidden; min-height: 260px; }
+.mermaid-viewport { padding: 54px 24px 24px; overflow: hidden; cursor: grab; touch-action: none; min-height: 260px; }
+.mermaid-viewport.is-dragging { cursor: grabbing; }
+.mermaid-viewport svg { max-width: none !important; height: auto; transform-origin: 0 0; transition: transform 120ms ease; }
+.mermaid-toolbar { position: absolute; top: 10px; right: 10px; z-index: 3; display: flex; align-items: center; gap: 6px; padding: 6px; background: rgba(15,23,42,0.92); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.28); }
+.mermaid-toolbar button, .mermaid-toolbar .zoom-level { height: 28px; min-width: 32px; border: 1px solid var(--border); border-radius: 6px; background: #1e293b; color: var(--text); font: 600 0.78rem system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; }
+.mermaid-toolbar button { cursor: pointer; }
+.mermaid-toolbar button:hover { border-color: var(--accent); color: var(--accent); }
+.mermaid-toolbar .zoom-level { min-width: 52px; color: var(--muted); background: transparent; }
+.call-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.92rem; }
+.call-table th { background: #1a2744; color: var(--accent); text-align: left; padding: 10px 14px; border: 1px solid var(--border); }
+.call-table td { padding: 8px 14px; border: 1px solid var(--border); vertical-align: top; }
+.call-table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+.tag-async { background: #7c3aed33; color: #a78bfa; }
+.tag-class { background: #05966933; color: var(--ok); }
+.tag-func { background: #2563eb33; color: var(--accent); }
+.tag-cmd { background: #d9770633; color: var(--warn); }
+.tag-endpoint { background: #dc262633; color: var(--err); }
+.tag-hook { background: #db277733; color: #f472b6; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 16px 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin: 16px 0; }
+.arrow-chain { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--accent); padding: 10px; background: rgba(56,189,248,0.06); border-radius: 6px; }
+code { font-family: 'Fira Code', 'Cascadia Code', monospace; background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 3px; font-size: 0.88em; }
+ul, ol { margin: 8px 0 8px 24px; color: var(--muted); }
+li { margin: 4px 0; }
+a { color: var(--accent); }
+hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+.nav { position: sticky; top: 0; background: var(--bg); z-index: 10; padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem; }
+.nav a { text-decoration: none; }
+.nav a:hover { text-decoration: underline; }
+@media (max-width: 768px) { .container { padding: 16px; } h1 { font-size: 1.8rem; } }
+
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>CityOmics — Complete Call Flow &amp; Architecture Documentation</h1>
+<p class="subtitle">Generated from graphify knowledge graph: 465 nodes, 1163 edges, 16 communities. Commit: badc247</p>
+
+<div class="nav">
+    <a href="#overview">Architecture Overview</a>
+    <a href="#build-graph">Graph Build</a>
+    <a href="#analysis-clustering">Analysis &amp; Clustering</a>
+    <a href="#ingest-cache-update">Ingestion &amp; Updates</a>
+    <a href="#security-global">Security &amp; Global Graph</a>
+    <a href="#tests-fixtures">Tests &amp; Fixtures</a>
+    <a href="#pacote-atlas">Pacote atlas</a>
+    <a href="#pacote-eval">Pacote eval</a>
+    <a href="#pacote-laya">Pacote laya</a>
+    <a href="#pacote-models">Pacote models</a>
+    <a href="#raiz-cityomics">Raiz cityomics</a>
+</div>
+
+<!-- ====== Architecture Overview ====== -->
+<h2 id="overview">1. Architecture Overview</h2>
+
+<div class="mermaid">
+
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    BUILD_GRAPH_321CBB04("Graph Build<br/><small>92 nodes</small>")
+    class BUILD_GRAPH_321CBB04 module;
+    ANALYSIS_CLUSTERING_C79796DA("Analysis &amp; Clustering<br/><small>115 nodes</small>")
+    class ANALYSIS_CLUSTERING_C79796DA module;
+    INGEST_CACHE_UPDATE_FF457338("Ingestion &amp; Updates<br/><small>65 nodes</small>")
+    class INGEST_CACHE_UPDATE_FF457338 module;
+    SECURITY_GLOBAL_5B9C6A04("Security &amp; Global Graph<br/><small>29 nodes</small>")
+    class SECURITY_GLOBAL_5B9C6A04 module;
+    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>155 nodes</small>")
+    class TESTS_FIXTURES_B84B1DCC module;
+    PACOTE_ATLAS_63F644B7("Pacote atlas<br/><small>2 nodes</small>")
+    class PACOTE_ATLAS_63F644B7 module;
+    PACOTE_EVAL_1DA4CC9E("Pacote eval<br/><small>2 nodes</small>")
+    class PACOTE_EVAL_1DA4CC9E module;
+    PACOTE_LAYA_FDBD8A59("Pacote laya<br/><small>2 nodes</small>")
+    class PACOTE_LAYA_FDBD8A59 module;
+    PACOTE_MODELS_973B24A7("Pacote models<br/><small>2 nodes</small>")
+    class PACOTE_MODELS_973B24A7 module;
+    RAIZ_CITYOMICS_0A8AA5BF("Raiz cityomics<br/><small>1 nodes</small>")
+    class RAIZ_CITYOMICS_0A8AA5BF module;
+    INGEST_CACHE_UPDATE_FF457338 -->|calls x25| TESTS_FIXTURES_B84B1DCC
+    TESTS_FIXTURES_B84B1DCC -->|calls x21| BUILD_GRAPH_321CBB04
+    BUILD_GRAPH_321CBB04 -->|calls x18| INGEST_CACHE_UPDATE_FF457338
+    BUILD_GRAPH_321CBB04 -->|references x16| ANALYSIS_CLUSTERING_C79796DA
+    TESTS_FIXTURES_B84B1DCC -->|imports x14| ANALYSIS_CLUSTERING_C79796DA
+    INGEST_CACHE_UPDATE_FF457338 -->|imports x14| ANALYSIS_CLUSTERING_C79796DA
+    TESTS_FIXTURES_B84B1DCC -->|calls x13| INGEST_CACHE_UPDATE_FF457338
+    ANALYSIS_CLUSTERING_C79796DA -->|references x12| BUILD_GRAPH_321CBB04
+    BUILD_GRAPH_321CBB04 -->|imports x10| TESTS_FIXTURES_B84B1DCC
+    SECURITY_GLOBAL_5B9C6A04 -->|calls x10| INGEST_CACHE_UPDATE_FF457338
+    SECURITY_GLOBAL_5B9C6A04 -->|calls x7| TESTS_FIXTURES_B84B1DCC
+    SECURITY_GLOBAL_5B9C6A04 -->|calls x6| BUILD_GRAPH_321CBB04
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h4>Architecture Layers</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
+      <tr><td>Graph Build</td><td>92</td><td><code>2, 4</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>115</td><td><code>1, 6, 12</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>65</td><td><code>5, 8</code></td></tr><tr><td>Security &amp; Global Graph</td><td>29</td><td><code>7</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>155</td><td><code>0, 3, 9</code></td></tr><tr><td>Pacote atlas</td><td>2</td><td><code>10</code></td></tr><tr><td>Pacote eval</td><td>2</td><td><code>11</code></td></tr><tr><td>Pacote laya</td><td>2</td><td><code>13</code></td></tr><tr><td>Pacote models</td><td>2</td><td><code>14</code></td></tr><tr><td>Raiz cityomics</td><td>1</td><td><code>15</code></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Core Flow</h4>
+    <div class="arrow-chain">Pacote atlas -&gt; Graph Build -&gt; Ingestion &amp; Updates -&gt; Tests &amp; Fixtures -&gt; Analysis &amp; Clustering -&gt; Security &amp; Global Graph -&gt; Pacote eval</div>
+  </div>
+</div>
+<div class="grid">
+  <div class="card">
+    <h4>Graph Report Highlights</h4>
+    <ul>
+      <li>465 nodes · 1163 edges · 16 communities (10 shown, 6 thin omitted)</li>
+      <li>Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 28 edges (avg confidence: 0.82)</li>
+      <li>Token cost: 135,770 input · 0 output</li>
+      <li>1. `Spec Dados, unidades e covariáveis (F1-F3)` - 24 edges</li>
+      <li>2. `norm_text()` - 20 edges</li>
+      <li>3. `parse_file()` - 20 edges</li>
+    </ul>
+  </div>
+</div>
+<hr>
+<!-- ====== 2. Graph Build ====== -->
+<h2 id="build-graph">2. Graph Build</h2>
+<p>Graph Build groups implementation around cityomics, spec, covariates, units, mostly in spec-dados.md, cityomics/covariates/osm.py, docs/F2_unidades.md. This section covers 92 nodes and 192 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Graph Build (92 nodes, 192 edges)
+    subgraph build_graph_cityomics_covariates_osm_py_34501739["cityomics/covariates/osm.py"]
+        src_cityomics_covariates_osm_a9d32689("osm.py")
+        src_cityomics_covariates_osm_load_pois_2aafe1ea("load_pois()<br/><small>cityomics/covariates/osm.py</small>")
+        src_cityomics_covariates_osm_build_41ec0c7f("build()<br/><small>cityomics/covariates/osm.py</small>")
+        src_cityomics_covariates_osm_poi_metrics_597bc510("poi_metrics()<br/><small>cityomics/covariates/osm.py</small>")
+        src_cityomics_covariates_osm_street_metrics_eaca93e4("street_metrics()<br/><small>cityomics/covariates/osm.py</small>")
+        src_cityomics_covariates_osm_load_graph_0932093a("load_graph()<br/><small>cityomics/covariates/osm.py</small>")
+        src_cityomics_covariates_osm_osm_dir_7e063645("osm_dir()<br/><small>cityomics/covariates/osm.py</small>")
+        src_cityomics_covariates_osm_municipio_polygon_55eeb797("municipio_polygon()<br/><small>cityomics/covariates/osm.py</small>")
+        src_cityomics_covariates_osm_record_dada8446("_record()<br/><small>cityomics/covariates/osm.py</small>")
+        src_cityomics_covariates_osm_pois_from_pbf_6a0d7f96("_pois_from_pbf()<br/><small>cityomics/covariates/osm.py</small>")
+        src_cityomics_covariates_osm_configure_osmnx_fffbc451("_configure_osmnx()<br/><small>cityomics/covariates/osm.py</small>")
+    end
+    subgraph build_graph_cityomics_covariates_infra_py_2c46972f["cityomics/covariates/infra.py"]
+        src_cityomics_covariates_infra_89487f68("infra.py")
+        src_cityomics_covariates_infra_build_179fe726("build()<br/><small>cityomics/covariates/infra.py</small>")
+        src_cityomics_covariates_infra_layer_5947cf65("_layer()<br/><small>cityomics/covariates/infra.py</small>")
+    end
+    geopandas_33849ba0("geopandas")
+    src_cityomics_units_lotes_6783274f("lotes.py")
+    src_cityomics_units_setores_load_setores_47d5e919("load_setores()<br/><small>cityomics/units/setores.py</small>")
+    src_cityomics_paths_processed_dir_ca905832("processed_dir()<br/><small>src/cityomics/paths.py</small>")
+    src_cityomics_covariates_infra_build_179fe726 -->|calls| src_cityomics_units_setores_load_setores_47d5e919
+    src_cityomics_covariates_infra_build_179fe726 -->|calls| geopandas_33849ba0
+    src_cityomics_covariates_infra_build_179fe726 -->|calls| src_cityomics_covariates_infra_layer_5947cf65
+    src_cityomics_covariates_infra_build_179fe726 -->|calls| src_cityomics_paths_processed_dir_ca905832
+    src_cityomics_covariates_infra_layer_5947cf65 -->|calls| geopandas_33849ba0
+    src_cityomics_covariates_osm_build_41ec0c7f -->|calls| src_cityomics_units_setores_load_setores_47d5e919
+    src_cityomics_covariates_osm_build_41ec0c7f -->|calls| src_cityomics_covariates_osm_poi_metrics_597bc510
+    src_cityomics_covariates_osm_build_41ec0c7f -->|calls| src_cityomics_covariates_osm_street_metrics_eaca93e4
+    src_cityomics_covariates_osm_build_41ec0c7f -->|calls| src_cityomics_paths_processed_dir_ca905832
+    src_cityomics_covariates_osm_load_graph_0932093a -->|calls| src_cityomics_covariates_osm_osm_dir_7e063645
+    src_cityomics_covariates_osm_load_graph_0932093a -->|calls| src_cityomics_covariates_osm_municipio_polygon_55eeb797
+    src_cityomics_covariates_osm_load_graph_0932093a -->|calls| src_cityomics_covariates_osm_record_dada8446
+    src_cityomics_covariates_osm_load_pois_2aafe1ea -->|calls| src_cityomics_covariates_osm_osm_dir_7e063645
+    src_cityomics_covariates_osm_load_pois_2aafe1ea -->|calls| src_cityomics_covariates_osm_municipio_polygon_55eeb797
+    src_cityomics_covariates_osm_load_pois_2aafe1ea -->|calls| src_cityomics_covariates_osm_pois_from_pbf_6a0d7f96
+    src_cityomics_covariates_osm_load_pois_2aafe1ea -->|calls| src_cityomics_covariates_osm_record_dada8446
+    src_cityomics_covariates_osm_load_pois_2aafe1ea -->|calls| geopandas_33849ba0
+    src_cityomics_covariates_osm_municipio_polygon_55eeb797 -->|calls| src_cityomics_units_setores_load_setores_47d5e919
+    src_cityomics_covariates_osm_osm_dir_7e063645 -->|calls| src_cityomics_covariates_osm_configure_osmnx_fffbc451
+    src_cityomics_covariates_osm_poi_metrics_597bc510 -->|calls| src_cityomics_covariates_osm_load_pois_2aafe1ea
+    src_cityomics_covariates_osm_poi_metrics_597bc510 -->|calls| geopandas_33849ba0
+    src_cityomics_covariates_osm_pois_from_pbf_6a0d7f96 -->|calls| geopandas_33849ba0
+    src_cityomics_covariates_osm_pois_from_pbf_6a0d7f96 -->|calls| src_cityomics_covariates_osm_municipio_polygon_55eeb797
+    src_cityomics_covariates_osm_record_dada8446 -->|calls| src_cityomics_covariates_osm_osm_dir_7e063645
+    %% Omitted for readability: 74 nodes, 11 edges
+    class src_cityomics_covariates_osm_a9d32689 module;
+    class src_cityomics_covariates_osm_load_pois_2aafe1ea function;
+    class src_cityomics_covariates_osm_build_41ec0c7f function;
+    class src_cityomics_covariates_osm_poi_metrics_597bc510 function;
+    class src_cityomics_covariates_osm_street_metrics_eaca93e4 function;
+    class src_cityomics_covariates_osm_load_graph_0932093a function;
+    class src_cityomics_covariates_osm_osm_dir_7e063645 function;
+    class src_cityomics_covariates_osm_municipio_polygon_55eeb797 function;
+    class src_cityomics_covariates_osm_record_dada8446 function;
+    class src_cityomics_covariates_osm_pois_from_pbf_6a0d7f96 function;
+    class src_cityomics_covariates_osm_configure_osmnx_fffbc451 function;
+    class src_cityomics_covariates_infra_89487f68 module;
+    class src_cityomics_covariates_infra_build_179fe726 function;
+    class src_cityomics_covariates_infra_layer_5947cf65 function;
+    class geopandas_33849ba0 function;
+    class src_cityomics_units_lotes_6783274f module;
+    class src_cityomics_units_setores_load_setores_47d5e919 function;
+    class src_cityomics_paths_processed_dir_ca905832 async;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>build()</code><br><small style="color:var(--muted)">cityomics/covariates/infra.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>_layer()</code><br><small style="color:var(--muted)">cityomics/covariates/infra.py</small><br><code>geopandas</code><br><code>load_setores()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small><br>+2 more</td>
+  <td>build() node in cityomics/covariates/infra.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>_layer()</code><br><small style="color:var(--muted)">cityomics/covariates/infra.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build()</code><br><small style="color:var(--muted)">cityomics/covariates/infra.py</small></td>
+  <td><code>fetch_geosampa()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br><code>geopandas</code></td>
+  <td>_layer() node in cityomics/covariates/infra.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>build()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>load_setores()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small><br><code>poi_metrics()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>processed_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small><br>+1 more</td>
+  <td>build() node in cityomics/covariates/osm.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>_configure_osmnx()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>osm_dir()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Reads, resolves, or persists project configuration.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>load_graph()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>street_metrics()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><code>_record()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>municipio_polygon()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>osm_dir()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>load_pois()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>poi_metrics()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><code>_pois_from_pbf()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>_record()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>geopandas</code><br>+2 more</td>
+  <td>load_pois() node in cityomics/covariates/osm.py.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>municipio_polygon()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>_pois_from_pbf()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>load_graph()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>load_pois()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><code>load_setores()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small></td>
+  <td>municipio_polygon() node in cityomics/covariates/osm.py.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>osm_dir()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>_record()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>load_graph()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>load_pois()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><code>_configure_osmnx()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>external_dir()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small></td>
+  <td>osm_dir() node in cityomics/covariates/osm.py.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>poi_metrics()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><code>geopandas</code><br><code>load_pois()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td>poi_metrics() node in cityomics/covariates/osm.py.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>_pois_from_pbf()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>load_pois()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><code>fetch()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br><code>geopandas</code><br><code>municipio_polygon()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td>_pois_from_pbf() node in cityomics/covariates/osm.py.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>_record()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>load_graph()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>load_pois()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><code>json</code><br><code>load_manifest()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br><code>manifest_file()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br>+2 more</td>
+  <td>_record() node in cityomics/covariates/osm.py.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>street_metrics()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><code>geopandas</code><br><code>load_graph()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>networkx</code></td>
+  <td>street_metrics() node in cityomics/covariates/osm.py.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>processed_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small></td>
+  <td><span class="tag tag-async">Async</span></td>
+  <td><code>alvos_dir()</code><br><small style="color:var(--muted)">cityomics/units/build.py</small><br><code>build()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>build()</code><br><small style="color:var(--muted)">cityomics/covariates/infra.py</small><br>+7 more</td>
+  <td><code>data_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small></td>
+  <td>processed_dir() node in src/cityomics/paths.py.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>build_lotes()</code><br><small style="color:var(--muted)">cityomics/units/lotes.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>units_lotes()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><code>_read_gpkg_zip()</code><br><small style="color:var(--muted)">cityomics/units/lotes.py</small><br><code>external_dir()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br><code>fetch_geosampa()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br>+4 more</td>
+  <td>build_lotes() node in cityomics/units/lotes.py.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>load_lotes()</code><br><small style="color:var(--muted)">cityomics/units/lotes.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>covariates_iptu()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><code>geopandas</code><br><code>units_dir()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small></td>
+  <td>load_lotes() node in cityomics/units/lotes.py.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>_read_gpkg_zip()</code><br><small style="color:var(--muted)">cityomics/units/lotes.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build_lotes()</code><br><small style="color:var(--muted)">cityomics/units/lotes.py</small></td>
+  <td><code>geopandas</code><br><code>zipfile</code></td>
+  <td>_read_gpkg_zip() node in cityomics/units/lotes.py.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>build_distritos()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>run()</code><br><small style="color:var(--muted)">cityomics/units/build.py</small></td>
+  <td><code>units_dir()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small></td>
+  <td>build_distritos() node in cityomics/units/setores.py.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>build_setores()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>run()</code><br><small style="color:var(--muted)">cityomics/units/build.py</small></td>
+  <td><code>fetch()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br><code>geopandas</code><br><code>units_dir()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small></td>
+  <td>build_setores() node in cityomics/units/setores.py.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>load_distritos()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>geopandas</code><br><code>units_dir()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small></td>
+  <td>load_distritos() node in cityomics/units/setores.py.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>load_setores()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>assign.py</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small><br><code>build()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>build()</code><br><small style="color:var(--muted)">cityomics/covariates/infra.py</small><br>+6 more</td>
+  <td><code>geopandas</code><br><code>units_dir()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small></td>
+  <td>load_setores() node in cityomics/units/setores.py.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>units_dir()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build_distritos()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small><br><code>build_lotes()</code><br><small style="color:var(--muted)">cityomics/units/lotes.py</small><br><code>build_setores()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small><br>+4 more</td>
+  <td><code>processed_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small></td>
+  <td>units_dir() node in cityomics/units/setores.py.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>load_stations()</code><br><small style="color:var(--muted)">cityomics/units/transit.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>run()</code><br><small style="color:var(--muted)">cityomics/units/build.py</small></td>
+  <td><code>fetch_geosampa()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br><code>geopandas</code></td>
+  <td>load_stations() node in cityomics/units/transit.py.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>station_setores()</code><br><small style="color:var(--muted)">cityomics/units/transit.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>run()</code><br><small style="color:var(--muted)">cityomics/units/build.py</small></td>
+  <td><code>geopandas</code></td>
+  <td>station_setores() node in cityomics/units/transit.py.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>infra.py</code><br><small style="color:var(--muted)">cityomics/covariates/infra.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>__init__.py</code><br><small style="color:var(--muted)">src/cityomics/__init__.py</small><br><code>external.py</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br><code>geopandas</code><br>+6 more</td>
+  <td>Module file in cityomics/covariates/infra.py.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>DataFrame</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DataFrame node in project.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>GeoDataFrame</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>GeoDataFrame node in project.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>osm.py</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>__init__.py</code><br><small style="color:var(--muted)">src/cityomics/__init__.py</small><br><code>datetime</code><br><code>external.py</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br>+10 more</td>
+  <td>Module file in cityomics/covariates/osm.py.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>DataFrame</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DataFrame node in project.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>GeoDataFrame</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>GeoDataFrame node in project.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>cityomics/__init__.py</code><br><small style="color:var(--muted)">src/cityomics/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>censo.py</code><br><small style="color:var(--muted)">cityomics/covariates/censo.py</small><br><code>cli.py</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small><br><code>geosampa.py</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small><br>+9 more</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in src/cityomics/__init__.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>spec-dados.md</code></td><td>15 nodes</td></tr>
+<tr><td><code>cityomics/covariates/osm.py</code></td><td>14 nodes</td></tr>
+<tr><td><code>docs/F2_unidades.md</code></td><td>8 nodes</td></tr>
+<tr><td><code>spec-overview.md</code></td><td>8 nodes</td></tr>
+<tr><td><code>cityomics/units/setores.py</code></td><td>7 nodes</td></tr>
+<tr><td><code>docs/F3_covariaveis.md</code></td><td>5 nodes</td></tr>
+<tr><td><code>cityomics/units/lotes.py</code></td><td>5 nodes</td></tr>
+<tr><td><code>cityomics/covariates/infra.py</code></td><td>4 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: references x58, calls x44, contains x22, explains x17. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 3. Analysis & Clustering ====== -->
+<h2 id="analysis-clustering">3. Analysis &amp; Clustering</h2>
+<p>Analysis &amp; Clustering groups implementation around spec, cityomics, overviewmd, sealedpy, mostly in spec-overview.md, src/cityomics/sealed.py, spec-benchmark.md. This section covers 115 nodes and 232 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Analysis &amp; Clustering (115 nodes, 232 edges)
+    subgraph analysis_clustering_src_cityomics_sealed_py_b4c4cac0["src/cityomics/sealed.py"]
+        src_cityomics_sealed_a31a382f("sealed.py")
+        src_cityomics_sealed_require_unsealed_db4b9fcf("require_unsealed()<br/><small>src/cityomics/sealed.py</small>")
+        src_cityomics_sealed_open_sealed_da77610f("open_sealed()<br/><small>src/cityomics/sealed.py</small>")
+        src_cityomics_sealed_is_unsealed_d702c0d8("is_unsealed()<br/><small>src/cityomics/sealed.py</small>")
+        src_cityomics_sealed_registered_key_a5e07f54("registered_key()<br/><small>src/cityomics/sealed.py</small>")
+        src_cityomics_sealed_commit_exists_3c57d141("_commit_exists()<br/><small>src/cityomics/sealed.py</small>")
+        src_cityomics_sealed_git_2f02d2da("_git()<br/><small>src/cityomics/sealed.py</small>")
+        src_cityomics_sealed_git_commit_cfb07a91("_git_commit()<br/><small>src/cityomics/sealed.py</small>")
+        src_cityomics_sealed_normalize_cb4d0a74("_normalize()<br/><small>src/cityomics/sealed.py</small>")
+        src_cityomics_sealed_sealederror_8c7ffa29("SealedError<br/><small>src/cityomics/sealed.py</small>")
+        src_cityomics_sealed_sealed_path_for_write_4a113100("sealed_path_for_write()<br/><small>src/cityomics/sealed.py</small>")
+    end
+    subgraph analysis_clustering_src_cityomics_paths_py_1a18e623["src/cityomics/paths.py"]
+        src_cityomics_paths_dbe73918("paths.py")
+        src_cityomics_paths_data_dir_3fc7a3ac("data_dir()<br/><small>src/cityomics/paths.py</small>")
+        src_cityomics_paths_sealed_dir_8b791a64("sealed_dir()<br/><small>src/cityomics/paths.py</small>")
+        src_cityomics_paths_unseal_key_file_3e506f76("unseal_key_file()<br/><small>src/cityomics/paths.py</small>")
+    end
+    subgraph analysis_clustering_External_generated_9ee0240b["External / generated"]
+        os_999a3419("os")
+        pathlib_4471f74a("pathlib")
+    end
+    src_cityomics_cli_info_de36644d("info()<br/><small>src/cityomics/cli.py</small>")
+    src_cityomics_cli_info_de36644d -->|calls| src_cityomics_paths_data_dir_3fc7a3ac
+    src_cityomics_cli_info_de36644d -->|calls| src_cityomics_paths_sealed_dir_8b791a64
+    src_cityomics_cli_info_de36644d -->|calls| src_cityomics_sealed_registered_key_a5e07f54
+    src_cityomics_cli_info_de36644d -->|calls| src_cityomics_sealed_is_unsealed_d702c0d8
+    src_cityomics_paths_sealed_dir_8b791a64 -->|calls| src_cityomics_paths_data_dir_3fc7a3ac
+    src_cityomics_sealed_commit_exists_3c57d141 -->|calls| src_cityomics_sealed_git_2f02d2da
+    src_cityomics_sealed_git_commit_cfb07a91 -->|calls| src_cityomics_sealed_git_2f02d2da
+    src_cityomics_sealed_is_unsealed_d702c0d8 -->|calls| src_cityomics_sealed_registered_key_a5e07f54
+    src_cityomics_sealed_is_unsealed_d702c0d8 -->|calls| src_cityomics_sealed_normalize_cb4d0a74
+    src_cityomics_sealed_open_sealed_da77610f -->|calls| src_cityomics_sealed_require_unsealed_db4b9fcf
+    src_cityomics_sealed_open_sealed_da77610f -->|calls| src_cityomics_paths_sealed_dir_8b791a64
+    src_cityomics_sealed_open_sealed_da77610f -->|calls| src_cityomics_sealed_git_commit_cfb07a91
+    src_cityomics_sealed_registered_key_a5e07f54 -->|calls| src_cityomics_paths_unseal_key_file_3e506f76
+    src_cityomics_sealed_registered_key_a5e07f54 -->|calls| src_cityomics_sealed_normalize_cb4d0a74
+    src_cityomics_sealed_registered_key_a5e07f54 -->|calls| src_cityomics_sealed_commit_exists_3c57d141
+    src_cityomics_sealed_require_unsealed_db4b9fcf -->|calls| src_cityomics_sealed_registered_key_a5e07f54
+    src_cityomics_sealed_require_unsealed_db4b9fcf -->|calls| src_cityomics_sealed_sealederror_8c7ffa29
+    src_cityomics_sealed_require_unsealed_db4b9fcf -->|calls| src_cityomics_paths_unseal_key_file_3e506f76
+    src_cityomics_sealed_require_unsealed_db4b9fcf -->|calls| src_cityomics_sealed_normalize_cb4d0a74
+    src_cityomics_sealed_sealed_path_for_write_4a113100 -->|calls| src_cityomics_paths_sealed_dir_8b791a64
+    src_cityomics_paths_dbe73918 -->|imports| os_999a3419
+    src_cityomics_paths_dbe73918 -->|imports| pathlib_4471f74a
+    src_cityomics_sealed_a31a382f -->|imports| os_999a3419
+    src_cityomics_sealed_a31a382f -->|imports| src_cityomics_paths_sealed_dir_8b791a64
+    %% Omitted for readability: 97 nodes, 3 edges
+    class src_cityomics_sealed_a31a382f module;
+    class src_cityomics_sealed_require_unsealed_db4b9fcf function;
+    class src_cityomics_sealed_open_sealed_da77610f function;
+    class src_cityomics_sealed_is_unsealed_d702c0d8 function;
+    class src_cityomics_sealed_registered_key_a5e07f54 function;
+    class src_cityomics_sealed_commit_exists_3c57d141 function;
+    class src_cityomics_sealed_git_2f02d2da function;
+    class src_cityomics_sealed_git_commit_cfb07a91 function;
+    class src_cityomics_sealed_normalize_cb4d0a74 function;
+    class src_cityomics_sealed_sealederror_8c7ffa29 klass;
+    class src_cityomics_sealed_sealed_path_for_write_4a113100 function;
+    class src_cityomics_paths_dbe73918 module;
+    class src_cityomics_paths_data_dir_3fc7a3ac function;
+    class src_cityomics_paths_sealed_dir_8b791a64 function;
+    class src_cityomics_paths_unseal_key_file_3e506f76 function;
+    class os_999a3419 function;
+    class pathlib_4471f74a function;
+    class src_cityomics_cli_info_de36644d function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>Cadastro IPTU/TPCL por lote 1995-2026</code><br><small style="color:var(--muted)">docs/F2_unidades.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Cadastro IPTU/TPCL por lote 1995-2026 node in docs/F2_unidades.md.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Nascimento e morte de lotes (desmembramento, unificação)</code><br><small style="color:var(--muted)">docs/F2_unidades.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Nascimento e morte de lotes (desmembramento, unificação) node in docs/F2_unidades.md.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>ITBI: transações imobiliárias</code><br><small style="color:var(--muted)">docs/F3_covariaveis.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ITBI: transações imobiliárias node in docs/F3_covariaveis.md.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Regras do que sobe ao Colab</code><br><small style="color:var(--muted)">notebooks/colab/README.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Regras do que sobe ao Colab node in notebooks/colab/README.md.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>Notebooks finos no Colab</code><br><small style="color:var(--muted)">notebooks/colab/README.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Notebooks finos no Colab node in notebooks/colab/README.md.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>Commit de congelamento (FREEZE-sha, UNSEAL_KEY)</code><br><small style="color:var(--muted)">prereg/preregistration.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Commit de congelamento (FREEZE-sha, UNSEAL_KEY) node in prereg/preregistration.md.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>Declaração de exposição prévia a 2026</code><br><small style="color:var(--muted)">prereg/preregistration.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Declaração de exposição prévia a 2026 node in prereg/preregistration.md.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>H1a: melhor modelo de outras áreas vence melhor baseline (CRPS)</code><br><small style="color:var(--muted)">prereg/preregistration.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>H1a: melhor modelo de outras áreas vence melhor baseline (CRPS) node in prereg/preregistration.md.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>H1b: mesma comparação por PAI a 1%</code><br><small style="color:var(--muted)">prereg/preregistration.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>H1b: mesma comparação por PAI a 1% node in prereg/preregistration.md.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>H2: Laya-FT vs LightGBM no mesmo estado comprimido (Brier)</code><br><small style="color:var(--muted)">prereg/preregistration.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>H2: Laya-FT vs LightGBM no mesmo estado comprimido (Brier) node in prereg/preregistration.md.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>H3: features do atlas melhoram o melhor modelo</code><br><small style="color:var(--muted)">prereg/preregistration.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>H3: features do atlas melhoram o melhor modelo node in prereg/preregistration.md.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>H4: Laya-FT vs Markov em transições de tipo de lote</code><br><small style="color:var(--muted)">prereg/preregistration.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>H4: Laya-FT vs Markov em transições de tipo de lote node in prereg/preregistration.md.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>Inferência: bootstrap por distrito e correção de Holm</code><br><small style="color:var(--muted)">prereg/preregistration.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Inferência: bootstrap por distrito e correção de Holm node in prereg/preregistration.md.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>Janela prospectiva nov/2026 a mar/2027</code><br><small style="color:var(--muted)">prereg/preregistration.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Janela prospectiva nov/2026 a mar/2027 node in prereg/preregistration.md.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>Registro no OSF (etapa final)</code><br><small style="color:var(--muted)">prereg/preregistration.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Registro no OSF (etapa final) node in prereg/preregistration.md.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>cityomics privacy-scan</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Starts scanning or handles scan status.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>Retenção de data/raw (publicação + 5 anos)</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Retenção de data/raw (publicação + 5 anos) node in README.md.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>Atribuição de crime por tipo de lote (Poisson + BYM2)</code><br><small style="color:var(--muted)">spec-atlas.md</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Atribuição de crime por tipo de lote (Poisson + BYM2) node in spec-atlas.md.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>Destino celular (transição semestral de tipo)</code><br><small style="color:var(--muted)">spec-atlas.md</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Destino celular (transição semestral de tipo) node in spec-atlas.md.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>Genes espacialmente variáveis (nnSVG, SPARK-X)</code><br><small style="color:var(--muted)">spec-atlas.md</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Genes espacialmente variáveis (nnSVG, SPARK-X) node in spec-atlas.md.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>Módulos suplementares (COMMOT, MISTy, imagem)</code><br><small style="color:var(--muted)">spec-atlas.md</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Módulos suplementares (COMMOT, MISTy, imagem) node in spec-atlas.md.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>Nichos e domínios (Squidpy, CellCharter, Banksy)</code><br><small style="color:var(--muted)">spec-atlas.md</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Nichos e domínios (Squidpy, CellCharter, Banksy) node in spec-atlas.md.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>Tipagem de lotes (Leiden/scVI vs k-means OAC)</code><br><small style="color:var(--muted)">spec-atlas.md</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>Validação pontual da atribuição</code><br><small style="color:var(--muted)">spec-atlas.md</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Validação pontual da atribuição node in spec-atlas.md.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>Auditoria de equidade por renda e raça</code><br><small style="color:var(--muted)">spec-benchmark.md</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Auditoria de equidade por renda e raça node in spec-benchmark.md.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>Baselines obrigatórios (persistência, KDE, NB-GLM)</code><br><small style="color:var(--muted)">spec-benchmark.md</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Baselines obrigatórios (persistência, KDE, NB-GLM) node in spec-benchmark.md.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>BYM2 / Knorr-Held em R-INLA (epidemiologia)</code><br><small style="color:var(--muted)">spec-benchmark.md</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>BYM2 / Knorr-Held em R-INLA (epidemiologia) node in spec-benchmark.md.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>Divisão temporal treino/tuning/validação/prospectiva</code><br><small style="color:var(--muted)">spec-benchmark.md</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Divisão temporal treino/tuning/validação/prospectiva node in spec-benchmark.md.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>Estado serializado anônimo em inglês</code><br><small style="color:var(--muted)">spec-benchmark.md</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Estado serializado anônimo em inglês node in spec-benchmark.md.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>ETAS/Hawkes (sismologia)</code><br><small style="color:var(--muted)">spec-benchmark.md</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ETAS/Hawkes (sismologia) node in spec-benchmark.md.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>spec-overview.md</code></td><td>33 nodes</td></tr>
+<tr><td><code>src/cityomics/sealed.py</code></td><td>17 nodes</td></tr>
+<tr><td><code>spec-benchmark.md</code></td><td>13 nodes</td></tr>
+<tr><td><code>prereg/preregistration.md</code></td><td>11 nodes</td></tr>
+<tr><td><code>spec-atlas.md</code></td><td>9 nodes</td></tr>
+<tr><td><code>src/cityomics/paths.py</code></td><td>6 nodes</td></tr>
+<tr><td><code>README.md</code></td><td>3 nodes</td></tr>
+<tr><td><code>notebooks/colab/README.md</code></td><td>3 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: references x93, explains x40, relates x33, calls x20. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 4. Ingestion & Updates ====== -->
+<h2 id="ingest-cache-update">4. Ingestion &amp; Updates</h2>
+<p>Ingestion &amp; Updates groups implementation around cityomics, ingest, ssppy, snapshotpy, mostly in cityomics/ingest/ssp.py, cityomics/ingest/snapshot.py, src/cityomics/external.py. This section covers 65 nodes and 164 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Ingestion &amp; Updates (65 nodes, 164 edges)
+    subgraph ingest_cache_update_src_cityomics_external_py_0655c6a7["src/cityomics/external.py"]
+        src_cityomics_external_fetch_6c49630c("fetch()<br/><small>src/cityomics/external.py</small>")
+        src_cityomics_external_fetch_geosampa_c2f3fa6b("fetch_geosampa()<br/><small>src/cityomics/external.py</small>")
+        src_cityomics_external_external_dir_a59ab5f3("external_dir()<br/><small>src/cityomics/external.py</small>")
+        src_cityomics_external_load_manifest_e70cddda("load_manifest()<br/><small>src/cityomics/external.py</small>")
+        src_cityomics_external_manifest_file_9c8ec73e("manifest_file()<br/><small>src/cityomics/external.py</small>")
+    end
+    subgraph ingest_cache_update_cityomics_ingest_snapshot_py_51d6da50["cityomics/ingest/snapshot.py"]
+        src_cityomics_ingest_snapshot_fetch_cca1f001("fetch()<br/><small>cityomics/ingest/snapshot.py</small>")
+        src_cityomics_ingest_snapshot_remote_size_fbd3192a("remote_size()<br/><small>cityomics/ingest/snapshot.py</small>")
+        src_cityomics_ingest_snapshot_download_4ef21a86("download()<br/><small>cityomics/ingest/snapshot.py</small>")
+        src_cityomics_ingest_snapshot_sha256_8eac246c("sha256()<br/><small>cityomics/ingest/snapshot.py</small>")
+    end
+    subgraph ingest_cache_update_External_generated_9d67cab5["External / generated"]
+        json_05d97e6e("json")
+        requests_54faec36("requests")
+        time_714eea0f("time")
+    end
+    subgraph ingest_cache_update_cityomics_ingest_sources_py_c2319799["cityomics/ingest/sources.py"]
+        src_cityomics_ingest_sources_source_798bd9f1("Source<br/><small>cityomics/ingest/sources.py</small>")
+        src_cityomics_ingest_sources_source_filename_244b5113("filename()<br/><small>cityomics/ingest/sources.py</small>")
+        src_cityomics_ingest_sources_source_url_4fc6ffe3("url()<br/><small>cityomics/ingest/sources.py</small>")
+    end
+    subgraph ingest_cache_update_src_cityomics_geosampa_py_e084973f["src/cityomics/geosampa.py"]
+        src_cityomics_geosampa_3f370b3c("geosampa.py")
+        src_cityomics_geosampa_download_e5cd918a("download()<br/><small>src/cityomics/geosampa.py</small>")
+    end
+    src_cityomics_ingest_ssp_parse_file_e971cbb6("parse_file()<br/><small>cityomics/ingest/ssp.py</small>")
+    src_cityomics_ingest_sources_source_798bd9f1 -->|method| src_cityomics_ingest_sources_source_filename_244b5113
+    src_cityomics_ingest_sources_source_798bd9f1 -->|method| src_cityomics_ingest_sources_source_url_4fc6ffe3
+    src_cityomics_external_fetch_6c49630c -->|calls| src_cityomics_external_external_dir_a59ab5f3
+    src_cityomics_external_fetch_6c49630c -->|calls| src_cityomics_ingest_snapshot_remote_size_fbd3192a
+    src_cityomics_external_fetch_6c49630c -->|calls| src_cityomics_ingest_snapshot_download_4ef21a86
+    src_cityomics_external_fetch_6c49630c -->|calls| src_cityomics_external_load_manifest_e70cddda
+    src_cityomics_external_fetch_6c49630c -->|calls| src_cityomics_ingest_snapshot_sha256_8eac246c
+    src_cityomics_external_fetch_6c49630c -->|calls| json_05d97e6e
+    src_cityomics_external_fetch_6c49630c -->|calls| src_cityomics_external_manifest_file_9c8ec73e
+    src_cityomics_external_fetch_geosampa_c2f3fa6b -->|calls| src_cityomics_external_external_dir_a59ab5f3
+    src_cityomics_external_fetch_geosampa_c2f3fa6b -->|calls| json_05d97e6e
+    src_cityomics_external_fetch_geosampa_c2f3fa6b -->|calls| src_cityomics_external_load_manifest_e70cddda
+    src_cityomics_external_fetch_geosampa_c2f3fa6b -->|calls| src_cityomics_ingest_snapshot_sha256_8eac246c
+    src_cityomics_external_fetch_geosampa_c2f3fa6b -->|calls| src_cityomics_external_manifest_file_9c8ec73e
+    src_cityomics_external_load_manifest_e70cddda -->|calls| src_cityomics_external_manifest_file_9c8ec73e
+    src_cityomics_external_load_manifest_e70cddda -->|calls| json_05d97e6e
+    src_cityomics_external_manifest_file_9c8ec73e -->|calls| src_cityomics_external_external_dir_a59ab5f3
+    src_cityomics_geosampa_download_e5cd918a -->|calls| src_cityomics_external_external_dir_a59ab5f3
+    src_cityomics_geosampa_download_e5cd918a -->|calls| requests_54faec36
+    src_cityomics_geosampa_download_e5cd918a -->|calls| time_714eea0f
+    src_cityomics_geosampa_download_e5cd918a -->|calls| src_cityomics_external_load_manifest_e70cddda
+    src_cityomics_geosampa_download_e5cd918a -->|calls| src_cityomics_ingest_snapshot_sha256_8eac246c
+    src_cityomics_geosampa_download_e5cd918a -->|calls| json_05d97e6e
+    src_cityomics_geosampa_download_e5cd918a -->|calls| src_cityomics_external_manifest_file_9c8ec73e
+    %% Omitted for readability: 47 nodes, 14 edges
+    class src_cityomics_external_fetch_6c49630c function;
+    class src_cityomics_external_fetch_geosampa_c2f3fa6b function;
+    class src_cityomics_external_external_dir_a59ab5f3 function;
+    class src_cityomics_external_load_manifest_e70cddda function;
+    class src_cityomics_external_manifest_file_9c8ec73e function;
+    class src_cityomics_ingest_snapshot_fetch_cca1f001 function;
+    class src_cityomics_ingest_snapshot_remote_size_fbd3192a function;
+    class src_cityomics_ingest_snapshot_download_4ef21a86 function;
+    class src_cityomics_ingest_snapshot_sha256_8eac246c function;
+    class json_05d97e6e function;
+    class requests_54faec36 function;
+    class time_714eea0f function;
+    class src_cityomics_ingest_sources_source_798bd9f1 klass;
+    class src_cityomics_ingest_sources_source_filename_244b5113 function;
+    class src_cityomics_ingest_sources_source_url_4fc6ffe3 function;
+    class src_cityomics_geosampa_3f370b3c module;
+    class src_cityomics_geosampa_download_e5cd918a function;
+    class src_cityomics_ingest_ssp_parse_file_e971cbb6 function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>Source</code><br><small style="color:var(--muted)">cityomics/ingest/sources.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>fetch()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small><br><code>snapshot.py</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td><code>filename()</code><br><small style="color:var(--muted)">cityomics/ingest/sources.py</small><br><code>url()</code><br><small style="color:var(--muted)">cityomics/ingest/sources.py</small></td>
+  <td>Source node in cityomics/ingest/sources.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>external_dir()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build_lotes()</code><br><small style="color:var(--muted)">cityomics/units/lotes.py</small><br><code>download()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small><br><code>fetch()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br>+5 more</td>
+  <td><code>data_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small></td>
+  <td>external_dir() node in src/cityomics/external.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>fetch()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>_pois_from_pbf()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>build_setores()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small><br><code>extract_all()</code><br><small style="color:var(--muted)">cityomics/covariates/censo.py</small><br>+2 more</td>
+  <td><code>download()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small><br><code>external_dir()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br><code>json</code><br>+4 more</td>
+  <td>fetch() node in src/cityomics/external.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>fetch_geosampa()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>_layer()</code><br><small style="color:var(--muted)">cityomics/covariates/infra.py</small><br><code>build_lotes()</code><br><small style="color:var(--muted)">cityomics/units/lotes.py</small><br><code>load_stations()</code><br><small style="color:var(--muted)">cityomics/units/transit.py</small></td>
+  <td><code>external_dir()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br><code>json</code><br><code>load_manifest()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br>+2 more</td>
+  <td>fetch_geosampa() node in src/cityomics/external.py.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>load_manifest()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>_record()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>download()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small><br><code>fetch()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br>+1 more</td>
+  <td><code>json</code><br><code>manifest_file()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small></td>
+  <td>load_manifest() node in src/cityomics/external.py.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>manifest_file()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>_record()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>download()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small><br><code>fetch()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br>+2 more</td>
+  <td><code>external_dir()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small></td>
+  <td>manifest_file() node in src/cityomics/external.py.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>download()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>fetch_iptu()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small><br><code>fetch_lotes()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small></td>
+  <td><code>external_dir()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br><code>json</code><br><code>load_manifest()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br>+4 more</td>
+  <td>download() node in src/cityomics/geosampa.py.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>fetch_iptu()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>covariates_iptu()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><code>download()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small><br><code>list_files()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small></td>
+  <td>fetch_iptu() node in src/cityomics/geosampa.py.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>fetch_lotes()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>units_lotes()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><code>download()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small><br><code>list_files()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small></td>
+  <td>fetch_lotes() node in src/cityomics/geosampa.py.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>list_files()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>fetch_iptu()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small><br><code>fetch_lotes()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small></td>
+  <td><code>requests</code></td>
+  <td>list_files() node in src/cityomics/geosampa.py.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>walk()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>walk()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small></td>
+  <td><code>walk()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small></td>
+  <td>walk() node in src/cityomics/geosampa.py.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>build()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>ingest_snapshot()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><code>fetch()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small><br><code>json</code><br><code>load_snapshot()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small><br>+1 more</td>
+  <td>build() node in cityomics/ingest/snapshot.py.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>download()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>external.py</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br><code>fetch()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br><code>fetch()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td><code>requests</code><br><code>time</code></td>
+  <td>download() node in cityomics/ingest/snapshot.py.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>fetch()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td><code>download()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small><br><code>filename()</code><br><small style="color:var(--muted)">cityomics/ingest/sources.py</small><br><code>remote_size()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small><br>+5 more</td>
+  <td>fetch() node in cityomics/ingest/snapshot.py.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>load_snapshot()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small><br><code>verify()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td><code>json</code><br><code>snapshot_file()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td>load_snapshot() node in cityomics/ingest/snapshot.py.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>remote_size()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>external.py</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br><code>fetch()</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br><code>fetch()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td><code>requests</code><br><code>time</code></td>
+  <td>remote_size() node in cityomics/ingest/snapshot.py.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>sha256()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>_record()</code><br><small style="color:var(--muted)">cityomics/covariates/osm.py</small><br><code>download()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small><br><code>external.py</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br>+6 more</td>
+  <td><code>hashlib</code></td>
+  <td>sha256() node in cityomics/ingest/snapshot.py.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>snapshot_file()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small><br><code>load_snapshot()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td><code>data_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small></td>
+  <td>snapshot_file() node in cityomics/ingest/snapshot.py.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>verify()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>ingest_snapshot()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><code>load_snapshot()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small><br><code>sha256()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small><br><code>xlsx_dir()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td>verify() node in cityomics/ingest/snapshot.py.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>xlsx_dir()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>fetch()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small><br><code>parse_file()</code><br><small style="color:var(--muted)">cityomics/ingest/ssp.py</small><br><code>ssp.py</code><br><small style="color:var(--muted)">cityomics/ingest/ssp.py</small><br>+1 more</td>
+  <td><code>raw_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small></td>
+  <td>xlsx_dir() node in cityomics/ingest/snapshot.py.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>.filename()</code><br><small style="color:var(--muted)">cityomics/ingest/sources.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>fetch()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small><br><code>Source</code><br><small style="color:var(--muted)">cityomics/ingest/sources.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>.filename() node in cityomics/ingest/sources.py.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>.url()</code><br><small style="color:var(--muted)">cityomics/ingest/sources.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>fetch()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small><br><code>Source</code><br><small style="color:var(--muted)">cityomics/ingest/sources.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>.url() node in cityomics/ingest/sources.py.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>external.py</code><br><small style="color:var(--muted)">src/cityomics/external.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>censo.py</code><br><small style="color:var(--muted)">cityomics/covariates/censo.py</small><br><code>geosampa.py</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small><br><code>infra.py</code><br><small style="color:var(--muted)">cityomics/covariates/infra.py</small><br>+6 more</td>
+  <td><code>data_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small><br><code>datetime</code><br><code>download()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small><br>+6 more</td>
+  <td>Module file in src/cityomics/external.py.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>Path</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Path node in project.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>geosampa.py</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>cli.py</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><code>__init__.py</code><br><small style="color:var(--muted)">src/cityomics/__init__.py</small><br><code>datetime</code><br><code>external.py</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br>+6 more</td>
+  <td>Module file in src/cityomics/geosampa.py.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>Path</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Path node in project.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>snapshot.py</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>cli.py</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small><br><code>external.py</code><br><small style="color:var(--muted)">src/cityomics/external.py</small><br><code>geosampa.py</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small><br>+1 more</td>
+  <td><code>data_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small><br><code>datetime</code><br><code>hashlib</code><br>+9 more</td>
+  <td>Module file in cityomics/ingest/snapshot.py.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>Path</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Path node in project.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>sources.py</code><br><small style="color:var(--muted)">cityomics/ingest/sources.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>check.py</code><br><small style="color:var(--muted)">cityomics/ingest/check.py</small><br><code>snapshot.py</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td><code>dataclasses</code></td>
+  <td>Module file in cityomics/ingest/sources.py.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>Downloads de bases públicas externas (IBGE, GeoSampa, ...), com registro de…</code><br><small style="color:var(--muted)">src/cityomics/external.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Downloads de bases públicas externas (IBGE, GeoSampa, ...), com registro de….</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>cityomics/ingest/ssp.py</code></td><td>19 nodes</td></tr>
+<tr><td><code>cityomics/ingest/snapshot.py</code></td><td>13 nodes</td></tr>
+<tr><td><code>src/cityomics/external.py</code></td><td>9 nodes</td></tr>
+<tr><td><code>src/cityomics/geosampa.py</code></td><td>7 nodes</td></tr>
+<tr><td><code>cityomics/ingest/sources.py</code></td><td>5 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: calls x61, contains x33, references x29, imports x16. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 5. Security & Global Graph ====== -->
+<h2 id="security-global">5. Security &amp; Global Graph</h2>
+<p>Security &amp; Global Graph groups implementation around cityomics, clipy, privacypy, scan, mostly in src/cityomics/cli.py, src/cityomics/privacy.py. This section covers 29 nodes and 48 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Security &amp; Global Graph (29 nodes, 48 edges)
+    subgraph security_global_src_cityomics_privacy_py_e9b85bc7["src/cityomics/privacy.py"]
+        src_cityomics_privacy_scan_repo_339d1fe5("scan_repo()<br/><small>src/cityomics/privacy.py</small>")
+        src_cityomics_privacy_scan_tables_92017158("scan_tables()<br/><small>src/cityomics/privacy.py</small>")
+        src_cityomics_privacy_finding_cae0118a("Finding<br/><small>src/cityomics/privacy.py</small>")
+        src_cityomics_privacy_finding_str_26111218("__str__()<br/><small>src/cityomics/privacy.py</small>")
+        src_cityomics_privacy_columns_24bad1b2("_columns()<br/><small>src/cityomics/privacy.py</small>")
+        src_cityomics_privacy_iter_repo_files_0c4fd95e("_iter_repo_files()<br/><small>src/cityomics/privacy.py</small>")
+        src_cityomics_privacy_477d7b79("privacy.py")
+    end
+    subgraph security_global_src_cityomics_cli_py_8cc3101d["src/cityomics/cli.py"]
+        src_cityomics_cli_privacy_scan_b097aef3("privacy_scan()<br/><small>src/cityomics/cli.py</small>")
+        src_cityomics_cli_784aefb3("cli.py")
+        src_cityomics_cli_covariates_iptu_d852fd8b("covariates_iptu()<br/><small>src/cityomics/cli.py</small>")
+        src_cityomics_cli_ingest_check_91829212("ingest_check()<br/><small>src/cityomics/cli.py</small>")
+        src_cityomics_cli_ingest_snapshot_aaa8d5d6("ingest_snapshot()<br/><small>src/cityomics/cli.py</small>")
+        src_cityomics_cli_ingest_parse_b07ba91d("ingest_parse()<br/><small>src/cityomics/cli.py</small>")
+    end
+    subgraph security_global_External_generated_3fe5b8bb["External / generated"]
+        typer_6a0426e7("typer")
+        re_c387c982("re")
+        src_cityomics_cli_py_path_b3ebb4df("Path")
+        src_cityomics_privacy_py_path_54acab3c("Path")
+        command_1925f793("command")
+    end
+    src_cityomics_privacy_finding_cae0118a -->|method| src_cityomics_privacy_finding_str_26111218
+    src_cityomics_cli_covariates_iptu_d852fd8b -->|calls| typer_6a0426e7
+    src_cityomics_cli_ingest_check_91829212 -->|calls| typer_6a0426e7
+    src_cityomics_cli_ingest_snapshot_aaa8d5d6 -->|calls| typer_6a0426e7
+    src_cityomics_cli_privacy_scan_b097aef3 -->|calls| src_cityomics_privacy_scan_repo_339d1fe5
+    src_cityomics_cli_privacy_scan_b097aef3 -->|calls| src_cityomics_privacy_scan_tables_92017158
+    src_cityomics_cli_privacy_scan_b097aef3 -->|calls| typer_6a0426e7
+    src_cityomics_privacy_columns_24bad1b2 -->|calls| re_c387c982
+    src_cityomics_privacy_scan_repo_339d1fe5 -->|calls| src_cityomics_privacy_iter_repo_files_0c4fd95e
+    src_cityomics_privacy_scan_repo_339d1fe5 -->|calls| src_cityomics_privacy_finding_cae0118a
+    src_cityomics_privacy_scan_tables_92017158 -->|calls| src_cityomics_privacy_columns_24bad1b2
+    src_cityomics_privacy_scan_tables_92017158 -->|calls| src_cityomics_privacy_finding_cae0118a
+    src_cityomics_cli_784aefb3 -->|imports| typer_6a0426e7
+    src_cityomics_cli_784aefb3 -->|imports| src_cityomics_privacy_477d7b79
+    src_cityomics_privacy_477d7b79 -->|imports| re_c387c982
+    %% Omitted for readability: 11 nodes, 0 edges
+    class src_cityomics_privacy_scan_repo_339d1fe5 function;
+    class src_cityomics_privacy_scan_tables_92017158 function;
+    class src_cityomics_privacy_finding_cae0118a klass;
+    class src_cityomics_privacy_finding_str_26111218 function;
+    class src_cityomics_privacy_columns_24bad1b2 function;
+    class src_cityomics_privacy_iter_repo_files_0c4fd95e function;
+    class src_cityomics_privacy_477d7b79 module;
+    class src_cityomics_cli_privacy_scan_b097aef3 function;
+    class src_cityomics_cli_784aefb3 entry;
+    class src_cityomics_cli_covariates_iptu_d852fd8b function;
+    class src_cityomics_cli_ingest_check_91829212 function;
+    class src_cityomics_cli_ingest_snapshot_aaa8d5d6 function;
+    class src_cityomics_cli_ingest_parse_b07ba91d function;
+    class typer_6a0426e7 entry;
+    class re_c387c982 function;
+    class src_cityomics_cli_py_path_b3ebb4df klass;
+    class src_cityomics_privacy_py_path_54acab3c klass;
+    class command_1925f793 entry;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>Finding</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>scan_repo()</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small><br><code>scan_tables()</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small></td>
+  <td><code>__str__()</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small></td>
+  <td>Finding node in src/cityomics/privacy.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>covariates_iptu()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>build_year()</code><br><small style="color:var(--muted)">cityomics/covariates/iptu.py</small><br><code>condo_lookup_from()</code><br><small style="color:var(--muted)">cityomics/covariates/iptu.py</small><br><code>fetch_iptu()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small><br>+2 more</td>
+  <td>covariates_iptu() node in src/cityomics/cli.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>ingest_check()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>compare()</code><br><small style="color:var(--muted)">cityomics/ingest/check.py</small><br><code>typer</code></td>
+  <td>Turns a local path or remote repository into analysis context.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>ingest_parse()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>combine_events()</code><br><small style="color:var(--muted)">cityomics/ingest/ssp.py</small><br><code>parse_file()</code><br><small style="color:var(--muted)">cityomics/ingest/ssp.py</small></td>
+  <td>Turns a local path or remote repository into analysis context.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>ingest_snapshot()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>build()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small><br><code>typer</code><br><code>verify()</code><br><small style="color:var(--muted)">cityomics/ingest/snapshot.py</small></td>
+  <td>Turns a local path or remote repository into analysis context.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>privacy_scan()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>scan_repo()</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small><br><code>scan_tables()</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small><br><code>typer</code></td>
+  <td>Starts scanning or handles scan status.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>units_build()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>run()</code><br><small style="color:var(--muted)">cityomics/units/build.py</small></td>
+  <td>units_build() node in src/cityomics/cli.py.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>units_lotes()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>build_lotes()</code><br><small style="color:var(--muted)">cityomics/units/lotes.py</small><br><code>fetch_lotes()</code><br><small style="color:var(--muted)">src/cityomics/geosampa.py</small></td>
+  <td>units_lotes() node in src/cityomics/cli.py.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>_columns()</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>scan_tables()</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small></td>
+  <td><code>re</code></td>
+  <td>_columns() node in src/cityomics/privacy.py.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>.__str__()</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>Finding</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>.__str__() node in src/cityomics/privacy.py.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>_iter_repo_files()</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>scan_repo()</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>_iter_repo_files() node in src/cityomics/privacy.py.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>scan_repo()</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>privacy_scan()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><code>_iter_repo_files()</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small><br><code>Finding</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small></td>
+  <td>Starts scanning or handles scan status.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>scan_tables()</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>privacy_scan()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><code>_columns()</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small><br><code>Finding</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small><br><code>processed_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small></td>
+  <td>Starts scanning or handles scan status.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>command</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-cmd">Entry</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>command node in project.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>cli.py</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><span class="tag tag-cmd">Entry</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>__init__.py</code><br><small style="color:var(--muted)">src/cityomics/__init__.py</small><br><code>build.py</code><br><small style="color:var(--muted)">cityomics/units/build.py</small><br><code>check.py</code><br><small style="color:var(--muted)">cityomics/ingest/check.py</small><br>+10 more</td>
+  <td>Module file in src/cityomics/cli.py.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>Path</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Path node in project.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>privacy.py</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>cli.py</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><code>dataclasses</code><br><code>pathlib</code><br><code>paths.py</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small><br>+2 more</td>
+  <td>Module file in src/cityomics/privacy.py.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>Path</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Path node in project.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>Linha de comando ``cityomics``.</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Linha de comando ``cityomics``..</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>Agrega o cadastro IPTU anual por lote.</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Agrega o cadastro IPTU anual por lote..</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>Procura chaves no repositório e colunas identificadoras em data/processed.</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Procura chaves no repositório e colunas identificadoras em data/processed..</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>Congela os xlsx da SSP em data/raw/xlsx com sha256 (D18).</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Congela os xlsx da SSP em data/raw/xlsx com sha256 (D18)..</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>Lê os xlsx, recorta a capital, deriva os eventos e envia 2026 ao cofre.</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Lê os xlsx, recorta a capital, deriva os eventos e envia 2026 ao cofre..</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>Compara os totais anuais (2022–2025) com a tabela oficial da SSP.</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Compara os totais anuais (2022–2025) com a tabela oficial da SSP..</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>Setores 2022, distritos, atribuição dos eventos e alvos agregados.</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Setores 2022, distritos, atribuição dos eventos e alvos agregados..</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>Lotes fiscais + pseudo-lotes de favela, com setor 2022 pelo centroide.</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Lotes fiscais + pseudo-lotes de favela, com setor 2022 pelo centroide..</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>Verificações de privacidade (D14, D28, D30). Duas varreduras: - ``scan_repo``:…</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Verificações de privacidade (D14, D28, D30). Duas varreduras: - ``scan_repo``:….</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>re</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>_columns()</code><br><small style="color:var(--muted)">src/cityomics/privacy.py</small><br><code>check.py</code><br><small style="color:var(--muted)">cityomics/ingest/check.py</small><br><code>official()</code><br><small style="color:var(--muted)">cityomics/ingest/check.py</small><br>+2 more</td>
+  <td>No direct outbound edge</td>
+  <td>re node in project.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>typer</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-cmd">Entry</span></td>
+  <td><code>cli.py</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small><br><code>covariates_iptu()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small><br><code>info()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small><br>+3 more</td>
+  <td>No direct outbound edge</td>
+  <td>typer node in project.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>src/cityomics/cli.py</code></td><td>16 nodes</td></tr>
+<tr><td><code>src/cityomics/privacy.py</code></td><td>8 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: references x12, contains x12, calls x11, explains x9. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 6. Tests & Fixtures ====== -->
+<h2 id="tests-fixtures">6. Tests &amp; Fixtures</h2>
+<p>Tests &amp; Fixtures groups implementation around cityomics, test, tests, covariates, mostly in cityomics/covariates/itbi.py, cityomics/ingest/schema.py, tests/test_sealed.py. This section covers 155 nodes and 336 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Tests &amp; Fixtures (155 nodes, 336 edges)
+    subgraph tests_fixtures_External_generated_473753cb["External / generated"]
+        unicodedata_61e641af("unicodedata")
+        numpy_a65e1d38("numpy")
+        pandas_add564b5("pandas")
+    end
+    subgraph tests_fixtures_cityomics_ingest_check_py_bb6a99de["cityomics/ingest/check.py"]
+        src_cityomics_ingest_check_compare_a11ec2d7("compare()<br/><small>cityomics/ingest/check.py</small>")
+        src_cityomics_ingest_check_official_0e42d417("official()<br/><small>cityomics/ingest/check.py</small>")
+        src_cityomics_ingest_check_ours_108b8e3c("ours()<br/><small>cityomics/ingest/check.py</small>")
+    end
+    subgraph tests_fixtures_prereg_analysis_power_letal_py_87cd4ae1["prereg/analysis/power_letal.py"]
+        prereg_analysis_power_letal_nb_crps_0ebbe7b5("nb_crps()<br/><small>prereg/analysis/power_letal.py</small>")
+        prereg_analysis_power_letal_run_c4b60c0e("run()<br/><small>prereg/analysis/power_letal.py</small>")
+        prereg_analysis_power_letal_nb_logpmf_3b9bf7fd("nb_logpmf()<br/><small>prereg/analysis/power_letal.py</small>")
+    end
+    subgraph tests_fixtures_cityomics_covariates_itbi_py_2762de1f["cityomics/covariates/itbi.py"]
+        src_cityomics_covariates_itbi_e7922788("itbi.py")
+        src_cityomics_covariates_itbi_iptu_sql_map_4ed0cfb8("_iptu_sql_map()<br/><small>cityomics/covariates/itbi.py</small>")
+    end
+    subgraph tests_fixtures_cityomics_units_build_py_27e9819d["cityomics/units/build.py"]
+        src_cityomics_units_build_run_37d90871("run()<br/><small>cityomics/units/build.py</small>")
+        src_cityomics_units_build_e16f7fac("build.py")
+    end
+    subgraph tests_fixtures_prereg_analysis_extract_letal_py_b06f1727["prereg/analysis/extract_letal.py"]
+        prereg_analysis_extract_letal_norm_86b1ad68("norm()<br/><small>prereg/analysis/extract_letal.py</small>")
+        prereg_analysis_extract_letal_pick_fdf0d136("pick()<br/><small>prereg/analysis/extract_letal.py</small>")
+    end
+    src_cityomics_covariates_iptu_build_year_fbafbbd2("build_year()<br/><small>cityomics/covariates/iptu.py</small>")
+    src_cityomics_ingest_schema_norm_text_8bdfde19("norm_text()<br/><small>cityomics/ingest/schema.py</small>")
+    src_cityomics_units_assign_3004bb7a("assign.py")
+    prereg_analysis_extract_letal_norm_86b1ad68 -->|calls| unicodedata_61e641af
+    prereg_analysis_extract_letal_pick_fdf0d136 -->|calls| prereg_analysis_extract_letal_norm_86b1ad68
+    prereg_analysis_power_letal_nb_crps_0ebbe7b5 -->|calls| numpy_a65e1d38
+    prereg_analysis_power_letal_run_c4b60c0e -->|calls| numpy_a65e1d38
+    prereg_analysis_power_letal_run_c4b60c0e -->|calls| pandas_add564b5
+    prereg_analysis_power_letal_run_c4b60c0e -->|calls| prereg_analysis_power_letal_nb_crps_0ebbe7b5
+    prereg_analysis_power_letal_run_c4b60c0e -->|calls| prereg_analysis_power_letal_nb_logpmf_3b9bf7fd
+    src_cityomics_ingest_check_compare_a11ec2d7 -->|calls| src_cityomics_ingest_check_official_0e42d417
+    src_cityomics_ingest_check_compare_a11ec2d7 -->|calls| src_cityomics_ingest_check_ours_108b8e3c
+    src_cityomics_ingest_check_compare_a11ec2d7 -->|calls| pandas_add564b5
+    src_cityomics_ingest_check_official_0e42d417 -->|calls| src_cityomics_ingest_schema_norm_text_8bdfde19
+    src_cityomics_ingest_check_ours_108b8e3c -->|calls| pandas_add564b5
+    src_cityomics_ingest_schema_norm_text_8bdfde19 -->|calls| numpy_a65e1d38
+    src_cityomics_ingest_schema_norm_text_8bdfde19 -->|calls| unicodedata_61e641af
+    src_cityomics_units_build_run_37d90871 -->|calls| pandas_add564b5
+    src_cityomics_units_assign_3004bb7a -->|imports| numpy_a65e1d38
+    src_cityomics_units_assign_3004bb7a -->|imports| pandas_add564b5
+    src_cityomics_units_assign_3004bb7a -->|imports| src_cityomics_ingest_schema_norm_text_8bdfde19
+    src_cityomics_units_build_e16f7fac -->|imports| pandas_add564b5
+    src_cityomics_units_build_e16f7fac -->|imports| src_cityomics_units_assign_3004bb7a
+    src_cityomics_covariates_itbi_e7922788 -->|imports| src_cityomics_ingest_schema_norm_text_8bdfde19
+    %% Omitted for readability: 137 nodes, 0 edges
+    class unicodedata_61e641af function;
+    class numpy_a65e1d38 function;
+    class pandas_add564b5 function;
+    class src_cityomics_ingest_check_compare_a11ec2d7 function;
+    class src_cityomics_ingest_check_official_0e42d417 function;
+    class src_cityomics_ingest_check_ours_108b8e3c function;
+    class prereg_analysis_power_letal_nb_crps_0ebbe7b5 function;
+    class prereg_analysis_power_letal_run_c4b60c0e function;
+    class prereg_analysis_power_letal_nb_logpmf_3b9bf7fd function;
+    class src_cityomics_covariates_itbi_e7922788 module;
+    class src_cityomics_covariates_itbi_iptu_sql_map_4ed0cfb8 function;
+    class src_cityomics_units_build_run_37d90871 function;
+    class src_cityomics_units_build_e16f7fac module;
+    class prereg_analysis_extract_letal_norm_86b1ad68 function;
+    class prereg_analysis_extract_letal_pick_fdf0d136 function;
+    class src_cityomics_covariates_iptu_build_year_fbafbbd2 function;
+    class src_cityomics_ingest_schema_norm_text_8bdfde19 function;
+    class src_cityomics_units_assign_3004bb7a module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>norm()</code><br><small style="color:var(--muted)">prereg/analysis/extract_letal.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>pick()</code><br><small style="color:var(--muted)">prereg/analysis/extract_letal.py</small></td>
+  <td><code>unicodedata</code></td>
+  <td>norm() node in prereg/analysis/extract_letal.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>pick()</code><br><small style="color:var(--muted)">prereg/analysis/extract_letal.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>norm()</code><br><small style="color:var(--muted)">prereg/analysis/extract_letal.py</small></td>
+  <td>pick() node in prereg/analysis/extract_letal.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>nb_crps()</code><br><small style="color:var(--muted)">prereg/analysis/power_letal.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>run()</code><br><small style="color:var(--muted)">prereg/analysis/power_letal.py</small></td>
+  <td><code>numpy</code></td>
+  <td>nb_crps() node in prereg/analysis/power_letal.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>nb_logpmf()</code><br><small style="color:var(--muted)">prereg/analysis/power_letal.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>run()</code><br><small style="color:var(--muted)">prereg/analysis/power_letal.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>nb_logpmf() node in prereg/analysis/power_letal.py.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>run()</code><br><small style="color:var(--muted)">prereg/analysis/power_letal.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>nb_crps()</code><br><small style="color:var(--muted)">prereg/analysis/power_letal.py</small><br><code>nb_logpmf()</code><br><small style="color:var(--muted)">prereg/analysis/power_letal.py</small><br><code>numpy</code><br>+1 more</td>
+  <td>run() node in prereg/analysis/power_letal.py.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>compare()</code><br><small style="color:var(--muted)">cityomics/ingest/check.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>ingest_check()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><code>official()</code><br><small style="color:var(--muted)">cityomics/ingest/check.py</small><br><code>ours()</code><br><small style="color:var(--muted)">cityomics/ingest/check.py</small><br><code>pandas</code></td>
+  <td>compare() node in cityomics/ingest/check.py.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>official()</code><br><small style="color:var(--muted)">cityomics/ingest/check.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>compare()</code><br><small style="color:var(--muted)">cityomics/ingest/check.py</small></td>
+  <td><code>norm_text()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small><br><code>re</code><br><code>requests</code></td>
+  <td>official() node in cityomics/ingest/check.py.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>ours()</code><br><small style="color:var(--muted)">cityomics/ingest/check.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>compare()</code><br><small style="color:var(--muted)">cityomics/ingest/check.py</small></td>
+  <td><code>pandas</code><br><code>raw_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small></td>
+  <td>ours() node in cityomics/ingest/check.py.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>_clean_text()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>harmonize()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>_clean_text() node in cityomics/ingest/schema.py.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>harmonize()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>parse_file()</code><br><small style="color:var(--muted)">cityomics/ingest/ssp.py</small><br><code>ssp.py</code><br><small style="color:var(--muted)">cityomics/ingest/ssp.py</small></td>
+  <td><code>_clean_text()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small><br><code>_parse_dates()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small><br><code>norm_text()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small><br>+2 more</td>
+  <td>harmonize() node in cityomics/ingest/schema.py.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>is_capital()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td><code>parse_file()</code><br><small style="color:var(--muted)">cityomics/ingest/ssp.py</small><br><code>ssp.py</code><br><small style="color:var(--muted)">cityomics/ingest/ssp.py</small></td>
+  <td><code>norm_text()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small></td>
+  <td>is_capital() node in cityomics/ingest/schema.py.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>norm_col()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>rename_columns()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small></td>
+  <td><code>norm_text()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small></td>
+  <td>norm_col() node in cityomics/ingest/schema.py.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>norm_text()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>_canon()</code><br><small style="color:var(--muted)">cityomics/covariates/itbi.py</small><br><code>_data_sheets()</code><br><small style="color:var(--muted)">cityomics/ingest/ssp.py</small><br><code>assign.py</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small><br>+13 more</td>
+  <td><code>numpy</code><br><code>unicodedata</code></td>
+  <td>norm_text() node in cityomics/ingest/schema.py.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>_parse_dates()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>harmonize()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small></td>
+  <td><code>pandas</code></td>
+  <td>_parse_dates() node in cityomics/ingest/schema.py.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>rename_columns()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>harmonize()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small></td>
+  <td><code>norm_col()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small></td>
+  <td>rename_columns() node in cityomics/ingest/schema.py.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>interim_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>assign.py</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small><br><code>build.py</code><br><small style="color:var(--muted)">cityomics/units/build.py</small><br><code>build_lookups()</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small><br>+11 more</td>
+  <td><code>data_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small></td>
+  <td>interim_dir() node in src/cityomics/paths.py.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>raw_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>assign.py</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small><br><code>build_lookups()</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small><br><code>check.py</code><br><small style="color:var(--muted)">cityomics/ingest/check.py</small><br>+5 more</td>
+  <td><code>data_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small></td>
+  <td>raw_dir() node in src/cityomics/paths.py.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>assign_events()</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>run()</code><br><small style="color:var(--muted)">cityomics/units/build.py</small></td>
+  <td><code>norm_text()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small><br><code>numpy</code><br><code>points_to_setores()</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small><br>+1 more</td>
+  <td>assign_events() node in cityomics/units/assign.py.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>build_lookups()</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>run()</code><br><small style="color:var(--muted)">cityomics/units/build.py</small></td>
+  <td><code>_modal_lookup()</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small><br><code>interim_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small><br><code>load_setores()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small><br>+4 more</td>
+  <td>build_lookups() node in cityomics/units/assign.py.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>load_lookups()</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>interim_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small><br><code>pandas</code></td>
+  <td>load_lookups() node in cityomics/units/assign.py.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>_modal_lookup()</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build_lookups()</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small></td>
+  <td><code>pandas</code></td>
+  <td>_modal_lookup() node in cityomics/units/assign.py.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>points_to_setores()</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>assign_events()</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small><br><code>build_lookups()</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small></td>
+  <td><code>geopandas</code></td>
+  <td>points_to_setores() node in cityomics/units/assign.py.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>stratum()</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>assign_events()</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small></td>
+  <td><code>norm_text()</code><br><small style="color:var(--muted)">cityomics/ingest/schema.py</small><br><code>pandas</code></td>
+  <td>stratum() node in cityomics/units/assign.py.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>alvos_dir()</code><br><small style="color:var(--muted)">cityomics/units/build.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>run()</code><br><small style="color:var(--muted)">cityomics/units/build.py</small></td>
+  <td><code>processed_dir()</code><br><small style="color:var(--muted)">src/cityomics/paths.py</small></td>
+  <td>alvos_dir() node in cityomics/units/build.py.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>run()</code><br><small style="color:var(--muted)">cityomics/units/build.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>units_build()</code><br><small style="color:var(--muted)">src/cityomics/cli.py</small></td>
+  <td><code>alvos_dir()</code><br><small style="color:var(--muted)">cityomics/units/build.py</small><br><code>assign_events()</code><br><small style="color:var(--muted)">cityomics/units/assign.py</small><br><code>build_distritos()</code><br><small style="color:var(--muted)">cityomics/units/setores.py</small><br>+8 more</td>
+  <td>run() node in cityomics/units/build.py.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>district_totals()</code><br><small style="color:var(--muted)">cityomics/units/reconcile.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>run()</code><br><small style="color:var(--muted)">cityomics/units/build.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>district_totals() node in cityomics/units/reconcile.py.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>reconcile()</code><br><small style="color:var(--muted)">cityomics/units/reconcile.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>run()</code><br><small style="color:var(--muted)">cityomics/units/build.py</small></td>
+  <td><code>_window_sums()</code><br><small style="color:var(--muted)">cityomics/units/reconcile.py</small><br><code>pandas</code></td>
+  <td>reconcile() node in cityomics/units/reconcile.py.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>_window_sums()</code><br><small style="color:var(--muted)">cityomics/units/reconcile.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>reconcile()</code><br><small style="color:var(--muted)">cityomics/units/reconcile.py</small></td>
+  <td><code>numpy</code><br><code>pandas</code></td>
+  <td>_window_sums() node in cityomics/units/reconcile.py.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>data_root()</code><br><small style="color:var(--muted)">tests/test_ingest.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>data_root() node in tests/test_ingest.py.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>row()</code><br><small style="color:var(--muted)">tests/test_ingest.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>and 2026 headers()</code><br><small style="color:var(--muted)">tests/test_ingest.py</small><br><code>and junk dates()</code><br><small style="color:var(--muted)">tests/test_ingest.py</small><br><code>end seals 2026()</code><br><small style="color:var(--muted)">tests/test_ingest.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>row() node in tests/test_ingest.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>cityomics/covariates/itbi.py</code></td><td>14 nodes</td></tr>
+<tr><td><code>cityomics/ingest/schema.py</code></td><td>11 nodes</td></tr>
+<tr><td><code>tests/test_sealed.py</code></td><td>11 nodes</td></tr>
+<tr><td><code>cityomics/covariates/censo.py</code></td><td>10 nodes</td></tr>
+<tr><td><code>cityomics/covariates/iptu.py</code></td><td>9 nodes</td></tr>
+<tr><td><code>cityomics/units/assign.py</code></td><td>9 nodes</td></tr>
+<tr><td><code>tests/test_ingest.py</code></td><td>9 nodes</td></tr>
+<tr><td><code>tests/test_units.py</code></td><td>8 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: calls x130, contains x83, imports x43, references x38. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 7. Pacote atlas ====== -->
+<h2 id="pacote-atlas">7. Pacote atlas</h2>
+<p>Pacote atlas groups implementation around atlas, cityomics, spec, módulos, mostly in cityomics/atlas/__init__.py. This section covers 2 nodes and 1 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Pacote atlas (2 nodes, 1 edges)
+    src_cityomics_atlas_init_rationale_1_101e90ab("Atlas CityOmics (spec-atlas). Módulos p...<br/><small>cityomics/atlas/__init__.py</small>")
+    src_cityomics_atlas_init_7e645f0e("__init__.py")
+    src_cityomics_atlas_init_rationale_1_101e90ab -->|explains| src_cityomics_atlas_init_7e645f0e
+    class src_cityomics_atlas_init_rationale_1_101e90ab concept;
+    class src_cityomics_atlas_init_7e645f0e module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>atlas/__init__.py</code><br><small style="color:var(--muted)">cityomics/atlas/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in cityomics/atlas/__init__.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Atlas CityOmics (spec-atlas). Módulos previstos: build_adata, typing,…</code><br><small style="color:var(--muted)">cityomics/atlas/__init__.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Atlas CityOmics (spec-atlas). Módulos previstos: build_adata, typing,….</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>cityomics/atlas/__init__.py</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: explains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 8. Pacote eval ====== -->
+<h2 id="pacote-eval">8. Pacote eval</h2>
+<p>Pacote eval groups implementation around eval, cityomics, avaliação, spec, mostly in cityomics/eval/__init__.py. This section covers 2 nodes and 1 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Pacote eval (2 nodes, 1 edges)
+    src_cityomics_eval_init_rationale_1_5f41818b("Avaliação (spec-benchmark §4). Módulos...<br/><small>cityomics/eval/__init__.py</small>")
+    src_cityomics_eval_init_31f7113b("__init__.py")
+    src_cityomics_eval_init_rationale_1_5f41818b -->|explains| src_cityomics_eval_init_31f7113b
+    class src_cityomics_eval_init_rationale_1_5f41818b concept;
+    class src_cityomics_eval_init_31f7113b module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>eval/__init__.py</code><br><small style="color:var(--muted)">cityomics/eval/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in cityomics/eval/__init__.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Avaliação (spec-benchmark §4). Módulos previstos: hotspot (hit rate/PAI/PEI),…</code><br><small style="color:var(--muted)">cityomics/eval/__init__.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Avaliação (spec-benchmark §4). Módulos previstos: hotspot (hit rate/PAI/PEI),….</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>cityomics/eval/__init__.py</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: explains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 9. Pacote laya ====== -->
+<h2 id="pacote-laya">9. Pacote laya</h2>
+<p>Pacote laya groups implementation around laya, cityomics, spec, como, mostly in cityomics/laya/__init__.py. This section covers 2 nodes and 1 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Pacote laya (2 nodes, 1 edges)
+    src_cityomics_laya_init_rationale_1_265bdea8("Laya como camada de decisão e destino c...<br/><small>cityomics/laya/__init__.py</small>")
+    src_cityomics_laya_init_81e1ff3d("__init__.py")
+    src_cityomics_laya_init_rationale_1_265bdea8 -->|explains| src_cityomics_laya_init_81e1ff3d
+    class src_cityomics_laya_init_rationale_1_265bdea8 concept;
+    class src_cityomics_laya_init_81e1ff3d module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>laya/__init__.py</code><br><small style="color:var(--muted)">cityomics/laya/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in cityomics/laya/__init__.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Laya como camada de decisão e destino celular (spec-benchmark §3.3, spec-atlas…</code><br><small style="color:var(--muted)">cityomics/laya/__init__.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Laya como camada de decisão e destino celular (spec-benchmark §3.3, spec-atlas….</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>cityomics/laya/__init__.py</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: explains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 10. Pacote models ====== -->
+<h2 id="pacote-models">10. Pacote models</h2>
+<p>Pacote models groups implementation around models, cityomics, baselines, famílias, mostly in cityomics/models/__init__.py. This section covers 2 nodes and 1 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Pacote models (2 nodes, 1 edges)
+    src_cityomics_models_init_rationale_1_33e9fa38("Baselines e famílias de métodos de outr...<br/><small>cityomics/models/__init__.py</small>")
+    src_cityomics_models_init_ad1ce054("__init__.py")
+    src_cityomics_models_init_rationale_1_33e9fa38 -->|explains| src_cityomics_models_init_ad1ce054
+    class src_cityomics_models_init_rationale_1_33e9fa38 concept;
+    class src_cityomics_models_init_ad1ce054 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>models/__init__.py</code><br><small style="color:var(--muted)">cityomics/models/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in cityomics/models/__init__.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Baselines e famílias de métodos de outras áreas (spec-benchmark §3). Módulos…</code><br><small style="color:var(--muted)">cityomics/models/__init__.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Baselines e famílias de métodos de outras áreas (spec-benchmark §3). Módulos….</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>cityomics/models/__init__.py</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: explains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 11. Raiz cityomics ====== -->
+<h2 id="raiz-cityomics">11. Raiz cityomics</h2>
+<p>Raiz cityomics groups implementation around cityomics, pyprojecttoml, mostly in pyproject.toml. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Raiz cityomics (1 nodes, 0 edges)
+    pkg_cityomics_79b23187("cityomics<br/><small>pyproject.toml</small>")
+    class pkg_cityomics_79b23187 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>cityomics</code><br><small style="color:var(--muted)">pyproject.toml</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>cityomics node in pyproject.toml.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>pyproject.toml</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<h2 id="hyperedges">Group Relationships (Hyperedges)</h2>
+<div class="grid">
+
+  <div class="card">
+    <h4>Blindagem contra vazamento e contaminação do teste de 2026</h4>
+    <p><code>form</code> — 6 participants</p>
+    <ul>
+      <li><code>spec_dados_regra_as_of</code></li>
+      <li><code>spec_dados_cofre_2026</code></li>
+      <li><code>spec_benchmark_protocolo_congelado</code></li>
+      <li><code>prereg_preregistration_commit_congelamento</code></li>
+      <li><code>prereg_preregistration_janela_prospectiva</code></li>
+      <li>... and 1 more</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>Módulos do atlas (analogia transcriptômica espacial, cada um com baseline urbano)</h4>
+    <p><code>form</code> — 6 participants</p>
+    <ul>
+      <li><code>spec_atlas_tipagem_lotes</code></li>
+      <li><code>spec_atlas_atribuicao_por_tipo</code></li>
+      <li><code>spec_atlas_nichos_dominios</code></li>
+      <li><code>spec_atlas_genes_espacialmente_variaveis</code></li>
+      <li><code>spec_atlas_destino_celular</code></li>
+      <li>... and 1 more</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>Privacidade: microdados locais, só agregados vão ao Colab</h4>
+    <p><code>participate_in</code> — 6 participants</p>
+    <ul>
+      <li><code>spec_dados_privacidade_armazenamento</code></li>
+      <li><code>readme_privacy_scan</code></li>
+      <li><code>notebooks_colab_dados_que_sobem</code></li>
+      <li><code>readme_retencao_dados</code></li>
+      <li><code>spec_overview_d14</code></li>
+      <li>... and 1 more</li>
+    </ul>
+  </div>
+</div>
+<hr>
+<h2 id="stats">Project Statistics</h2>
+
+<div class="grid">
+  <div class="card">
+    <h4>Graph</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>Nodes</td><td>465</td></tr>
+      <tr><td>Edges</td><td>1163</td></tr>
+      <tr><td>Hyperedges</td><td>3</td></tr>
+      <tr><td>Communities</td><td>16</td></tr>
+      <tr><td>Documented Sections</td><td>10</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Edge Confidence</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>EXTRACTED</td><td>1135</td></tr>
+      <tr><td>INFERRED</td><td>28</td></tr>
+      <tr><td>AMBIGUOUS</td><td>0</td></tr>
+    </table>
+  </div>
+</div>
+
+<div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
+  <p>CityOmics — Architecture Documentation</p>
+  <p>Generated: 2026-10-15 12:00 UTC · graphify callflow-html</p>
+</div>
+
+</div><!-- .container -->
+
+<script>
+(function () {
+  const mermaidConfig = {
+    startOnLoad: false,
+    theme: 'dark',
+    securityLevel: 'loose',
+    flowchart: { htmlLabels: true, useMaxWidth: true },
+    themeVariables: {
+      primaryColor: '#1e293b',
+      primaryTextColor: '#e2e8f0',
+      primaryBorderColor: '#38bdf8',
+      secondaryColor: '#0f172a',
+      tertiaryColor: '#334155',
+      lineColor: '#64748b',
+      textColor: '#e2e8f0',
+    }
+  };
+
+  mermaid.initialize(mermaidConfig);
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function enhanceMermaidDiagrams() {
+    document.querySelectorAll('.mermaid').forEach((container) => {
+      if (container.dataset.zoomReady === 'true') return;
+      const svg = container.querySelector('svg');
+      if (!svg) return;
+
+      container.dataset.zoomReady = 'true';
+      container.classList.add('is-enhanced');
+
+      const viewport = document.createElement('div');
+      viewport.className = 'mermaid-viewport';
+      svg.parentNode.insertBefore(viewport, svg);
+      viewport.appendChild(svg);
+
+      const toolbar = document.createElement('div');
+      toolbar.className = 'mermaid-toolbar';
+      toolbar.innerHTML = [
+        '<button type="button" data-action="zoom-out" title="Zoom out">-</button>',
+        '<span class="zoom-level" data-role="level">100%</span>',
+        '<button type="button" data-action="zoom-in" title="Zoom in">+</button>',
+        '<button type="button" data-action="fit" title="Fit width">Fit</button>',
+        '<button type="button" data-action="reset" title="Reset view">Reset</button>'
+      ].join('');
+      container.insertBefore(toolbar, viewport);
+
+      const state = { scale: 1, x: 0, y: 0, dragging: false, startX: 0, startY: 0, originX: 0, originY: 0 };
+      const level = toolbar.querySelector('[data-role="level"]');
+
+      function applyTransform() {
+        svg.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale})`;
+        level.textContent = `${Math.round(state.scale * 100)}%`;
+      }
+
+      function zoomBy(delta) {
+        state.scale = clamp(state.scale + delta, 0.25, 3);
+        applyTransform();
+      }
+
+      function reset() {
+        state.scale = 1;
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      function fitWidth() {
+        const rawWidth = svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width
+          ? svg.viewBox.baseVal.width
+          : svg.getBoundingClientRect().width / state.scale;
+        if (!rawWidth) {
+          reset();
+          return;
+        }
+        state.scale = clamp((viewport.clientWidth - 48) / rawWidth, 0.25, 1.4);
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      toolbar.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-action]');
+        if (!button) return;
+        const action = button.dataset.action;
+        if (action === 'zoom-in') zoomBy(0.15);
+        if (action === 'zoom-out') zoomBy(-0.15);
+        if (action === 'fit') fitWidth();
+        if (action === 'reset') reset();
+      });
+
+      viewport.addEventListener('wheel', (event) => {
+        if (!event.ctrlKey && !event.metaKey) return;
+        event.preventDefault();
+        zoomBy(event.deltaY < 0 ? 0.1 : -0.1);
+      }, { passive: false });
+
+      viewport.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return;
+        state.dragging = true;
+        state.startX = event.clientX;
+        state.startY = event.clientY;
+        state.originX = state.x;
+        state.originY = state.y;
+        viewport.classList.add('is-dragging');
+        viewport.setPointerCapture(event.pointerId);
+      });
+
+      viewport.addEventListener('pointermove', (event) => {
+        if (!state.dragging) return;
+        state.x = state.originX + event.clientX - state.startX;
+        state.y = state.originY + event.clientY - state.startY;
+        applyTransform();
+      });
+
+      function endDrag(event) {
+        if (!state.dragging) return;
+        state.dragging = false;
+        viewport.classList.remove('is-dragging');
+        if (viewport.hasPointerCapture(event.pointerId)) {
+          viewport.releasePointerCapture(event.pointerId);
+        }
+      }
+
+      viewport.addEventListener('pointerup', endDrag);
+      viewport.addEventListener('pointercancel', endDrag);
+      applyTransform();
+    });
+  }
+
+  function renderMermaid() {
+    const result = mermaid.run
+      ? mermaid.run({ querySelector: '.mermaid' })
+      : Promise.resolve();
+    Promise.resolve(result)
+      .then(enhanceMermaidDiagrams)
+      .catch((error) => {
+        console.error('Mermaid render failed:', error);
+        enhanceMermaidDiagrams();
+      });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderMermaid);
+  } else {
+    renderMermaid();
+  }
+})();
+</script>
+
+</body>
+</html>

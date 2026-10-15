@@ -41,7 +41,8 @@ MUN_SP = "7107"
 
 COLS = ["cnpj_basico", "cnpj_ordem", "cnpj_dv", "matriz", "fantasia", "situacao", "data_situacao", "motivo",
         "cidade_ext", "pais", "data_inicio", "cnae", "cnae_sec", "tipo_log", "logradouro", "numero",
-        "complemento", "bairro", "cep", "uf", "municipio", "ddd1", "tel1", "ddd2", "tel2", "ddd_fax", "fax", "email"]
+        "complemento", "bairro", "cep", "uf", "municipio", "ddd1", "tel1", "ddd2", "tel2", "ddd_fax", "fax", "email",
+        "sit_especial", "data_sit_especial"]
 
 # divisão CNAE (2 dígitos) → grupo
 GRUPOS = {
@@ -97,9 +98,13 @@ def parse(log=print) -> pl.DataFrame:
         if not raw:
             log(f"parte {i}: sem linhas de SP")
             continue
+        # aspas soltas em complementos quebram o leitor com aspas: lê sem aspas e tira as aspas dos campos.
+        # Linhas com ";" dentro de texto saem deslocadas e caem no filtro de município (perda desprezível).
         df = pl.read_csv(raw, separator=";", has_header=False, new_columns=COLS, infer_schema=False,
-                         encoding="utf8-lossy", quote_char='"', truncate_ragged_lines=True)
-        df = df.filter(pl.col("municipio") == MUN_SP)
+                         encoding="utf8-lossy", quote_char=None, truncate_ragged_lines=True)
+        df = df.select(pl.all().str.strip_chars('"')).filter((pl.col("municipio") == MUN_SP) & (pl.col("uf") == "SP"))
+        df = df.select(*[c for c in COLS if c not in ("fantasia", "ddd1", "tel1", "ddd2", "tel2", "ddd_fax", "fax", "email",
+                                                        "sit_especial", "data_sit_especial", "cnae_sec", "complemento", "cidade_ext", "pais")])
         log(f"parte {i}: {df.height:,} estabelecimentos em SP")
         frames.append(df)
     df = pl.concat(frames)

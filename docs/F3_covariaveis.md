@@ -119,3 +119,13 @@
 - **Fonte:** produto VNP46A3 (mensal, versão 2 = Collection 2) da NASA LAADS DAAC, tile `h13v11`, grade de 15 segundos de arco (≈ 460 m). São 67 MB por mês (cerca de 9,5 GB de 2015-01 a 2026-08). A busca é pública (CMR), mas o download exige token gratuito da conta NASA Earthdata em `EARTHDATA_TOKEN` (`.env`).
 - **Status:** código pronto e testado em arquivo sintético; **ainda não executado**, porque o token não foi fornecido.
 - **Extração:** banda `AllAngle_Composite_Snow_Free`, fator 0,1, pixels de preenchimento ou qualidade 2 ausentes. Cada setor recebe o valor do pixel que contém o seu ponto representativo (medida de vizinhança, não do setor). Defasagem de 2 meses no painel.
+
+## CNPJ (`covariates/cnpj.py`)
+
+- **Fonte:** dados abertos do CNPJ da Receita Federal, pasta `2026-09`, arquivos `Estabelecimentos0` a `9` (≈ 5,4 GB, nacionais). O recorte de São Paulo (município 7107 da Receita) fica em `data/interim/cnpj/estab_sp.parquet`. O bruto e o recorte ficam locais e fora do git; descartam-se nome fantasia, telefone, e-mail, complemento e CNAE secundário.
+- **Volume:** 6.337.245 estabelecimentos (inclui baixados). 5,29 milhões (83%) têm geocódigo de nível fino (número ou logradouro) pelo CNEFE e 5,28 milhões caem em setores da malha.
+- **Estoque mensal:** o estabelecimento conta como ativo de `data_inicio` até `data_situacao`, se a situação não é ativa. Há só a situação final: reativações e mudanças de endereço não aparecem, e o endereço é o atual (quem mudou aparece no ponto novo em toda a série). Limite declarado da fonte.
+- **Grupos de CNAE (divisão de 2 dígitos):** bar e restaurante, comércio varejista e atacado, financeiro, indústria, transporte e armazenagem, alojamento, educação e saúde, construção e imobiliário, serviços pessoais e outros serviços.
+- **Estoque em 2026-09:** cerca de 2,1 milhões de ativos, a maior parte em outros serviços (731 mil), comércio varejista (352 mil) e educação e saúde (218 mil).
+- **Artefato de 2018:** as saídas anuais saltam para 361 mil em 2018 (contra 72 mil em 2017 e 116 mil em 2019), o que parece uma baixa de ofício em massa de empresas inativas. Saídas dessa onda não medem fechamento real de negócio; nos modelos, preferir estoques e entradas, ou tratar 2018 à parte.
+- **Saída:** `setor_cnpj_mes.parquet` (setor × mês × grupo, com estoque, entradas e saídas). Defasagem de 1 mês no painel.

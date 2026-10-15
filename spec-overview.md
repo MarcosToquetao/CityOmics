@@ -186,7 +186,8 @@ F0 specs + repo
 - [x] SP156 2015–2026-T3 por setor × mês × grupo (`covariates/sp156.py`)
 - [x] Geocodificador local sobre o CNEFE 2022 (`geocode.py`, 5,69 milhões de endereços)
 - [x] BCB: agências por setor × mês (`covariates/bcb.py`)
-- [ ] T2: CNPJ por CNAE (estoques e fluxos) e alvarás
+- [x] CNPJ: estoques, entradas e saídas mensais por grupo de CNAE e setor (`covariates/cnpj.py`, 6,3 milhões de estabelecimentos)
+- [ ] Alvarás (opcional, contexto 2020+)
 - [x] `asof.py`: painel setor × mês com defasagens de publicação, janelas 3/6/12 e variação anual + testes (ITBI/CNPJ 1, SP156 3)
 - [ ] Atualização dasimétrica da população
 
