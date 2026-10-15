@@ -89,3 +89,48 @@ Leituras:
 - **O BYM2 entra com o maior peso (0,28) apesar do pior CRPS individual**: ele é o mais bem calibrado e complementar aos modelos de árvore, o que o ensemble usa.
 - **O ganho total sobre o baseline continua pequeno**: o melhor CRPS (GNN) é 4% menor que o do GLM/média histórica, e o log score do ensemble 3% menor.
 - Falta o teste formal (bootstrap por distrito com Holm) entre os candidatos principais; ele sai na rodada de seleção para o congelamento.
+
+## Teste formal e seleção dos melhores da classe (`models/select_run.py`)
+
+Bootstrap por cluster de distrito (96 distritos, 2000 reamostras), Holm dentro de cada família de testes. Dados: previsões de 2025 da rodada consolidada (ajuste 2023–2024). Resultados completos em `prereg/selection_dev.json`.
+
+**Seleção provisória (`prereg/selection.json`):**
+
+| Chave | Escolha |
+|---|---|
+| Melhor baseline por CRPS | GLM de contagem (0,6193; empata com a média histórica até a 4ª casa) |
+| Melhor baseline por PAI 1% | Média histórica (27,60; GLM 27,59) |
+| Melhor outras áreas por CRPS | GNN (0,5945) |
+| Melhor outras áreas por PAI 1% | Ensemble empilhado (28,27; LightGBM núcleo 28,26 e GNN 28,20) |
+| Laya-FT, LightGBM no estado comprimido, Markov do destino | pendentes (Colab e atlas) |
+
+**H1a (CRPS), GNN contra GLM:** diferença −0,0248 (IC 95% −0,0343 a −0,0164), p ajustado por Holm 0,001. Efeito pequeno (4%), mas distinguível do ruído quando o distrito é a unidade de reamostragem.
+
+**H1b (PAI 1%), ensemble contra média histórica:** diferença +0,69 (IC −0,30 a +1,79), p ajustado 0,19. **Não há evidência de que o PAI a 1% melhore.** Todos os modelos fortes ficam em 27,5–28,3 porque o ranking é dominado pelos setores de estações e terminais.
+
+**Cada modelo contra o GLM (CRPS, Holm entre os 12 modelos):**
+
+| Modelo | Diferença | IC 95% | Holm |
+|---|---|---|---|
+| GNN | −0,0248 | −0,0343 a −0,0164 | sim |
+| LightGBM sem crime | −0,0196 | −0,0265 a −0,0134 | sim |
+| Hawkes | −0,0194 | −0,0244 a −0,0150 | sim |
+| Ensemble | −0,0193 | −0,0285 a −0,0110 | sim |
+| LightGBM completo | −0,0167 | −0,0250 a −0,0094 | sim |
+| LightGBM núcleo | −0,0135 | −0,0217 a −0,0062 | sim |
+| GWR por distrito | −0,0124 | −0,0205 a −0,0052 | sim |
+| Painel espacial | −0,0046 | −0,0095 a −0,0001 | não (p 0,051) |
+| BYM2 | +0,0169 | +0,0101 a +0,0228 | pior |
+| SPDE | +0,0365 | +0,0316 a +0,0415 | pior |
+| Chronos zero-shot | +0,0504 | +0,0448 a +0,0571 | pior |
+| MaxEnt | +0,0898 | +0,0685 a +0,1125 | pior |
+
+**Entre finalistas:** o GNN é melhor que o ensemble (−0,0055), o LightGBM completo (−0,0081) e o núcleo (−0,0113), todos com Holm significativo. **Não se distingue do Hawkes** (−0,0054, IC −0,0150 a +0,0039). Ensemble, LightGBM completo e Hawkes também empatam entre si. O núcleo teórico (71 variáveis) fica 0,0032 atrás do conjunto completo, diferença pequena mas significativa.
+
+**Brier de P(≥1) contra o GLM:** ensemble −0,0028, LightGBM completo −0,0018, GNN −0,0013, todos com IC que exclui zero. Antecipa o terreno do H2, mas ainda sem Laya.
+
+Cuidados:
+- A seleção é **provisória**. A VIIRS (luz noturna, grupo CPTED do núcleo) ainda não está na tabela; ao incluí-la, o benchmark e a seleção são refeitos.
+- Os pesos do ensemble foram ajustados em 2024-H2. No congelamento serão reajustados dentro de 2025, como o pré-registro exige.
+- O bootstrap do PAI usa o hit rate agregado nos 12 meses, não a média mensal usada para escolher. As duas versões coincidem na ordem dos modelos.
+- Escolher o melhor entre 12 modelos no mesmo período de avaliação infla o ganho observado em 2025. A confirmação honesta é o teste em 2026 com a escolha já congelada.

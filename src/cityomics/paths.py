@@ -15,6 +15,20 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
+def env_value(name: str) -> str:
+    """Valor de uma chave: variável de ambiente ou linha ``NOME=valor`` do ``.env`` (fora do git). Nunca é registrada."""
+    v = os.environ.get(name, "").strip()
+    if v:
+        return v
+    f = REPO_ROOT / ".env"
+    if f.exists():
+        for line in f.read_text().splitlines():
+            k, sep, val = line.partition("=")
+            if sep and k.strip() == name:
+                return val.strip().strip("\"'")
+    return ""
+
+
 def data_dir() -> Path:
     return Path(os.environ.get("CITYOMICS_DATA", REPO_ROOT / "data"))
 

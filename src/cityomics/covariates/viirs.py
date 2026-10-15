@@ -16,7 +16,6 @@ Saída: ``data/processed/covariaveis/setor_viirs_mes.parquet`` (setor × mês, a
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 import numpy as np
@@ -24,7 +23,7 @@ import polars as pl
 import requests
 
 from cityomics import external
-from cityomics.paths import processed_dir
+from cityomics.paths import env_value, processed_dir
 
 CMR = "https://cmr.earthdata.nasa.gov/search/granules.json"
 TILE = "h13v11"
@@ -36,7 +35,7 @@ H, V = 13, 11     # tile: lon0 = -180 + 10·h, lat0 = 90 − 10·v
 
 
 def token() -> str:
-    t = os.environ.get("EARTHDATA_TOKEN", "").strip()
+    t = env_value("EARTHDATA_TOKEN")
     if not t:
         raise RuntimeError("EARTHDATA_TOKEN ausente: crie um token em urs.earthdata.nasa.gov (gratuito) e coloque no .env")
     return t
@@ -95,27 +94,47 @@ def read_tile(path: Path) -> np.ndarray:
     return raw * scale
 
 
-def build(setores, inicio: str = "2015-01-01", log=print) -> pl.DataFrame:
-    """Baixa os meses (retomável) e extrai o valor por setor. ``setores``: GeoDataFrame com cd_setor."""
+def download(g: dict, tok: str) -> Path:
+    """Baixa um mês (retomável: só grava o arquivo final quando completo)."""
+    dest = external.external_dir() / "viirs" / f"VNP46A3_{g['mes']}_{TILE}.h5"
+    if dest.exists():
+        return dest
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    part = dest.with_suffix(".part")
+    with requests.get(g["url"], headers={"Authorization": f"Bearer {tok}"}, stream=True, timeout=(30, 600)) as r:
+        r.raise_for_status()
+        with part.open("wb") as fh:
+            for chunk in r.iter_content(1 << 20):
+                fh.write(chunk)
+    part.replace(dest)
+    return dest
+
+
+def download_all(gran: list[dict], tok: str, workers: int = 6, log=print) -> None:
+    """Baixa os meses em paralelo: o servidor limita a velocidade por conexão."""
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    todo = [g for g in gran if not (external.external_dir() / "viirs" / f"VNP46A3_{g['mes']}_{TILE}.h5").exists()]
+    log(f"VIIRS: {len(todo)} arquivos a baixar com {workers} conexões")
+    with ThreadPoolExecutor(workers) as ex:
+        futs = {ex.submit(download, g, tok): g["mes"] for g in todo}
+        for i, f in enumerate(as_completed(futs), 1):
+            f.result()
+            log(f"baixado {futs[f]} ({i}/{len(todo)})")
+
+
+def build(setores, inicio: str = "2015-01-01", workers: int = 6, log=print) -> pl.DataFrame:
+    """Baixa os meses (retomável, em paralelo) e extrai o valor por setor. ``setores``: GeoDataFrame com cd_setor."""
     tok = token()
     rep = setores.to_crs(4674).representative_point()
     row, col = pixel_index(rep.y.to_numpy(), rep.x.to_numpy())
     ok = (row >= 0) & (row < 2400) & (col >= 0) & (col < 2400)
     gran = list_granules(inicio)
     log(f"VIIRS: {len(gran)} meses de {gran[0]['mes']} a {gran[-1]['mes']}")
+    download_all(gran, tok, workers, log)
     rows = []
     for g in gran:
-        dest = external.external_dir() / "viirs" / f"VNP46A3_{g['mes']}_{TILE}.h5"
-        if not dest.exists():
-            dest.parent.mkdir(parents=True, exist_ok=True)
-            part = dest.with_suffix(".part")
-            with requests.get(g["url"], headers={"Authorization": f"Bearer {tok}"}, stream=True, timeout=(30, 600)) as r:
-                r.raise_for_status()
-                with part.open("wb") as fh:
-                    for chunk in r.iter_content(1 << 20):
-                        fh.write(chunk)
-            part.replace(dest)
-        arr = read_tile(dest)
+        arr = read_tile(download(g, tok))
         v = np.full(len(setores), np.nan)
         v[ok] = arr[row[ok], col[ok]]
         rows.append(pl.DataFrame({"cd_setor": setores["cd_setor"].to_list(), "mes": g["mes"], "luz_noturna": v}))

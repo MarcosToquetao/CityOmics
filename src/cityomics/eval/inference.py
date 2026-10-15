@@ -37,3 +37,23 @@ def holm(pvalues: dict[str, float], alpha: float = 0.05) -> dict[str, dict[str, 
         running = max(running, adj)
         out[nme] = {"p": pvalues[nme], "p_adj": running, "reject": running < alpha}
     return out
+
+
+def cluster_bootstrap_ratio_diff(num_a, num_b, den, clusters, n_boot: int = 2000, seed: int = 0) -> dict[str, float]:
+    """Diferença ``Σnum_a/Σden − Σnum_b/Σden`` com bootstrap de clusters (razão de somas).
+
+    Serve para o hit rate: ``num`` = ocorrências dentro do hotspot, ``den`` = ocorrências totais.
+    Positivo = ``a`` captura mais. A razão é reagregada em cada reamostra.
+    """
+    d = np.asarray(num_a, dtype="float64") - np.asarray(num_b, dtype="float64")
+    _, inv = np.unique(np.asarray(clusters), return_inverse=True)
+    k = inv.max() + 1
+    sd = np.bincount(inv, weights=d, minlength=k)
+    sn = np.bincount(inv, weights=np.asarray(den, dtype="float64"), minlength=k)
+    rng = np.random.default_rng(seed)
+    w = rng.multinomial(k, np.full(k, 1 / k), size=n_boot).astype("float64")
+    boot = (w @ sd) / (w @ sn)
+    est = sd.sum() / sn.sum()
+    lo, hi = np.quantile(boot, [0.025, 0.975])
+    p = float((np.abs(boot - boot.mean()) >= abs(est)).mean())
+    return {"diff": float(est), "ci_low": float(lo), "ci_high": float(hi), "p": max(p, 1 / n_boot), "n_clusters": int(k)}
