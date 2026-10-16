@@ -24,6 +24,8 @@ print(sorted(p.name for p in Path(OUT).glob("*")))   # precisa conter model.safe
 # %%
 DATA = Path("/content")
 print(sorted(p.name for p in DATA.glob("*.jsonl")))
+faltam = [n for n in ("score_recal.jsonl", "score_eval.jsonl") if not (DATA / n).exists()]
+assert not faltam, f"suba para /content: {faltam}"
 
 # %% [markdown]
 # ## 2. Inferência (modelo ajustado e zero-shot), com saída no Drive

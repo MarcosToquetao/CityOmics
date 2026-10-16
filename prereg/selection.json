@@ -1,7 +1,7 @@
 {
   "best_baseline_crps": "glm",
   "best_baseline_pai1": "media_historica",
-  "best_crossdomain_crps": "gnn",
+  "best_crossdomain_crps": "lgbm_sem_crime",
   "best_crossdomain_pai1": "ensemble",
   "laya_ft": null,
   "lightgbm_compressed_state": null,
