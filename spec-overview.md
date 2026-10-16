@@ -89,7 +89,7 @@ IBGE/GeoSampa/... ──┘    (snapshot)     (lote→setor→distrito)         
 | D5 | Desfechos | Roubo/furto de celular; violência letal (ver D20) | Dinâmicas opostas | Interview | 2026-10-14 |
 | D6 | Genes vs desfecho | Genes = covariáveis (tipos definidos sem crime); histórico de crime = 2ª modalidade só nos modelos preditivos, com ablação | Evita circularidade | Interview | 2026-10-14 |
 | D7 | Dados para APIs externas | Superado por D24. Regra mantida: só saem da máquina dados agregados ou anônimos | Privacidade | Interview | 2026-10-14 |
-| D8 | Publicações | Data science = benchmark; Ciências urbanas = atlas | Evita salami slicing | Interview | 2026-10-14 |
+| D8 | Publicações | Data science = benchmark; Ciências urbanas = atlas (**substituída por D34 em 2026-10-16**) | Evita salami slicing | Interview | 2026-10-14 |
 | D9 | Stack | Python 3.12 (conda) + R pontual (R-INLA, spdep, scoringRules, surveillance), com Parquet como interface | Melhor ferramenta para cada tarefa | Interview | 2026-10-14 |
 | D10 | Validação | 2026 lacrado até o pré-registro no OSF; tuning em 2025 com origem móvel; janela prospectiva nov/2026–mar/2027 | Blindagem contra "olharam o teste" | Interview | 2026-10-14 |
 | D11 | Ética | Prevenção/planejamento; auditoria de equidade; mapas públicos agregados | Loops de feedback | Interview | 2026-10-14 |
@@ -115,6 +115,9 @@ IBGE/GeoSampa/... ──┘    (snapshot)     (lote→setor→distrito)         
 | D31 | Janela do destino | Treino 2012-S1 → 2025-S2; teste 2025-S2 → 2026-S1; alvarás só como contexto | Genes consistentes desde 2012 | Red Team | 2026-10-14 |
 | D32 | Momento do pré-registro | F4 depende só de F0: registrar até 31/out/2026 com emendas datadas permitidas até abrir 2026 | O pipeline F1–F3 não fica pronto antes do início da janela prospectiva | Red Team | 2026-10-14 |
 | D33 | Registro no OSF | Adiado para a etapa final, junto com os artigos. Antes de abrir 2026, um commit de congelamento (hashes dos modelos, melhores da classe) vira a chave do cofre (`FREEZE-<sha>`); 2026 é reportado como teste retrospectivo lacrado; a janela prospectiva é o teste totalmente limpo | Decisão do autor: campos do artigo só no fim. Custo aceito: sem carimbo externo de data antes da análise | Interview | 2026-10-14 |
+| D34 | Estrutura de publicação | **Substitui D8.** Artigo único integrado (atlas + predição) para a Nature Cities; benchmark detalhado no suplemento; submissão após F7 (~meados de 2027). Detalhes em spec-figuras.md | O tecido explica onde o crime se organiza e o benchmark mede o que resta prever; versão mais forte para alto impacto | Interview | 2026-10-16 |
+| D41 | Violência letal no artigo | No corpo, como contraste (celular = tecido fino, setor × mês; letal = órgão, distrito × trimestre), com comparador pareado do celular em distrito × trimestre e macrotipos (D61) | Desfecho pré-registrado; o contraste fortalece a história sem confundir escala com desfecho | Interview | 2026-10-16 |
+| D52 | FREEZE em duas etapas | FREEZE-A até o início de dez/2026 (benchmark + features mínimas do atlas, com hash dos rótulos por lote) e FREEZE-B (emenda A11 + multiverso) antes de abrir 2026; `freeze.py` inclui os artefatos do atlas. O ato de congelar é do autor | A janela prospectiva começa em nov/2026; o atlas não estava no manifesto | Red Team | 2026-10-16 |
 
 ## Dependency Graph & Implementation Order
 

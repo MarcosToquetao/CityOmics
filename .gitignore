@@ -39,3 +39,10 @@ cache/
 
 # Saída da skill graphify
 graphify-out/
+
+# Atlas, figuras e explorador (D60): objetos e saídas regeráveis ficam fora do git
+*.zarr
+*.csv
+figures/out/
+explorer/local/
+explorer/public/

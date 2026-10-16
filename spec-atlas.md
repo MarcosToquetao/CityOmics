@@ -8,7 +8,9 @@
 
 | Transcriptômica espacial | CityOmics |
 |---|---|
-| Célula segmentada (Xenium/MERFISH) | Lote fiscal (+ favela como pseudo-lote FCU) |
+| Célula segmentada (Xenium/MERFISH) | Lote fiscal (+ favela como pseudo-célula: setor FCU do IBGE, D54) |
+| Espaço intersticial e vasos | Ruas (segmentos do OSM, por classe) e estações/terminais (D51) |
+| Metacélula | Quadra fiscal (D59) |
 | Spot (Visium) | Setor censitário 2022 |
 | Região anatômica | Distrito |
 | Genes (contagens) | Atributos nativos do lote: IPTU, ITBI, CNPJ/CNAE, CNEFE (D22) |
@@ -66,6 +68,8 @@
 - **Saída:** quais atributos urbanos têm estrutura espacial além da densidade, e quais módulos coexpressos existem.
 
 ### 3.5 Destino celular — D4, D23, D31
+
+> **Emenda (2026-10-16, D42/D56):** no artigo integrado, o destino entra em versão reduzida: estabilidade do tecido, com transições **anuais** do IPTU de 2012 a 2025 (2021 mascarado) e o mapa de renovação. O destino semestral completo com Laya vai para o suplemento.
 - **Estado do lote no semestre s:**
   - estoques: CNPJ ativos por CNAE, preço/m² do último ITBI carregado adiante, tempo desde a última transação, SP156 no entorno;
   - **IPTU do ano anterior** como contexto defasado.
@@ -85,6 +89,22 @@
   - tudo separado pelas duas famílias.
 - **Amostragem:** a população inteira para os baselines. Para o Laya, todos os lotes que mudam mais uma amostra de igual tamanho dos que não mudam, com pesos de reamostragem. A inferência roda no Colab, com estados anônimos.
 - **Desfecho criminal condicional:** P(crime no setor) segundo a trajetória dos tipos que o compõem. É a ligação com o benchmark.
+
+### 3.6 Comunicação exploratória e cofre espacial — D39, D40, D53, D59 (emenda de 2026-10-16)
+- **Multiverso:**
+  - L–R criminológico (força no estilo COMMOT, atividade no estilo NicheNet);
+  - vizinhança com nulo restrito;
+  - Knox entre tipos (excitação cruzada em tempo contínuo);
+  - OD 2017 contra o modelo gravitacional;
+  - MISTy;
+  - NCEM/SLX;
+  - ablação do GNN;
+  - Lee's L.
+- **Métricas padronizadas por abordagem:** p de permutação, estabilidade por bootstrap e ganho fora da amostra contra o baseline.
+- **Escala:** L–R, co-ocorrência e campos em metacélulas por quadra fiscal; lotes completos só na tipagem e na vizinhança.
+- **Escolha sem crime:** a tipagem (genes, resolução, k) é fixada só por ARI e marcadores.
+- **Cofre espacial:** ~20% dos distritos, sorteados com semente registrada em `prereg/atlas_vault.json`, ficam fora de toda análise de crime do atlas até a confirmação.
+- **Emenda A11 (antes do FREEZE-B):** registra as escolhas, a família do atlas com Holm e a redefinição de H4.
 
 ## 4. Módulos suplementares — D17
 
@@ -121,7 +141,7 @@ As features de omics ajustadas até 2025 (tipo/domínio, composição do nicho, 
 |---|---|---|---|---|---|
 | D4 | Próximo passo | Desfecho + transição de tipo | Destino celular | Interview | 2026-10-14 |
 | D6 | Genes vs desfecho | Tipos definidos sem crime | Circularidade | Interview | 2026-10-14 |
-| D8 | Publicações | Atlas = artigo de ciências urbanas | Contribuições distintas | Interview | 2026-10-14 |
+| D8 | Publicações | Atlas = artigo de ciências urbanas (**substituída por D34**: artigo integrado) | Contribuições distintas | Interview | 2026-10-14 |
 | D13 | Unidades | Lote → setor → distrito | Unidades orgânicas | Interview | 2026-10-14 |
 | D17 | Escopo | 5 módulos principais + 3 suplementares | Foco | Interview | 2026-10-14 |
 | D21 | Atribuição | Composição conhecida → taxas por tipo | Deconvolução seria um erro | Red Team | 2026-10-14 |
@@ -129,6 +149,15 @@ As features de omics ajustadas até 2025 (tipo/domínio, composição do nicho, 
 | D23 | Destino | Semestral; estoques + IPTU defasado; atividade vs cadastro | Evita trivialidade e artefato | Red Team | 2026-10-14 |
 | D29 | Validação pontual | Pontos → lote → comparação com λ | Falácia ecológica | Red Team | 2026-10-14 |
 | D31 | Janela | 2012-S1 → 2025-S2 treino; 2026-S1 teste | Genes consistentes | Red Team | 2026-10-14 |
+| D38 | Tipagem | Leiden sobre lotes com IPTU 2025 (incluindo testada e esquinas) + CNPJ 2025-12 ligado por endereço + MEI separado; favelas como pseudo-células FCU | Atividade econômica é central para o crime | Interview | 2026-10-16 |
+| D39 | Comunicação | Multiverso exploratório (ver §3.6) | Avaliar várias abordagens | Interview | 2026-10-16 |
+| D40 | Seleção | Explorar até 2025 → emenda A11 → confirmar; tabela multiverso; refinada por D53 | Defesa contra o jardim dos caminhos que se bifurcam | Interview | 2026-10-16 |
+| D42 | Destino reduzido | Estabilidade do tecido no corpo do artigo; destino completo com Laya no suplemento | Sustenta a afirmação central a custo moderado | Interview | 2026-10-16 |
+| D51 | Ruas e estações | Classes de célula com λ próprio; exposição dos lotes pela testada | 79% do roubo de celular é em via pública | Red Team | 2026-10-16 |
+| D53 | Escolha sem crime e cofre espacial | Tipagem fixada sem crime; ~20% dos distritos em cofre; família do atlas com Holm | A confirmação temporal discrimina pouco | Red Team | 2026-10-16 |
+| D54 | Favelas | Setores FCU do IBGE como pseudo-células (exposição em lotes-equivalentes); HABISP fora; lotes dentro marcados | HABISP erra a composição e infla λ | Red Team | 2026-10-16 |
+| D56 | CNPJ por lote | Ligação por endereço via IPTU (CEP + número); snapshot de 2025-12; destino só com IPTU anual | Precisão da ligação e as-of | Red Team | 2026-10-16 |
+| D59 | Escala | Metacélulas por quadra; nulos restritos; estabilidade do Leiden por subamostras | Limites de memória e nulo informativo | Red Team | 2026-10-16 |
 
 ## Dependency Graph & Implementation Order
 
