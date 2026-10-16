@@ -138,32 +138,40 @@ FAMILIAS = ["res_horizontal", "res_vertical_medio", "res_vertical_alto", "comerc
 
 
 def _nome(p: dict) -> tuple[str, str, str]:
-    """(nome em português, nome em inglês, família) a partir do perfil médio (valores brutos)."""
-    cnpj_ativ = p.get("cnpj_comercio_varejista", 0) + p.get("cnpj_bar_restaurante", 0)
-    vertical = p["pavimentos"] >= 4 or p["n_unidades"] >= 12
+    """(nome em português, nome em inglês, família) a partir do perfil médio (valores brutos, sem crime).
+
+    Regras em ordem: uso dominante (vago, indústria, serviços); verticalização (pavimentos ≥ 3 ou
+    ≥ 4 unidades); comércio de rua por padrão construtivo; uso misto horizontal; lote de esquina;
+    residencial horizontal por padrão.
+    """
+    vertical = p["pavimentos"] >= 3 or p["n_unidades"] >= 4
     if p["uso_terreno"] >= 0.5:
         return "Terreno vago", "Vacant land", "vazio"
     if p["uso_industria"] >= 0.35:
         return "Indústria e galpões", "Industry and warehouses", "industria"
     if p["uso_servicos"] >= 0.35:
         return "Serviços e equipamentos", "Services and facilities", "servicos"
-    if p["uso_comercio"] >= 0.4:
-        if vertical:
-            return "Escritórios e comércio vertical", "Offices and high-rise commerce", "servicos"
-        if cnpj_ativ >= 1.0:
-            return "Comércio de rua ativo", "Active street retail", "comercio"
-        return "Comércio de rua", "Street retail", "comercio"
     if vertical:
+        if p["uso_comercio"] >= 0.15:
+            return "Vertical residencial e misto", "Mid/high-rise, residential and mixed", "res_vertical_medio"
         if p["padrao_alto"] >= 0.4:
-            return "Residencial vertical alto padrão", "High-rise residential, high standard", "res_vertical_alto"
-        return "Residencial vertical", "High-rise residential", "res_vertical_medio"
+            return "Vertical alto padrão", "High-rise, high standard", "res_vertical_alto"
+        return "Vertical residencial", "Mid/high-rise residential", "res_vertical_medio"
+    if p["uso_comercio"] >= 0.6:
+        if p["padrao_baixo"] >= 0.5:
+            return "Comércio de rua popular", "Street retail, low standard", "comercio"
+        return "Comércio de rua médio", "Street retail, middle standard", "comercio"
+    if p["uso_comercio"] >= 0.25:
+        if p.get("cnpj_comercio_atacado", 0) >= 0.3:
+            return "Casa e comércio atacadista", "Low-rise mixed, wholesale", "comercio"
+        return "Misto residencial e comercial", "Mixed residential and commercial", "comercio"
+    if p.get("esquina", 0) >= 0.5:
+        return "Residencial de esquina", "Corner residential", "res_horizontal"
     if p["padrao_alto"] >= 0.3:
         return "Residencial horizontal alto padrão", "Low-rise residential, high standard", "res_vertical_alto"
     if p["padrao_baixo"] >= 0.5:
-        return "Residencial horizontal popular", "Low-rise residential, low income", "res_horizontal"
-    if p["uso_comercio"] >= 0.15:
-        return "Misto residencial-comercial", "Mixed residential-commercial", "comercio"
-    return "Residencial horizontal médio", "Low-rise residential, middle income", "res_horizontal"
+        return "Residencial horizontal popular", "Low-rise residential, low standard", "res_horizontal"
+    return "Residencial horizontal médio", "Low-rise residential, middle standard", "res_horizontal"
 
 
 def name_types(raw: np.ndarray, names: list[str], lab: np.ndarray) -> pl.DataFrame:
@@ -273,3 +281,49 @@ def run(n_ref: int = 80_000, min_share: float = 0.003, log=print) -> dict:
     (d / f"tipagem_{G.REF_YEAR}.json").write_text(json.dumps(rep, ensure_ascii=False, indent=2))
     log(f"tipagem: r={r}, {rep['n_tipos']} tipos; ARI k-means × Leiden = {ari_km:.2f}")
     return rep
+
+
+def rename(log=print) -> pl.DataFrame:
+    """Reaplica as regras de nome sobre os rótulos já gravados (não muda os agrupamentos)."""
+    d = atlas_dir()
+    g = pl.read_parquet(d / f"lote_genes_{G.REF_YEAR}.parquet")
+    Z, names, mask, raw = prepare(g)
+    tipos = pl.read_parquet(d / f"lote_tipos_{G.REF_YEAR}.parquet")
+    gi = g.filter(pl.col("tem_iptu")).select("sql_base").join(tipos.select("sql_base", "cluster"), on="sql_base", how="left")
+    lab = gi["cluster"].to_numpy()
+    perfil = name_types(raw, names, lab)
+    nm = dict(zip(perfil["cluster"], perfil["nome"]))
+    fam = dict(zip(perfil["cluster"], perfil["familia"]))
+    tipos = tipos.with_columns(
+        pl.when(pl.col("cluster") >= 0).then(pl.col("cluster").replace_strict(nm, default=None)).otherwise(pl.col("tipo")).alias("tipo"),
+        pl.when(pl.col("cluster") >= 0).then(pl.col("cluster").replace_strict(fam, default=None)).otherwise(pl.col("familia")).alias("familia"))
+    tipos.write_parquet(d / f"lote_tipos_{G.REF_YEAR}.parquet")
+    perfil.write_parquet(d / f"tipos_perfil_{G.REF_YEAR}.parquet")
+    log("tipos: " + "; ".join(f"{r['nome']} ({r['n_lotes']:,})" for r in perfil.iter_rows(named=True)))
+    return perfil
+
+
+def subcluster_vertical(parent: str = "Misto residencial e comercial", min_floors: float = 4, min_units: float = 8, log=print) -> int:
+    """Sub-agrupamento por regra de genes (sem crime) do tipo misto, que absorveu os prédios no Leiden.
+
+    É o refinamento usual de um grupo heterogêneo num atlas celular: os lotes do tipo-pai com
+    ≥ ``min_floors`` pavimentos ou ≥ ``min_units`` unidades viram um tipo próprio (renomeado pelas regras).
+    """
+    d = atlas_dir()
+    tipos = pl.read_parquet(d / f"lote_tipos_{G.REF_YEAR}.parquet")
+    if "sub_vertical" in tipos.columns:
+        return 0
+    g = pl.read_parquet(d / f"lote_genes_{G.REF_YEAR}.parquet", columns=["sql_base", "pavimentos", "n_unidades"])
+    j = tipos.join(g, on="sql_base", how="left")
+    new = int(tipos["cluster"].max()) + 1
+    vert = (pl.col("tipo") == parent) & ((pl.col("pavimentos") >= min_floors) | (pl.col("n_unidades") >= min_units))
+    j = j.with_columns(pl.when(vert).then(pl.lit(new)).otherwise(pl.col("cluster")).alias("cluster"), vert.alias("sub_vertical"))
+    j.drop("pavimentos", "n_unidades").write_parquet(d / f"lote_tipos_{G.REF_YEAR}.parquet")
+    n = int(j["sub_vertical"].sum())
+    rep = json.loads((d / f"tipagem_{G.REF_YEAR}.json").read_text())
+    rep["subagrupamento_vertical"] = {"tipo_pai": parent, "min_pavimentos": min_floors, "min_unidades": min_units, "lotes": n}
+    rep["n_tipos"] = int(j.filter(pl.col("cluster") >= 0)["cluster"].n_unique())
+    (d / f"tipagem_{G.REF_YEAR}.json").write_text(json.dumps(rep, ensure_ascii=False, indent=2))
+    log(f"subagrupamento vertical: {n:,} lotes de '{parent}' viram um tipo próprio")
+    rename(log=log)
+    return n

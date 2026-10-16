@@ -19,6 +19,20 @@ from cityomics.viz.style import DARK_BG
 CRS = "EPSG:31983"
 
 
+_CACHE: dict = {}
+
+
+def layer(name: str):
+    """Camadas lidas uma vez por processo (lotes: 1,7 milhão de polígonos)."""
+    import geopandas as gpd
+
+    if name not in _CACHE:
+        cols = {"lotes": ["sql_base", "origem", "geometry"], "setores": ["cd_setor", "favela", "geometry"]}[name]
+        f = {"lotes": "lotes.parquet", "setores": "setores_2022.parquet"}[name]
+        _CACHE[name] = gpd.read_parquet(processed_dir() / "units" / f, columns=cols)
+    return _CACHE[name]
+
+
 def _bounds():
     import geopandas as gpd
 
@@ -49,7 +63,7 @@ def type_raster(tipo_by_sql: dict[str, int], fcu_code: int, res: float = 12.0):
     fav = setores[setores["favela"]]
     base = rasterize(fav.geometry.values, [fcu_code] * len(fav), res, bounds)
     top = rasterize(lots.geometry.values, codes, res, bounds)
-    img = np.where(top > 0, top, base)
+    img = np.where(base > 0, base, top)  # favela FCU prevalece sobre o cadastro (D54)
     mask = rasterize(dist.geometry.values, [1] * len(dist), res, bounds)
     return img, mask, bounds
 
@@ -87,21 +101,21 @@ def roi(ax, bbox, tipo_by_sql: dict[str, str], colors: dict[str, str], fcu_color
     from shapely.geometry import box
 
     b = box(*bbox)
-    lots = gpd.read_parquet(processed_dir() / "units" / "lotes.parquet", columns=["sql_base", "origem", "geometry"],
-                            bbox=bbox)
+    lots = layer("lotes").cx[bbox[0]:bbox[2], bbox[1]:bbox[3]]
     lots = lots[(lots["origem"] == "lote_fiscal") & lots.intersects(b)]
-    setores = gpd.read_parquet(processed_dir() / "units" / "setores_2022.parquet", columns=["cd_setor", "favela", "geometry"],
-                               bbox=bbox)
+    setores = layer("setores").cx[bbox[0]:bbox[2], bbox[1]:bbox[3]]
     setores = setores[setores.intersects(b)]
     fav = setores[setores["favela"]]
-    if len(fav):
-        fav.clip(b).plot(ax=ax, color=fcu_color, linewidth=0, rasterized=False)
     cols = lots["sql_base"].astype(str).map(lambda s: colors.get(tipo_by_sql.get(s, ""), "#3A3A40"))
     lots.clip(b).plot(ax=ax, color=cols.loc[lots.clip(b).index] if len(lots) else None, edgecolor=edge, linewidth=0.08)
+    if len(fav):  # favela FCU por cima do cadastro (D54)
+        fav.clip(b).plot(ax=ax, color=fcu_color, edgecolor=edge, linewidth=0.15, zorder=2)
     setores.boundary.clip(b).plot(ax=ax, color=setor_edge, linewidth=setor_lw, alpha=0.9)
     ax.set_xlim(bbox[0], bbox[2])
     ax.set_ylim(bbox[1], bbox[3])
     ax.set_aspect("equal")
+    ax.set_xlabel("")
+    ax.set_ylabel("")
     del PatchCollection
 
 

@@ -198,7 +198,7 @@ def point_validation(year: int = REF_YEAR, buffer_m: float = 40.0, max_dist: flo
     from cityomics.units.setores import CRS
 
     ev = (pl.scan_parquet(guard.pre2026(interim_dir() / "eventos_celular_atribuidos.parquet"))
-          .filter(pl.col("periodo").cast(pl.String).str.starts_with(str(year)) & pl.col("coord_valida"))
+          .filter((pl.col("data_fato").dt.year() == year) & pl.col("coord_valida"))
           .select("latitude", "longitude", "cd_dist").collect())
     ev = ev.filter(pl.Series(guard.explore_mask(ev["cd_dist"].to_numpy())))
     pts = gpd.GeoSeries(gpd.points_from_xy(ev["longitude"], ev["latitude"]), crs="EPSG:4326").to_crs(CRS)

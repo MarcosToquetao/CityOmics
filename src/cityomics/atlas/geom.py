@@ -26,5 +26,6 @@ def lot_points(refresh: bool = False) -> pl.DataFrame:
         "area_m2": g["area_m2"].to_numpy().astype(float),
         "x": rp.x.to_numpy().astype(np.float64), "y": rp.y.to_numpy().astype(np.float64),
     })
+    out = out.unique("sql_base", keep="first", maintain_order=True)  # uma célula por chave (polígonos repetidos)
     out.write_parquet(path)
     return out

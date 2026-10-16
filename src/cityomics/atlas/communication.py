@@ -210,7 +210,7 @@ def knox(r_m: float = 400.0, t_days: int = 14, years=(2022, 2023, 2024, 2025), g
     from cityomics.units.setores import CRS
 
     ev = (pl.scan_parquet(guard.pre2026(interim_dir() / "eventos_celular_atribuidos.parquet"))
-          .filter(pl.col("coord_valida") & pl.col("periodo").cast(pl.String).str.slice(0, 4).cast(pl.Int32).is_in(list(years)))
+          .filter(pl.col("coord_valida") & pl.col("data_fato").dt.year().is_in(list(years)))
           .select("latitude", "longitude", "data_fato", "cd_dist").collect())
     ev = ev.filter(pl.Series(guard.explore_mask(ev["cd_dist"].to_numpy())) & pl.col("data_fato").is_not_null())
     pts = gpd.GeoSeries(gpd.points_from_xy(ev["longitude"], ev["latitude"]), crs="EPSG:4326").to_crs(CRS)

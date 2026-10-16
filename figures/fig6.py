@@ -24,6 +24,7 @@ from cityomics.viz import palette as P
 from cityomics.viz import style as S
 
 FINAL = ["glm", "hawkes", "lgbm_completo", "gnn", "ensemble"]
+COR = {"glm": "#9E9E9E", "hawkes": "#D1495B", "lgbm_completo": "#E9C46A", "gnn": "#F4A261", "ensemble": "#264653"}
 
 
 def _setup(tag):
@@ -36,14 +37,21 @@ def _setup(tag):
 def panel_test(ax, ev, mu, phi, y, crps):
     br = {m: float(np.mean((scores.prob_ge1(mu[m], phi[m]) - (y >= 0.5)) ** 2)) for m in FINAL}
     x = np.arange(len(FINAL))
-    ax.bar(x - 0.18, [float(np.mean(crps[m])) for m in FINAL], 0.34, color=[P.FAMILIAS_MODELO[P.MODELO_FAMILIA[m]] for m in FINAL], label="2025 (development)")
-    ax.bar(x + 0.18, [float(np.mean(crps[m])) for m in FINAL], 0.34, color="none", edgecolor="#BDBDBD", hatch="//////", lw=0.4, label="2026 (sealed)")
+    ax.bar(x - 0.18, [float(np.mean(crps[m])) for m in FINAL], 0.34, color=[COR[m] for m in FINAL], label="2025 (development)")
+    lo_, hi_ = min(float(np.mean(crps[m])) for m in FINAL) * 0.95, max(float(np.mean(crps[m])) for m in FINAL) * 1.02
+    for i in x:
+        ax.add_patch(__import__("matplotlib").patches.Rectangle((i + 0.01, lo_), 0.34, (hi_ - lo_) * 0.25, fill=False,
+                                                               edgecolor="#BDBDBD", hatch="//////", lw=0.4))
+    from matplotlib.patches import Patch
+
+    h1 = Patch(facecolor="#9E9E9E", label="2025 (development)")
+    h2 = Patch(facecolor="white", edgecolor="#BDBDBD", hatch="//////", lw=0.4, label="2026 (sealed; no values yet)")
     ax.set_xticks(x)
     ax.set_xticklabels([F.NOMES_MODELO[m].replace("Graph neural network", "GNN") for m in FINAL], rotation=30, ha="right", rotation_mode="anchor")
     lo = min(float(np.mean(crps[m])) for m in FINAL)
     ax.set_ylim(lo * 0.95, max(float(np.mean(crps[m])) for m in FINAL) * 1.02)
     ax.set_ylabel("CRPS (lower is better)")
-    ax.legend(loc="upper right", handlelength=1.2, fontsize=5)
+    ax.legend(handles=[h1, h2], loc="upper right", handlelength=1.2, fontsize=5)
     for i, m in enumerate(FINAL):
         ax.text(i - 0.18, float(np.mean(crps[m])) * 1.002, f"{br[m]:.3f}", ha="center", va="bottom", fontsize=4.4, rotation=90, color=S.MUTED)
 
@@ -53,7 +61,7 @@ def panel_monthly(ax, ev, crps):
     months = sorted(np.unique(mes))
     for m in FINAL[1:]:
         sk = [1 - np.mean(crps[m][mes == k]) / np.mean(crps["glm"][mes == k]) for k in months]
-        ax.plot(range(len(months)), np.array(sk) * 100, color=P.FAMILIAS_MODELO[P.MODELO_FAMILIA[m]], lw=0.9, marker="o", ms=1.6,
+        ax.plot(range(len(months)), np.array(sk) * 100, color=COR[m], lw=1.1 if m == "ensemble" else 0.8, marker="o", ms=1.6,
                 label=F.NOMES_MODELO[m].replace("Graph neural network", "GNN"))
     ax.axhline(0, color=S.INK, lw=0.5)
     ax.set_xticks(range(len(months)))
@@ -82,11 +90,13 @@ def panel_hitmiss(ax, ev, mu, share=0.05):
     S.dark(ax)
     ax.set_facecolor("white")
     M.show(ax, rgba, bounds)
+    ax.set_xlabel("")
+    ax.set_ylabel("")
     hit = (flag & real).sum() / max(real.sum(), 1)
-    for i, (c, t) in enumerate((("#F5C451", "Flagged and top-5%"), ("#5B9BD5", "Flagged only"), ("#D1495B", "Missed top-5%"))):
-        ax.add_patch(__import__("matplotlib").patches.Rectangle((0.03, 0.95 - i * 0.055), 0.04, 0.03, color=c, transform=ax.transAxes))
-        ax.text(0.09, 0.965 - i * 0.055, t, transform=ax.transAxes, fontsize=4.8, va="center", color=S.INK)
-    ax.text(0.03, 0.75, f"{hit * 100:.0f}% of top tracts flagged", transform=ax.transAxes, fontsize=4.8, color=S.INK)
+    for i, (c, t) in enumerate((("#F5C451", "Flagged and in observed top 5%"), ("#5B9BD5", "Flagged only"), ("#D1495B", "Missed (observed top 5%)"))):
+        ax.add_patch(__import__("matplotlib").patches.Rectangle((0.02, -0.06 - i * 0.05), 0.05, 0.03, color=c, transform=ax.transAxes, clip_on=False))
+        ax.text(0.09, -0.045 - i * 0.05, t, transform=ax.transAxes, fontsize=4.8, va="center", color=S.INK)
+    ax.text(0.02, -0.22, f"{hit * 100:.0f}% of observed top-5% tracts flagged (annual 2025)", transform=ax.transAxes, fontsize=4.8, color=S.INK)
 
 
 def panel_niche(ax, ev, crps):
@@ -106,7 +116,10 @@ def panel_niche(ax, ev, crps):
     y = np.arange(len(rows))
     ax.barh(y, [r[1] * 100 for r in rows], color=[DOM_COLORS[r[0] % len(DOM_COLORS)] for r in rows], height=0.65)
     ax.set_yticks(y)
-    ax.set_yticklabels([f"N{r[0] + 1}" for r in rows])
+    from cityomics.viz.names import domain_labels
+
+    dl = domain_labels(short=True)
+    ax.set_yticklabels([dl[r[0]] for r in rows], fontsize=4.8)
     ax.axvline(0, color=S.INK, lw=0.5)
     ax.set_xlabel("Ensemble CRPS skill vs NB-GLM (%)")
     ax.tick_params(axis="y", length=0)
@@ -168,16 +181,16 @@ def make(periodo: str = "dev"):
     b = ax_mm(fig, 72, 6, 50, 40)
     panel_monthly(b, ev, crps)
     S.fig_label(fig, "b", 62, 3)
-    c = ax_mm(fig, 132, 4, 50, 72)
+    c = ax_mm(fig, 134, 4, 46, 66)
     panel_hitmiss(c, ev, mu)
     S.fig_label(fig, "c", 128, 2)
-    d = ax_mm(fig, 12, 70, 30, 46)
+    d = ax_mm(fig, 34, 70, 28, 46)
     panel_niche(d, ev, crps)
     S.fig_label(fig, "d", 1, 66)
-    e = ax_mm(fig, 56, 70, 50, 38)
+    e = ax_mm(fig, 76, 70, 46, 38)
     panel_equity(e, ev, mu)
-    S.fig_label(fig, "e", 48, 66)
-    f = ax_mm(fig, 112, 96, 70, 22)
+    S.fig_label(fig, "e", 68, 66)
+    f = ax_mm(fig, 128, 108, 54, 16)
     panel_prospective(f)
-    S.fig_label(fig, "f", 110, 90)
+    S.fig_label(fig, "f", 126, 102)
     return S.save(fig, "fig6", periodo)

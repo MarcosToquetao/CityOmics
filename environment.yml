@@ -49,4 +49,9 @@ dependencies:
       - -e .
       - elapid          # MaxEnt (spec-benchmark §3.2)
       - blackmarblepy   # VIIRS Black Marble (spec-dados §3.2)
+      - cmcrameri       # escalas perceptualmente uniformes das figuras (D45, D62)
+      - cairosvg        # esquema da Fig. 1a (SVG → PDF vetorial, D50)
+      - pypdf           # sobreposição do esquema no PDF da Fig. 1
+      - vitessce        # explorador interativo (D48)
+      - starlette       # exportação de arquivos do vitessce
       # - laya          # inferência local opcional; fine-tuning no Colab (D30)

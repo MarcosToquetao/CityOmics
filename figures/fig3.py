@@ -90,6 +90,8 @@ def panel_domains(ax, dom: pl.DataFrame):
     ax.set_facecolor("white")
     M.show(ax, rgba, bounds)
     M.scalebar(ax, 10_000, color="#1A1A1A", loc=(0.55, 0.03))
+    ax.set_xlabel("")
+    ax.set_ylabel("")
 
 
 def panel_markers(ax, mk: pl.DataFrame, names: dict, ntop: int = 3):
@@ -103,7 +105,10 @@ def panel_markers(ax, mk: pl.DataFrame, names: dict, ntop: int = 3):
     ax.set_xticks(range(len(covs)))
     ax.set_xticklabels([COV_EN.get(c, c) for c in covs], rotation=60, ha="right", rotation_mode="anchor", fontsize=4.6)
     ax.set_yticks(range(len(doms)))
-    ax.set_yticklabels([f"N{d + 1}" for d in doms], fontsize=5)
+    from cityomics.viz.names import domain_labels
+
+    dl = domain_labels(short=True)
+    ax.set_yticklabels([dl[d] for d in doms], fontsize=4.6)
     for i, d in enumerate(doms):
         ax.add_patch(__import__("matplotlib").patches.Rectangle((-1.4, i - 0.4), 0.6, 0.8, color=DOM_COLORS[d % len(DOM_COLORS)], clip_on=False))
     ax.tick_params(length=0)
@@ -191,10 +196,10 @@ def make(periodo: str = "dev"):
     b = ax_mm(fig, 82, 4, 44, 62)
     panel_domains(b, dom)
     S.fig_label(fig, "b", 76, 2)
-    c = ax_mm(fig, 140, 4, 40, 30)
+    c = ax_mm(fig, 152, 4, 30, 30)
     im2 = panel_markers(c, mk, {})
-    S.fig_label(fig, "c", 128, 2)
-    cb2 = ax_mm(fig, 140, 58, 18, 2.0)
+    S.fig_label(fig, "c", 130, 2)
+    cb2 = ax_mm(fig, 152, 60, 18, 2.0)
     c2 = fig.colorbar(im2, cax=cb2, orientation="horizontal")
     c2.set_label("Cohen's d", fontsize=5.0)
     c2.ax.tick_params(labelsize=4.8, length=1.5)

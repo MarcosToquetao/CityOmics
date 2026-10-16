@@ -68,11 +68,11 @@ def panel_dotplot(ax, dp: pl.DataFrame, order: list[str], en: dict, cols: dict, 
     for tl, t in zip(ax.get_yticklabels(), order):
         tl.set_color(S.INK)
     for i, t in enumerate(order):
-        ax.add_patch(mpatches.Rectangle((-1.3, i - 0.4), 0.55, 0.8, color=cols[t], clip_on=False))
+        ax.add_patch(mpatches.Rectangle((-1.05, i - 0.38), 0.45, 0.76, color=cols[t], clip_on=False))
     ax.set_xlim(-0.6, len(genes) - 0.4)
     ax.set_ylim(len(order) - 0.5, -0.5)
     ax.tick_params(axis="both", length=0)
-    ax.tick_params(axis="y", pad=7)
+    ax.tick_params(axis="y", pad=11)
     for s in ax.spines.values():
         s.set_visible(False)
     ax.grid(True, color="#F0F0F0", lw=0.4)
@@ -86,9 +86,11 @@ def panel_pies(ax, cols_dark: dict, tipos_all: list[str]):
     from figures_fig1_helpers import roi_center_se
 
     cx, cy = roi_center_se()
-    half = 1400.0
+    half = 1000.0
     bbox = (cx - half, cy - half, cx + half, cy + half)
-    s = gpd.read_parquet(processed_dir() / "units" / "setores_2022.parquet", columns=["cd_setor", "geometry"], bbox=bbox)
+    from cityomics.viz.maps import layer
+
+    s = layer("setores").cx[bbox[0]:bbox[2], bbox[1]:bbox[3]][["cd_setor", "geometry"]].copy()
     comp = pl.read_parquet(atlas_dir() / "setor_composicao_2025.parquet")
     ecols = [c for c in comp.columns if c.startswith("e|") and c[2:] in tipos_all]
     s["cd_setor"] = s["cd_setor"].astype(str)
@@ -96,7 +98,7 @@ def panel_pies(ax, cols_dark: dict, tipos_all: list[str]):
     S.dark(ax)
     s.boundary.plot(ax=ax, color="#3A3A44", linewidth=0.25)
     cen = s.set_index("cd_setor").geometry.representative_point()
-    r = 55.0
+    area = s.set_index("cd_setor").geometry.area
     for row in cm.iter_rows(named=True):
         v = np.array([row[c] for c in ecols], dtype=float)
         if v.sum() <= 0 or row["cd_setor"] not in cen.index:
@@ -105,6 +107,7 @@ def panel_pies(ax, cols_dark: dict, tipos_all: list[str]):
         if not (bbox[0] < p.x < bbox[2] and bbox[1] < p.y < bbox[3]):
             continue
         frac = v / v.sum()
+        r = float(np.clip(0.42 * np.sqrt(area[row["cd_setor"]] / np.pi), 18, 60))
         ang = 90.0
         for c, f in zip(ecols, frac):
             if f <= 0:
@@ -114,6 +117,8 @@ def panel_pies(ax, cols_dark: dict, tipos_all: list[str]):
     ax.set_xlim(bbox[0], bbox[2])
     ax.set_ylim(bbox[1], bbox[3])
     ax.set_aspect("equal")
+    ax.set_xlabel("")
+    ax.set_ylabel("")
     from cityomics.viz.maps import scalebar
 
     scalebar(ax, 500, color="white", loc=(0.06, 0.05))
@@ -173,32 +178,32 @@ def make(periodo: str = "dev"):
     top = (mk.filter(pl.col("logfc") > 0).sort("score", descending=True).group_by("cluster").head(3)["gene"].unique().to_list())
     pref = list(F.GENE_EN)
     genes = [g for g in pref if g in top] + [g for g in top if g not in pref]
-    fig = S.figure(S.DOUBLE, 150)
+    fig = S.figure(S.DOUBLE, 140)
     a = ax_mm(fig, 4, 6, 52, 52)
     panel_umap(a, cols_by_cluster)
     S.fig_label(fig, "a", 1, 3)
     b = ax_mm(fig, 100, 6, 80, 62)
     sc = panel_dotplot(b, dp, order, en, cols, genes)
     S.fig_label(fig, "b", 62, 3)
-    cb = ax_mm(fig, 100, 104, 22, 2.2)
+    cb = ax_mm(fig, 100, 99, 22, 2.2)
     cbar = fig.colorbar(sc, cax=cb, orientation="horizontal")
     cbar.set_label("Mean expression (z)", fontsize=5.2)
     cbar.ax.tick_params(labelsize=5, length=1.5)
-    lg = ax_mm(fig, 130, 100, 50, 8)
+    lg = ax_mm(fig, 132, 95, 48, 8)
     lg.axis("off")
     for i, f in enumerate((0.1, 0.5, 1.0)):
         lg.scatter([0.1 + i * 0.22], [0.5], s=0.5 + 18 * f, color="#BBBBBB", edgecolor="#555555", linewidth=0.2, transform=lg.transAxes, clip_on=False)
         lg.text(0.1 + i * 0.22 + 0.05, 0.5, f"{int(f * 100)}%", fontsize=5, va="center", transform=lg.transAxes)
     lg.text(0.1, 1.1, "Parcels expressing", fontsize=5.2, transform=lg.transAxes)
-    c = ax_mm(fig, 4, 72, 52, 52)
+    c = ax_mm(fig, 4, 76, 54, 54)
     panel_pies(c, cols_dark, tipos + ["Favela (FCU)"])
-    S.fig_label(fig, "c", 1, 69)
-    d = ax_mm(fig, 72, 116, 70, 28)
+    S.fig_label(fig, "c", 1, 73)
+    d = ax_mm(fig, 72, 108, 70, 26)
     panel_districts(d, {**cols, "Favela (FCU)": P.FAMILIAS["favela"][0]}, order + ["Favela (FCU)"])
-    S.fig_label(fig, "d", 62, 113)
-    e = ax_mm(fig, 155, 116, 25, 28)
+    S.fig_label(fig, "d", 62, 105)
+    e = ax_mm(fig, 155, 108, 25, 26)
     panel_stability(e)
-    S.fig_label(fig, "e", 146, 113)
+    S.fig_label(fig, "e", 146, 105)
     return S.save(fig, "fig2", periodo)
 
 

@@ -14,7 +14,7 @@ import numpy as np
 FAMILIAS = {
     #                  clara      escura (mapa)
     "res_horizontal": ("#9CC3E6", "#4F86C6"),
-    "res_vertical_medio": ("#5B9BD5", "#7FB3EE"),
+    "res_vertical_medio": ("#3FA7B5", "#5FD0DC"),
     "res_vertical_alto": ("#1F4E89", "#B4D4FF"),
     "comercio": ("#E8743B", "#FF8A4C"),
     "servicos": ("#8E6CC2", "#B99BF0"),

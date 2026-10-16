@@ -51,7 +51,10 @@ def lot_table() -> pl.DataFrame:
     import pyarrow.parquet as pq
 
     cols = ["sql_base", "origem", "setor_fiscal", "quadra_fiscal", "condominio", "cd_setor", "cd_dist", "area_m2"]
-    return pl.from_arrow(pq.read_table(processed_dir() / "units" / "lotes.parquet", columns=cols))
+    lots = pl.from_arrow(pq.read_table(processed_dir() / "units" / "lotes.parquet", columns=cols))
+    # ~17 mil chaves aparecem em mais de um polígono: a célula é a chave (genes do IPTU são por chave)
+    return lots.group_by("sql_base", maintain_order=True).agg(
+        [pl.col(c).first() for c in cols if c not in ("sql_base", "area_m2")] + [pl.col("area_m2").sum()])
 
 
 def _digits(col: str) -> pl.Expr:

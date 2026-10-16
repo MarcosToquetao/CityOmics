@@ -108,6 +108,8 @@ def make(periodo: str = "dev"):
     trilho.plot(ax=b, color="#E8E8E8", linewidth=0.35, zorder=3)
     b.set_xlim(x0, x1)
     b.set_ylim(y0, y1)
+    b.set_xlabel("")
+    b.set_ylabel("")
     M.scalebar(b, 10_000, color="#1A1A1A", loc=(0.62, 0.03))
     S.fig_label(fig, "b", 1, 33)
     (cx, cy), (px, py) = roi_centers()
@@ -131,8 +133,9 @@ def make(periodo: str = "dev"):
     e = ax_mm(fig, xl, 37, W - xl - 1, 110)
     e.axis("off")
     order = P.ordered_types(tipos, fam, key)
+    nfam = len({fam[tipos.index(x)] for x in order})
     y = 1.0
-    step = 1.0 / (len(order) + 6)
+    step = 1.0 / (len(order) + 1.6 * nfam + 1)
     last = None
     fam_en = {"res_horizontal": "Residential, low-rise", "res_vertical_medio": "Residential, high-rise",
               "res_vertical_alto": "Residential, high standard", "comercio": "Commerce", "servicos": "Services",
@@ -140,7 +143,7 @@ def make(periodo: str = "dev"):
     for t in order:
         f = fam[tipos.index(t)]
         if f != last:
-            y -= step * 0.6
+            y -= step * 0.6 if last is not None else 0
             e.text(0.0, y, fam_en.get(f, f), fontsize=5.5, fontweight="bold", transform=e.transAxes, va="center")
             y -= step
             last = f

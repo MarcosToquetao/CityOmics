@@ -198,7 +198,7 @@ def run(n_perm: int = 100, log=print) -> dict:
     dens = setor.select("cd_setor", (pl.col("pop_2022") / pl.col("area_km2").clip(1e-4)).alias("dens"))
     dens = dens.with_columns(pl.col("dens").qcut(10, labels=[str(i) for i in range(10)], allow_duplicates=True).cast(pl.String).alias("decil"))
     cel = cel.join(dens.select("cd_setor", "decil"), on="cd_setor", how="left").with_columns(pl.col("decil").fill_null("0"))
-    strata = np.unique((cel["cd_dist"].cast(pl.String) + "|" + cel["decil"]).to_numpy(), return_inverse=True)[1]
+    strata = np.unique((cel["cd_dist"].cast(pl.String).fill_null("NA") + "|" + cel["decil"]).to_numpy(), return_inverse=True)[1]
     ne = nhood_enrichment(cel, strata, n_perm=n_perm, log=log)
     ne.write_parquet(d / "nhood_enrichment_2025.parquet")
     colocation_quotient(cel).write_parquet(d / "colocation_quotient_2025.parquet")
