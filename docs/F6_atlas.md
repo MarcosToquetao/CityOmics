@@ -120,8 +120,24 @@ Specs: [spec-atlas.md](../spec-atlas.md) (emendado), [spec-figuras.md](../spec-f
 
 Na escala do órgão (distrito), os métodos não se separam.
 
-## 7. A completar
+## 7. Destino reduzido: estabilidade do tecido (`fate.py`, D42/D56)
 
-- Destino (§3.5 emendado).
-- Comunicação (multiverso, ED2).
-- Confirmação no cofre: só depois da A11 (`prereg/A11_DRAFT.md`).
+- **Classificador:** LightGBM multiclasse sobre os genes do IPTU. Acerta a família de 2025 em 93,6% dos lotes de teste.
+- **Período:** aplicado aos cadastros de 2012 a 2025; os pares de anos com 2021 ficam fora.
+- **Permanência média:** 98,2% dos lotes ficam na mesma família de um ano para o outro. É um teto: parte das "transições" vem do erro do classificador.
+- **Renovação:** a mediana por setor é de 0,4% dos lotes por ano.
+- **Ligação com o "quando":** a correlação entre renovação e variabilidade mensal do crime dentro do setor é fraca, Spearman de 0,13 (4.073 setores com média > 0,5/mês, fora do cofre).
+- **Leitura:** o tecido muda devagar, coerente com a previsibilidade do "onde". Os lugares que mudam mais variam um pouco mais.
+
+## 8. Comunicação: multiverso exploratório (`communication.py`, ED2)
+
+| Abordagem | Resultado | Leitura |
+|---|---|---|
+| L–R criminológico (12 pares, ℓ = 250–1.000 m) | Força estável (ρ de bootstrap = 0,99) e 1.390 pares de tipos com p < 0,05 a 500 m. A atividade no estilo NicheNet não acrescenta previsão: melhor par ônibus → alvos a pé = +0,02%; os demais ficam negativos | A comunicação teórica descreve a co-localização de geradores e alvos, mas não prevê além da história |
+| Knox entre famílias (449 mil eventos, 400 m × 1–14 dias) | Razão média de 1,12. As maiores razões ficam dentro de favelas (1,68), terrenos vagos (1,40) e indústria (1,27) | A repetição próxima é mais forte nas bordas informais e vazias do tecido |
+| MISTy | R² combinado de 0,33. Contribuições: intrínseca 0,73, justaposta 0,25, para-espacial (1 km) 0,02 | O crime é uma propriedade do próprio spot e da vizinhança imediata, quase nada vem de 1 km |
+| NCEM/SLX | As interações tipo × vizinhança pioram a previsão fora da amostra (−5,9%) | Sobreajuste: o efeito de vizinhança é aditivo, não específico por par |
+| Lee's L | Todos os ligantes têm associação positiva com o roubo (p = 0,01): vida noturna 0,27, trilhos 0,25, varejo 0,21, ônibus 0,13, dinheiro 0,12 | Os geradores e atratores co-localizam com o crime |
+| OD 2017 e ablação do GNN | Não rodados (base OD indisponível localmente; GNN fora desta versão) | Registrados na tabela multiverso |
+
+A escolha do que vai para o corpo do artigo é do autor (D40), via `prereg/A11_DRAFT.md`. A confirmação no cofre espacial só roda depois da emenda.

@@ -113,7 +113,7 @@ def group_scores(year: int = REF_YEAR) -> pl.DataFrame:
 # --- λ dependente das covariáveis + Shapley -----------------------------------------------------
 
 def fit_covariates(E: np.ndarray, y: np.ndarray, Z: np.ndarray, groups: np.ndarray | None = None,
-                   ridge: float = 1.0, n_outer: int = 6) -> dict:
+                   ridge: float = 200.0, max_slope: float = 1.0, n_outer: int = 6) -> dict:
     from scipy.optimize import minimize
 
     keep = E.sum(axis=1) > 0
@@ -142,7 +142,10 @@ def fit_covariates(E: np.ndarray, y: np.ndarray, Z: np.ndarray, groups: np.ndarr
 
     theta = b0.ravel()
     for _ in range(n_outer):
-        r = minimize(nll, theta, jac=True, method="L-BFGS-B", options={"maxiter": 500})
+        # inclinações limitadas a ±max_slope por desvio-padrão do escore: λ_k só pode variar e^±1 por DP,
+        # o que evita a explosão de classes quase sem crime (inferência ecológica com grupos colineares)
+        bounds = [(None, None) if j == 0 else (-max_slope, max_slope) for _ in range(K) for j in range(Gn + 1)]
+        r = minimize(nll, theta, jac=True, method="L-BFGS-B", bounds=bounds, options={"maxiter": 800})
         theta = r.x
         if g is None:
             break
@@ -300,3 +303,37 @@ def run(n_boot: int = 500, log=print) -> dict:
     (d / "atribuicao_celular_2025.json").write_text(json.dumps(rep, ensure_ascii=False, indent=2))
     log(f"atribuição celular: D² da composição = {rep['d2_composicao']:.3f}; Spearman validação pontual = {rho:.2f}")
     return rep
+
+
+def refit_sankey(ridge: float = 200.0, max_slope: float = 1.0, log=print) -> pl.DataFrame:
+    """Recalcula só a decomposição do Sankey (sem refazer bootstrap nem validação pontual)."""
+    d = atlas_dir()
+    setor = pl.read_parquet(d / f"setor_composicao_{REF_YEAR}.parquet")
+    setor = setor.join(crime_setor(), on="cd_setor", how="left").fill_null(0)
+    setor = setor.join(group_scores(), on="cd_setor", how="left").fill_null(0.0)
+    ex = setor.filter(pl.Series(guard.explore_mask(setor["cd_dist"].to_numpy())))
+    E, names = exposure_matrix(ex)
+    E = E / 1000.0
+    est = [i for i, n in enumerate(names) if n.startswith("n_")]
+    E[:, est] *= 1000.0
+    y = ex["y"].to_numpy().astype(float)
+    dist = np.unique(ex["cd_dist"].to_numpy(), return_inverse=True)[1]
+    Z = ex.select(GROUPS).to_numpy()
+    cov = fit_covariates(E, y, Z, groups=dist, ridge=ridge, max_slope=max_slope)
+    keep = cov["keep"]
+    fl = shapley_flows(E[keep], Z[keep], cov["B"], cov["delta"])
+    rows = []
+    for k, n in enumerate(names):
+        rows.append({"classe": n, "origem": "identidade", "valor": float(fl["identidade"][k])})
+        for gi, gname in enumerate(GROUPS):
+            rows.append({"classe": n, "origem": gname, "valor": float(fl["phi"][k, gi])})
+    flows = pl.DataFrame(rows)
+    flows.write_parquet(d / "sankey_celular_2025.parquet")
+    pl.DataFrame({"classe": names, **{f"beta_{g}": cov["B"][:, i + 1] for i, g in enumerate(GROUPS)},
+                  "beta0": cov["B"][:, 0]}).write_parquet(d / "sankey_coeficientes_2025.parquet")
+    rep = json.loads((d / "atribuicao_celular_2025.json").read_text())
+    rep |= {"ridge": ridge, "inclinacao_max": max_slope, "espacial_total": fl["espacial"],
+            "sankey_total_identidade": float(fl["identidade"].sum()), "sankey_total_phi": float(fl["phi"].sum())}
+    (d / "atribuicao_celular_2025.json").write_text(json.dumps(rep, ensure_ascii=False, indent=2))
+    log(f"Sankey: identidade {fl['identidade'].sum():,.0f}; Σφ {fl['phi'].sum():,.0f}; espacial {fl['espacial']:,.0f}")
+    return flows

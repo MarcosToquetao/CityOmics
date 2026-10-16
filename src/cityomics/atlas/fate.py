@@ -4,7 +4,7 @@ Só transições **anuais do cadastro (IPTU)**, de 2012 a 2025. Os pares de anos
 porque a cobertura do IPTU cai ~25 mil lotes naquele ano. O CNPJ não entra: o snapshot só tem a
 situação final e o endereço atual (D56).
 
-1. Um classificador (kNN no espaço padronizado dos genes do IPTU) aprende, em 2025, a família de
+1. Um classificador (LightGBM multiclasse sobre os genes do IPTU) aprende, em 2025, a família de
    tipo de cada lote a partir só do IPTU. A acurácia fora da amostra fica registrada.
 2. O classificador é aplicado aos lotes de cada ano; as famílias formam a matriz de transição
    anual.
@@ -46,7 +46,7 @@ def _matrix(df: pl.DataFrame, med: np.ndarray | None = None) -> np.ndarray:
 
 
 def run(log=print) -> dict:
-    from sklearn.neighbors import KNeighborsClassifier
+    import lightgbm as lgb
     from sklearn.preprocessing import StandardScaler
 
     d = atlas_dir()
@@ -61,7 +61,7 @@ def run(log=print) -> dict:
     rng = np.random.default_rng(0)
     tr = rng.random(len(Z)) < 0.8
     sub = np.where(tr)[0][rng.choice(tr.sum(), min(300_000, tr.sum()), replace=False)]
-    clf = KNeighborsClassifier(n_neighbors=15, n_jobs=-1).fit(Z[sub], yfam[sub])
+    clf = lgb.LGBMClassifier(n_estimators=200, learning_rate=0.1, num_leaves=63, verbose=-1, random_state=0).fit(Z[sub], yfam[sub])
     te = np.where(~tr)[0][:100_000]
     acc = float((clf.predict(Z[te]) == yfam[te]).mean())
     log(f"destino: acurácia do classificador IPTU → família em 2025 = {acc:.3f}")

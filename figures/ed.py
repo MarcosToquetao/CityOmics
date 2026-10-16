@@ -61,10 +61,31 @@ def ed2(periodo):
     fig = S.figure(S.DOUBLE, 60)
     ax = ax_mm(fig, 2, 3, 179, 54)
     fmt = lambda v, d=2: "—" if v is None or (isinstance(v, float) and np.isnan(v)) else (f"{v:.{d}f}" if isinstance(v, float) else str(v))  # noqa: E731
-    rows = [[r["abordagem"], r["escala"], fmt(r["estatistica"]), fmt(r["ganho_fora_amostra_pct"]), fmt(r["estabilidade"]),
-             fmt(r["pares_tipo_significativos"]), r["status"]] for r in m.iter_rows(named=True)]
-    table(ax, ["Approach", "Scale", "Statistic", "Out-of-sample gain (%)", "Stability (ρ)", "Significant pairs", "Status"], rows,
-          [3.2, 2.0, 3.2, 1.3, 1.0, 1.0, 2.4], fontsize=4.6)
+    tr = {"ligante–receptor (COMMOT + NicheNet)": "Ligand–receptor (COMMOT + NicheNet)",
+          "excitação cruzada (Knox, consistente com Hawkes)": "Cross-excitation (Knox, Hawkes-consistent)",
+          "MISTy (visões intrínseca/justaposta/para-espacial)": "MISTy (intrinsic / juxta / para views)",
+          "NCEM / SLX (tipo receptor × vizinhança)": "NCEM / SLX (receiver type × neighbourhood)",
+          "Lee's L bivariado (ligante × crime)": "Bivariate Lee's L (ligand × theft)",
+          "fluxos OD 2017 × gravitacional": "OD-2017 flows vs gravity model", "ablação de arestas do GNN": "GNN edge ablation",
+          "setor, ℓ = 250–1000 m": "tract, ℓ = 250–1,000 m", "evento, 400 m × 14 dias": "event, 400 m × 14 days", "setor": "tract",
+          "setor (contiguidade)": "tract (contiguity)", "zona OD": "OD zone", "rodado": "run",
+          "não rodado: base OD 2017 não disponível localmente": "not run: OD-2017 data not available",
+          "não rodado nesta versão": "not run in this version"}
+    words = {"melhor par": "best pair", "razão média": "mean ratio", "máx": "max", "intrinseca": "intrinsic", "justaposta": "juxta",
+             "para_espacial": "para", "fluxo_trilhos": "rail", "fluxo_onibus": "bus", "vida_noturna": "nightlife", "varejo": "retail",
+             "dinheiro": "cash", "alvos_a_pe": "pedestrian targets", "→": " → "}
+
+    def en(s):
+        if s is None:
+            return "—"
+        s = tr.get(s, s)
+        for k, v in words.items():
+            s = s.replace(k, v)
+        return s
+    rows = [[en(r["abordagem"]), en(r["escala"]), en(r["estatistica"]), fmt(r["ganho_fora_amostra_pct"]), fmt(r["estabilidade"]),
+             fmt(r["pares_tipo_significativos"]), en(r["status"])] for r in m.iter_rows(named=True)]
+    table(ax, ["Approach", "Scale", "Statistic", "OOS gain (%)", "Stability ρ", "Sig. pairs", "Status"], rows,
+          [3.0, 1.9, 4.2, 1.0, 0.9, 0.8, 2.6], fontsize=4.6)
     return S.save(fig, "ed2_multiverso", periodo)
 
 
@@ -76,8 +97,8 @@ def ed3(periodo):
     R = np.full((len(fams), len(fams)), np.nan)
     for r in kx.iter_rows(named=True):
         R[fams.index(r["a"]), fams.index(r["b"])] = r["razao"]
-    fig = S.figure(S.DOUBLE, 64)
-    a = ax_mm(fig, 22, 6, 46, 46)
+    fig = S.figure(S.DOUBLE, 72)
+    a = ax_mm(fig, 22, 6, 44, 44)
     im = a.imshow(R, cmap=P.cmap("lajolla"), vmin=1.0, vmax=np.nanmax(R))
     a.set_xticks(range(len(fams)))
     a.set_xticklabels([FAM_EN.get(f, f) for f in fams], rotation=55, ha="right", rotation_mode="anchor", fontsize=4.8)
@@ -88,12 +109,12 @@ def ed3(periodo):
     for s in a.spines.values():
         s.set_visible(False)
     a.tick_params(length=0)
-    cb = ax_mm(fig, 70, 10, 2.2, 30)
+    cb = ax_mm(fig, 68, 10, 2.2, 30)
     c = fig.colorbar(im, cax=cb)
-    c.set_label("Knox ratio (≤400 m, 1–14 days)", fontsize=5)
+    c.set_label("Knox ratio\n(≤400 m, 1–14 days)", fontsize=5)
     c.ax.tick_params(labelsize=4.8, length=1.5)
     S.fig_label(fig, "a", 1, 3)
-    b = ax_mm(fig, 96, 8, 36, 36)
+    b = ax_mm(fig, 114, 8, 26, 36)
     d = ms.filter(pl.col("visao") != "combinada")
     names = {"intrinseca": "Intrinsic (own tract)", "justaposta": "Juxtaview (neighbours)", "para_espacial": "Paraview (1 km)"}
     b.barh(range(d.height), d["contribuicao"].to_numpy(), color=["#264653", "#2A9D8F", "#B99BF0"], height=0.6)
@@ -103,8 +124,8 @@ def ed3(periodo):
     b.set_xlabel("MISTy view contribution")
     r2 = float(ms.filter(pl.col("visao") == "combinada")["r2_sozinha"][0])
     b.set_title(f"Combined out-of-sample R² = {r2:.2f}", fontsize=5.5, loc="left", color=S.MUTED)
-    S.fig_label(fig, "b", 76, 3)
-    c2 = ax_mm(fig, 150, 8, 30, 36)
+    S.fig_label(fig, "b", 84, 3)
+    c2 = ax_mm(fig, 160, 8, 21, 36)
     lr_en = {"fluxo_trilhos": "Rail flow", "fluxo_onibus": "Bus flow", "vida_noturna": "Nightlife", "varejo": "Retail", "dinheiro": "Cash"}
     c2.barh(range(le.height), le["L_xy"].to_numpy(), color="#E8743B", height=0.6)
     c2.set_yticks(range(le.height))
@@ -112,7 +133,7 @@ def ed3(periodo):
     c2.invert_yaxis()
     c2.axvline(0, color=S.INK, lw=0.5)
     c2.set_xlabel("Lee's L (ligand × theft rate)")
-    S.fig_label(fig, "c", 136, 3)
+    S.fig_label(fig, "c", 144, 3)
     return S.save(fig, "ed3_knox_misty_lee", periodo)
 
 

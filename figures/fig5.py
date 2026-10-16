@@ -113,8 +113,9 @@ def panel_turnover(ax) -> None:
     rv = pl.read_parquet(p).filter(pl.col("m") > 0.5)
     x = rv["renovacao"].to_numpy() * 100
     y = rv["sobredispersao_intra"].to_numpy()
-    bins = np.quantile(x, np.linspace(0, 1, 11))
-    idx = np.clip(np.searchsorted(bins, x, side="right") - 1, 0, 9)
+    # decis por posto (muitos setores têm renovação zero: quantis repetidos deixariam faixas vazias)
+    rank = np.argsort(np.argsort(x, kind="stable"), kind="stable")
+    idx = (rank * 10 // len(x)).astype(int)
     mx = [np.median(x[idx == i]) for i in range(10)]
     my = [np.median(y[idx == i]) for i in range(10)]
     lo = [np.quantile(y[idx == i], 0.25) for i in range(10)]

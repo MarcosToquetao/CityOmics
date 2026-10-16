@@ -256,18 +256,18 @@ FREEZE-A (autor, até dez/2026) ─► FREEZE-B (autor) ─► abrir 2026 ─►
 
 ## Tarefas
 
-- [ ] Fase A: specs, emendas e estado da entrevista
-- [ ] `atlas/genes_lote.py` (IPTU 2025 + CNPJ 2025-12 por endereço + MEI)
-- [ ] `atlas/streets.py` (segmentos e estações como células)
-- [ ] `atlas/vault.py` (cofre espacial de distritos, semente registrada)
-- [ ] `atlas/typing.py` (Leiden, estabilidade, marcadores, k-means)
-- [ ] `atlas/spots.py` (composição por setor, quadra e distrito; FCU)
-- [ ] `atlas/niches.py` (vizinhança com nulo restrito; domínios; metacélulas)
-- [ ] `atlas/attribution.py` (λ por classe; Sankey; validação pontual)
+- [x] Fase A: specs, emendas e estado da entrevista
+- [x] `atlas/genes_lote.py` (IPTU 2025 + CNPJ 2025-12 por endereço + MEI)
+- [x] `atlas/streets.py` (segmentos e estações como células)
+- [x] `atlas/vault.py` (cofre espacial de distritos, semente registrada)
+- [x] `atlas/typing.py` (Leiden, estabilidade, marcadores, k-means)
+- [x] `atlas/spots.py` (composição por setor, quadra e distrito; FCU)
+- [x] `atlas/niches.py` (vizinhança com nulo restrito; domínios; metacélulas)
+- [x] `atlas/attribution.py` (λ por classe; Sankey; validação pontual)
 - [ ] `atlas/communication.py` (multiverso)
 - [ ] `atlas/fate.py` (transições anuais do IPTU)
-- [ ] `atlas/variance.py` e `atlas/predictors.py`
-- [ ] `models/letal_run.py` (+ celular distrito × trimestre)
+- [x] `atlas/variance.py` e `atlas/predictors.py`
+- [x] `models/letal_run.py` (+ celular distrito × trimestre)
 - [ ] `viz/*` e `figures/fig1..6`, `ed`, legendas
 - [ ] Explorador Vitessce
 - [ ] Documentação, A11 (rascunho), `freeze.py` e `privacy.py` estendidos, commits

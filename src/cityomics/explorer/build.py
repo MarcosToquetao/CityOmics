@@ -29,8 +29,6 @@ FORBIDDEN_PUBLIC = ("risco", "crime", "mu_", "pred", "n_total", "y_", "mei", "nm
 
 def lots_anndata(public: bool):
     import anndata as ad
-    from sklearn.neighbors import KNeighborsRegressor
-
     from cityomics.atlas import typing as T
     from cityomics.viz.figdata import GENE_EN
 
@@ -44,10 +42,15 @@ def lots_anndata(public: bool):
            .join(dom, on="cd_setor", how="left").sort("i"))
     um = pl.read_parquet(atlas_dir() / "tipos_umap_2025.parquet")
     pos = pl.DataFrame({"sql_base": gi["sql_base"]}).with_row_index("i").join(um.select("sql_base", "umap1", "umap2"), on="sql_base", how="inner")
-    knn = KNeighborsRegressor(n_neighbors=5, n_jobs=-1).fit(Z[pos["i"].to_numpy()], pos.select("umap1", "umap2").to_numpy())
+    from pynndescent import NNDescent
+
+    ref = pos["i"].to_numpy()
+    um_ref = pos.select("umap1", "umap2").to_numpy()
+    index = NNDescent(Z[ref], n_neighbors=15, random_state=0, n_jobs=-1)
     U = np.empty((len(Z), 2), dtype=np.float32)
     for s in range(0, len(Z), 250_000):
-        U[s:s + 250_000] = knn.predict(Z[s:s + 250_000])
+        nb, _ = index.query(Z[s:s + 250_000], k=5)
+        U[s:s + 250_000] = um_ref[nb].mean(axis=1)
     U[pos["i"].to_numpy()] = pos.select("umap1", "umap2").to_numpy()
     keep = [i for i, n in enumerate(names) if not (public and n == "cnpj_mei")]
     X = Z[:, keep].astype(np.float32)

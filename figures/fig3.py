@@ -54,7 +54,10 @@ def meta():
     tipos = perfil["nome"].to_list() + ["Favela (FCU)"]
     fam = perfil["familia"].to_list() + ["favela"]
     key = (perfil["padrao_alto"] * 2 + perfil["pavimentos"] / 10).to_list() + [0.0]
-    en = dict(zip(perfil["nome"].to_list(), perfil["name_en"].to_list())) | {"Favela (FCU)": "Favelas (FCU)"}
+    from cityomics.viz.names import SHORT
+
+    en = dict(zip(perfil["nome"].to_list(), perfil["name_en"].to_list())) | {"Favela (FCU)": "Favelas"}
+    en = {k: SHORT.get(v, v) for k, v in en.items()}
     n = dict(zip(perfil["nome"].to_list(), perfil["n_lotes"].to_list()))
     return tipos, fam, key, en, n
 
@@ -67,13 +70,16 @@ def panel_nhood(ax, ne: pl.DataFrame, order: list[str], en: dict):
     for r in ne.iter_rows(named=True):
         if r["a"] in idx and r["b"] in idx:
             Z[idx[r["a"]], idx[r["b"]]] = r["z"]
+    np.fill_diagonal(Z, np.nan)
     vmax = np.nanpercentile(np.abs(Z), 95)
-    im = ax.imshow(np.clip(Z, -vmax, vmax), cmap=P.cmap("vik"), vmin=-vmax, vmax=vmax)
+    cm = P.cmap("vik").copy()
+    cm.set_bad("#E6E6E6")
+    im = ax.imshow(np.clip(Z, -vmax, vmax), cmap=cm, vmin=-vmax, vmax=vmax)
     lab = [en.get(t, t) for t in order]
     ax.set_xticks(range(K))
-    ax.set_xticklabels(lab, rotation=60, ha="right", rotation_mode="anchor", fontsize=4.6)
+    ax.set_xticklabels(lab, rotation=60, ha="right", rotation_mode="anchor", fontsize=5)
     ax.set_yticks(range(K))
-    ax.set_yticklabels(lab, fontsize=4.6)
+    ax.set_yticklabels(lab, fontsize=5)
     ax.tick_params(length=0)
     for s in ax.spines.values():
         s.set_visible(False)
@@ -94,7 +100,7 @@ def panel_domains(ax, dom: pl.DataFrame):
     ax.set_ylabel("")
 
 
-def panel_markers(ax, mk: pl.DataFrame, names: dict, ntop: int = 3):
+def panel_markers(ax, mk: pl.DataFrame, names: dict, ntop: int = 2):
     top = mk.sort("cohen_d", descending=True).group_by("dominio").head(ntop)["covariavel"].unique().to_list()
     doms = sorted(mk["dominio"].unique().to_list())
     covs = [c for c in COV_EN if c in top] + [c for c in top if c not in COV_EN]
@@ -134,13 +140,13 @@ def panel_bubbles(ax, lt: pl.DataFrame, en: dict, ell: int = 500, ncol: int = 10
     toptt = d.group_by("tt").agg(pl.col("forca").sum()).sort("forca", descending=True).head(ncol)["tt"].to_list()
     pares = d.select("par").unique().sort("par")["par"].to_list()
     d = d.filter(pl.col("tt").is_in(toptt))
-    fmax = float(d["forca"].max())
+    d = d.with_columns((pl.col("forca") / pl.col("forca").max().over("par")).alias("rel"))
     xs = [toptt.index(t) for t in d["tt"]]
     ys = [pares.index(p) for p in d["par"]]
     size = 2 + 24 * np.clip(-np.log10(d["p"].to_numpy()) / 2.0, 0, 1)
-    sc = ax.scatter(xs, ys, s=size, c=d["forca"].to_numpy() / fmax, cmap=P.cmap("lajolla"), vmin=0, vmax=1, edgecolor="#555555", linewidth=0.2)
+    sc = ax.scatter(xs, ys, s=size, c=d["rel"].to_numpy(), cmap=P.cmap("batlow"), vmin=0, vmax=1, edgecolor="#555555", linewidth=0.2)
     ax.set_xticks(range(len(toptt)))
-    ax.set_xticklabels([" → ".join(en.get(x, x) for x in t.split(" → ")) for t in toptt], rotation=60, ha="right", rotation_mode="anchor", fontsize=4.4)
+    ax.set_xticklabels([" → ".join(en.get(x, x) for x in t.split(" → ")) for t in toptt], rotation=60, ha="right", rotation_mode="anchor", fontsize=4.6)
     ax.set_yticks(range(len(pares)))
     ax.set_yticklabels([" → ".join(LR_EN.get(x, x) for x in p.split("→")) for p in pares], fontsize=4.6)
     ax.tick_params(length=0)
@@ -163,10 +169,15 @@ def panel_field(ax, best: dict):
     V, mag = signal_field(xy, s[best["ligante"]].to_numpy(), s[best["receptor"]].to_numpy(), K)
     _, dist = M._bounds()
     bounds = tuple(dist.total_bounds)
-    gx, gy, U, W = to_grid(xy, V, bounds, n=180)
+    gx, gy, U, W = to_grid(xy, V, bounds, n=140)
+    from scipy.ndimage import gaussian_filter
+
+    U, W = gaussian_filter(U, 2.0), gaussian_filter(W, 2.0)
     S.dark(ax)
     dist.plot(ax=ax, color="#15151B", edgecolor="#2A2A33", linewidth=0.25)
-    stream(ax, gx, gy, U, W, P.cmap("lipari"), density=2.0)
+    stream(ax, gx, gy, U, W, P.cmap("lipari"), density=1.5)
+    ax.set_xlabel("")
+    ax.set_ylabel("")
     ax.set_xlim(bounds[0], bounds[2])
     ax.set_ylim(bounds[1], bounds[3])
     ax.set_aspect("equal")
@@ -185,8 +196,8 @@ def make(periodo: str = "dev"):
     lt = pl.read_parquet(atlas_dir() / "comunicacao" / "lr_tipos.parquet")
     act = pl.read_parquet(atlas_dir() / "comunicacao" / "lr_atividade.parquet")
     best = act.sort("ganho_pct", descending=True).row(0, named=True)
-    fig = S.figure(S.DOUBLE, 160)
-    a = ax_mm(fig, 24, 4, 40, 40)
+    fig = S.figure(S.DOUBLE, 158)
+    a = ax_mm(fig, 22, 4, 42, 42)
     im = panel_nhood(a, ne, order, en)
     S.fig_label(fig, "a", 1, 2)
     cb = ax_mm(fig, 66, 10, 2.2, 22)
@@ -196,21 +207,25 @@ def make(periodo: str = "dev"):
     b = ax_mm(fig, 82, 4, 44, 62)
     panel_domains(b, dom)
     S.fig_label(fig, "b", 76, 2)
-    c = ax_mm(fig, 152, 4, 30, 30)
+    c = ax_mm(fig, 158, 4, 24, 30)
     im2 = panel_markers(c, mk, {})
     S.fig_label(fig, "c", 130, 2)
-    cb2 = ax_mm(fig, 152, 60, 18, 2.0)
+    cb2 = ax_mm(fig, 136, 64, 18, 2.0)
     c2 = fig.colorbar(im2, cax=cb2, orientation="horizontal")
     c2.set_label("Cohen's d", fontsize=5.0)
     c2.ax.tick_params(labelsize=4.8, length=1.5)
-    d = ax_mm(fig, 4, 84, 62, 62)
+    d = ax_mm(fig, 10, 86, 56, 56)
     Smat = lr_matrix(lt, tipos)
-    circle(d, tipos, np.array([n.get(t, 2000) for t in tipos], dtype=float), Smat, cols, labels=en, top=28)
+    circle(d, tipos, np.array([n.get(t, 2000) for t in tipos], dtype=float), Smat, cols, labels=en, top=20)
     S.fig_label(fig, "d", 1, 80)
-    e = ax_mm(fig, 92, 84, 38, 38)
-    panel_bubbles(e, lt, en)
+    e = ax_mm(fig, 96, 84, 36, 40)
+    sc = panel_bubbles(e, lt, en)
     S.fig_label(fig, "e", 72, 80)
-    f = ax_mm(fig, 136, 72, 46, 72)
+    cb3 = ax_mm(fig, 96, 150, 16, 2.0)
+    c3 = fig.colorbar(sc, cax=cb3, orientation="horizontal")
+    c3.set_label("Strength relative to pair maximum", fontsize=4.8)
+    c3.ax.tick_params(labelsize=4.6, length=1.5)
+    f = ax_mm(fig, 136, 78, 46, 72)
     panel_field(f, best)
-    S.fig_label(fig, "f", 132, 70)
+    S.fig_label(fig, "f", 132, 76)
     return S.save(fig, "fig3", periodo)
