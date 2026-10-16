@@ -1,0 +1,25 @@
+{
+  "versao": "2026-10-16",
+  "nota": "Banco de pares ligante → receptor curado da teoria criminológica (análogo ao CellPhoneDB/OmniPath). O ligante mede o que o lugar emite (fluxo de pessoas, dinheiro, vida noturna); o receptor mede o que torna o lugar vizinho vulnerável (pouca vigilância natural, rotas de fuga, abandono, alvos a pé). Cada escore é a média das covariáveis padronizadas (sinal indicado). Montado antes de qualquer análise de crime do atlas (D53).",
+  "ligantes": {
+    "fluxo_trilhos": {"teoria": "geradores de crime (Brantingham & Brantingham 1995): estações concentram pessoas", "covariaveis": {"infra_dist_estacao_trilhos_m": -1}},
+    "fluxo_onibus": {"teoria": "geradores: terminais e pontos de ônibus concentram espera a pé", "covariaveis": {"infra_dist_terminal_onibus_m": -1, "infra_dens_ponto_onibus_km2": 1}},
+    "vida_noturna": {"teoria": "atratores e atividade rotineira noturna (Cohen & Felson 1979)", "covariaveis": {"osm_dens_poi_bar_noturno_km2": 1, "cnpj_estoque_bar_restaurante": 1, "osm_dist_bar_noturno_m": -1}},
+    "varejo": {"teoria": "atividade rotineira: compradores com celular à mão", "covariaveis": {"cnpj_estoque_comercio_varejista": 1, "osm_dens_poi_comercio_km2": 1, "osm_dens_poi_alimentacao_km2": 1}},
+    "dinheiro": {"teoria": "atratores: bancos e caixas eletrônicos", "covariaveis": {"cnpj_estoque_financeiro": 1, "agencias_estoque": 1, "osm_dens_poi_banco_atm_km2": 1}}
+  },
+  "receptores": {
+    "alvos_a_pe": {"teoria": "padrão do crime: caminhos com muito movimento a pé", "covariaveis": {"osm_betweenness_media": 1, "osm_dens_intersecoes_km2": 1}},
+    "pouca_iluminacao": {"teoria": "CPTED: pouca vigilância natural", "covariaveis": {"censo2022_frac_faces_iluminacao": -1, "infra_dens_iluminacao_km2": -1, "sp156_iluminacao_s6": 1}},
+    "rotas_de_fuga": {"teoria": "CPTED: permeabilidade e becos facilitam a fuga", "covariaveis": {"osm_frac_becos": 1, "osm_dens_intersecoes_km2": 1}},
+    "abandono": {"teoria": "desordem física (janelas quebradas; Wilson & Kelling 1982)", "covariaveis": {"sp156_imovel_abandonado_s12": 1, "sp156_limpeza_entulho_s6": 1, "censo2022_frac_dom_nao_ocupados": 1}},
+    "desvantagem": {"teoria": "desorganização social (Shaw & McKay 1942; Sampson 1997)", "covariaveis": {"ipvs_ipvs_codigo": 1, "censo_interp_renda_media_resp": -1}}
+  },
+  "pares": [
+    ["fluxo_trilhos", "alvos_a_pe"], ["fluxo_trilhos", "pouca_iluminacao"], ["fluxo_trilhos", "abandono"],
+    ["fluxo_onibus", "pouca_iluminacao"], ["fluxo_onibus", "alvos_a_pe"],
+    ["vida_noturna", "pouca_iluminacao"], ["vida_noturna", "rotas_de_fuga"], ["vida_noturna", "desvantagem"],
+    ["varejo", "alvos_a_pe"], ["varejo", "abandono"],
+    ["dinheiro", "alvos_a_pe"], ["dinheiro", "rotas_de_fuga"]
+  ]
+}

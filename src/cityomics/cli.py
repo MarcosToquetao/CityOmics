@@ -121,8 +121,6 @@ def covariates_iptu(
         typer.echo(f"{year}: {out.height:,} lotes | imóveis ligados a lote: {matched:.1%}")
 
 
-if __name__ == "__main__":
-    app()
 
 
 freeze_app = typer.Typer(help="F4: congelamento do plano antes de abrir 2026.")
@@ -151,3 +149,46 @@ def freeze_commit(confirm: bool = typer.Option(False, "--confirm", help="Confirm
         typer.echo("Use --confirm: depois do congelamento a seleção de modelos não pode mais mudar.", err=True)
         raise typer.Exit(code=2)
     typer.echo(freeze.freeze(log=typer.echo))
+
+
+atlas_app = typer.Typer(help="F6: atlas mínimo (tipos, nichos, comunicação, atribuição).")
+app.add_typer(atlas_app, name="atlas")
+
+ATLAS_STEPS = ["genes", "ruas", "tipagem", "spots", "nichos", "atribuicao", "variancia", "preditores", "comunicacao", "destino", "letal"]
+
+
+@atlas_app.command("run")
+def atlas_run(steps: list[str] = typer.Argument(None, help=f"Etapas, na ordem: {', '.join(ATLAS_STEPS)} (padrão: todas).")) -> None:
+    """Roda as etapas do atlas. Nada de 2026 é lido; o crime exclui o cofre espacial (D53)."""
+    from cityomics.atlas import attribution, communication, fate, genes_lote, niches, predictors, spots, streets, typing, variance
+    from cityomics.models import letal_run
+    from cityomics.units.setores import load_setores
+
+    run = {"genes": genes_lote.build, "ruas": lambda log: streets.build(load_setores(), log=log), "tipagem": typing.run,
+           "spots": spots.build, "nichos": niches.run, "atribuicao": attribution.run, "variancia": variance.run,
+           "preditores": predictors.shap_celular, "comunicacao": communication.run, "destino": fate.run, "letal": letal_run.run}
+    for s in steps or ATLAS_STEPS:
+        typer.echo(f"== {s}")
+        run[s](log=typer.echo)
+
+
+@app.command("figures")
+def figures(periodo: str = typer.Option("dev", help="dev (2025) ou 2026 (só com o cofre aberto, D52)."),
+            only: list[str] = typer.Option(None, "--only", help="fig1 … fig6, ed")) -> None:
+    """Gera as figuras do artigo em figures/out/<periodo>/ (PDF vetorial + PNG de 450 dpi)."""
+    from cityomics.viz import runner
+
+    runner.run(periodo, only=only or None, log=typer.echo)
+
+
+@app.command("explorer")
+def explorer(public: bool = typer.Option(False, "--public", help="Versão pública por lista branca (D49, D60)."),
+             port: int = typer.Option(8790, help="Porta do servidor local.")) -> None:
+    """Monta o explorador Vitessce em explorer/local/ ou explorer/public/."""
+    from cityomics.explorer.build import build
+
+    build(public=public, port=port, log=typer.echo)
+
+
+if __name__ == "__main__":
+    app()

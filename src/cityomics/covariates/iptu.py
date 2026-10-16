@@ -45,7 +45,14 @@ def iptu_zip(year: int) -> Path:
     return external.external_dir() / "geosampa" / "iptu" / f"IPTU_{year}.zip"
 
 
-def read_year(year: int) -> pl.DataFrame:
+# Colunas de endereço e frente, usadas pelo atlas (ligação CNPJ↔lote por endereço e testada, D51/D56)
+EXTRA = {"CODLOG DO IMOVEL": "codlog", "NOME DE LOGRADOURO DO IMOVEL": "logradouro", "NUMERO DO IMOVEL": "numero",
+         "CEP DO IMOVEL": "cep",
+         "TESTADA PARA CALCULO": "testada", "QUANTIDADE DE ESQUINAS/FRENTES": "frentes"}
+
+
+def read_year(year: int, extra: bool = False) -> pl.DataFrame:
+    cols = COLS | EXTRA if extra else COLS
     with zipfile.ZipFile(iptu_zip(year)) as z:
         name = next(n for n in z.namelist() if n.lower().endswith(".csv"))
         raw = z.read(name)
@@ -55,10 +62,11 @@ def read_year(year: int) -> pl.DataFrame:
         text = raw.decode("latin-1")
     # O arquivo não usa aspas como delimitador, e há endereços com aspas soltas (2024)
     df = pl.read_csv(text.encode(), separator=";", infer_schema=False, quote_char=None, truncate_ragged_lines=True)
-    df = df.rename({c: COLS[c.strip().upper()] for c in df.columns if c.strip().upper() in COLS})
-    df = df.select([c for c in COLS.values() if c in df.columns])
+    df = df.rename({c: cols[c.strip().upper()] for c in df.columns if c.strip().upper() in cols})
+    df = df.select([c for c in cols.values() if c in df.columns])
+    numeric = NUMERIC + (["testada", "frentes"] if extra else [])
     return df.with_columns(
-        [pl.col(c).str.replace(",", ".").cast(pl.Float64, strict=False) for c in NUMERIC if c in df.columns]
+        [pl.col(c).str.replace(",", ".").cast(pl.Float64, strict=False) for c in numeric if c in df.columns]
     ).with_columns(
         pl.col("sql").str.replace_all(r"[^0-9]", "").alias("sql_digits"),
         pl.col("condominio").str.replace_all(r"[^0-9]", "").str.slice(0, 2).alias("cond2"),

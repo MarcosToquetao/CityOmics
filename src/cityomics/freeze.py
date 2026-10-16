@@ -36,6 +36,14 @@ INPUTS = {
     "alvo_celular": lambda: processed_dir() / "alvos" / "celular_setor_mes.parquet",
     "alvo_letal": lambda: processed_dir() / "alvos" / "letal_distrito_trimestre.parquet",
 }
+# artefatos do atlas que entram no manifesto (D52): rótulos por lote, domínios, composição, cofre espacial e banco L–R
+ATLAS = {
+    "tipos_lote": lambda: processed_dir() / "atlas" / "lote_tipos_2025.parquet",
+    "dominios_setor": lambda: processed_dir() / "atlas" / "setor_dominio_2025.parquet",
+    "composicao_setor": lambda: processed_dir() / "atlas" / "setor_composicao_2025.parquet",
+    "cofre_espacial": lambda: REPO_ROOT / "prereg" / "atlas_vault.json",
+    "banco_ligante_receptor": lambda: REPO_ROOT / "src" / "cityomics" / "atlas" / "lr_pairs.json",
+}
 # identidades que a seleção pré-2026 precisa declarar (spec-benchmark §5; prereg §5.2)
 SELECTION_KEYS = ["best_baseline_crps", "best_baseline_pai1", "best_crossdomain_crps", "best_crossdomain_pai1",
                   "laya_ft", "lightgbm_compressed_state", "markov_fate_baseline"]
@@ -99,6 +107,9 @@ def check(run_tests: bool = True) -> list[str]:
             problems.append(f"seleção incompleta em {SELECTION}: {faltam_sel}")
     if not model_hashes():
         problems.append(f"nenhum modelo congelado em {models_dir()}")
+    missing = [n for n, fn in ATLAS.items() if not fn().exists()]
+    if missing:
+        problems.append("artefatos do atlas ausentes (D52): " + ", ".join(missing))
     return problems
 
 
@@ -113,6 +124,7 @@ def manifest() -> dict:
         "core_covariates": sha256(REPO_ROOT / CORE),
         "selection": sel,
         "models": model_hashes(),
+        "atlas": {n: sha256(fn()) for n, fn in ATLAS.items() if fn().exists()},
     }
 
 

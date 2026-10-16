@@ -6,7 +6,8 @@ Duas varreduras:
   em busca de chaves de API. ``.env`` é ignorado de propósito: é onde as chaves devem ficar,
   e ele está no ``.gitignore``.
 - ``scan_tables``: tabelas de um diretório (por padrão ``data/processed``), em busca de colunas
-  que identificam o BO ou o endereço. ``processed`` é o que pode subir ao Colab.
+  que identificam o BO ou o endereço. ``processed`` é o que pode subir ao Colab. Lê Parquet, CSV/TSV,
+  JSON, metadados de zarr (``zarr.json``/``.zattrs``), h5ad e SVG (D60).
 """
 
 from __future__ import annotations
@@ -71,6 +72,19 @@ def scan_repo(root: Path = REPO_ROOT) -> list[Finding]:
     return findings
 
 
+def _json_names(obj, out: set) -> None:
+    """Chaves de dicionários e nomes listados em ``column-order`` (metadados de AnnData/zarr)."""
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            out.add(str(k))
+            if k in ("column-order", "column_order") and isinstance(v, list):
+                out.update(str(x) for x in v)
+            _json_names(v, out)
+    elif isinstance(obj, list):
+        for v in obj:
+            _json_names(v, out)
+
+
 def _columns(path: Path) -> list[str]:
     suffix = path.suffix.lower()
     if suffix == ".parquet":
@@ -80,6 +94,24 @@ def _columns(path: Path) -> list[str]:
         with path.open(errors="ignore") as fh:
             header = fh.readline()
         return [c.strip().strip('"') for c in re.split(r"[,;\t]", header)]
+    if suffix in {".json", ".zattrs"} or path.name in {"zarr.json", ".zattrs", ".zgroup"}:
+        # metadados de zarr (AnnData do explorador) e JSON de figuras/configurações (D60)
+        import json
+        try:
+            obj = json.loads(path.read_text(errors="ignore")) if path.stat().st_size <= 20_000_000 else {}
+        except (OSError, ValueError):
+            return []
+        names: set = set()
+        _json_names(obj, names)
+        return sorted(names)
+    if suffix == ".h5ad":
+        import h5py
+        with h5py.File(path, "r") as f:
+            cols = list(f["obs"].keys()) if "obs" in f else []
+            return cols + list(f["obs"].attrs.get("column-order", [])) if "obs" in f else cols
+    if suffix == ".svg":
+        text = path.read_text(errors="ignore")
+        return [w for w in FORBIDDEN_COLUMNS if re.search(rf"\b{w}\b", text)]
     return []
 
 

@@ -22,7 +22,8 @@ def test_read_tile_masks_fill_and_bad_quality(tmp_path):
     assert out[0, 0] == pytest.approx(1.0) and np.isnan(out[0, 1]) and np.isnan(out[1, 0]) and out[1, 1] == pytest.approx(3.0)
 
 
-def test_token_required(monkeypatch):
+def test_token_required(monkeypatch, tmp_path):
     monkeypatch.delenv("EARTHDATA_TOKEN", raising=False)
+    monkeypatch.setattr("cityomics.paths.REPO_ROOT", tmp_path)  # sem .env: o token real não pode vazar para o teste
     with pytest.raises(RuntimeError):
         viirs.token()

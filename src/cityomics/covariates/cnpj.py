@@ -90,10 +90,10 @@ def _filtra_sp(zpath) -> bytes:
     return p2.stdout
 
 
-def parse(log=print) -> pl.DataFrame:
+def parse(log=print, mes: str = MES) -> pl.DataFrame:
     frames = []
     for i in range(N_PARTES):
-        zpath = external.external_dir() / "cnpj" / f"{MES}_Estabelecimentos{i}.zip"
+        zpath = external.external_dir() / "cnpj" / f"{mes}_Estabelecimentos{i}.zip"
         raw = _filtra_sp(zpath)
         if not raw:
             log(f"parte {i}: sem linhas de SP")
