@@ -38,3 +38,13 @@ cityomics explorer --public    # versão pública por lista branca (D49, D60)
 - **Proteção do setor (D60):** nenhum ponto de crime aparece. Os mapas com valores por setor (risco, acerto/erro) saem rasterizados, para que o valor de um setor não possa ser extraído do PDF.
 - **Esquema da Fig. 1a:** `figures/assets/fig1a_esquema.svg` é desenhado à mão e sobreposto em vetor (cairosvg + pypdf) ao PDF da Fig. 1. Pode ser refinado no Inkscape sem tocar no código.
 - **Exploração com crime no atlas:** exclui os 19 distritos do cofre espacial (`prereg/atlas_vault.json`, D53). A confirmação nesses distritos só roda depois da emenda A11.
+
+## Estado em 2026-10-16 (desenvolvimento)
+
+- **Figuras:** Figs. 1–6 e ED1–ED5 geradas em `figures/out/dev/`, com legendas em `figures/legendas_dev.md`.
+- **Explorador:** usa a subamostra aleatória de 150 mil lotes, a mesma do UMAP, com coordenadas exatas. Com 1,6 milhão de pontos e um heatmap de 1,6 milhão de colunas, o navegador travava. O mapa completo está na Fig. 1. As visões de mapa são dispersões das coordenadas (km), porque as visões espaciais do Vitessce 3.9 não colorem pontos por conjunto.
+- **Formato dos dados:** zarr v2 com compressão Blosc-LZ4. O zstd que o anndata 0.13 grava não abre no Vitessce.
+- **Pendente:**
+  - **versão pública:** ainda não mostra o risco por distrito previsto na D49. Hoje ela é mais restritiva, sem nenhum risco;
+  - **OD 2017:** ficou fora do multiverso (base não baixada);
+  - **GNN:** a ablação de arestas não foi feita.

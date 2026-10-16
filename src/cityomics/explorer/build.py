@@ -40,18 +40,14 @@ def lots_anndata(public: bool):
     dom = pl.read_parquet(atlas_dir() / "setor_dominio_2025.parquet").select("cd_setor", "dominio_nome")
     obs = (gi.with_row_index("i").join(tipos, on="sql_base", how="left").join(pts, on="sql_base", how="left")
            .join(dom, on="cd_setor", how="left").sort("i"))
-    um = pl.read_parquet(atlas_dir() / "tipos_umap_2025.parquet")
-    pos = pl.DataFrame({"sql_base": gi["sql_base"]}).with_row_index("i").join(um.select("sql_base", "umap1", "umap2"), on="sql_base", how="inner")
-    from pynndescent import NNDescent
-
-    ref = pos["i"].to_numpy()
-    um_ref = pos.select("umap1", "umap2").to_numpy()
-    index = NNDescent(Z[ref], n_neighbors=15, random_state=0, n_jobs=-1)
-    U = np.empty((len(Z), 2), dtype=np.float32)
-    for s in range(0, len(Z), 250_000):
-        nb, _ = index.query(Z[s:s + 250_000], k=5)
-        U[s:s + 250_000] = um_ref[nb].mean(axis=1)
-    U[pos["i"].to_numpy()] = pos.select("umap1", "umap2").to_numpy()
+    # o explorador usa a subamostra aleatória do UMAP (150 mil lotes, coordenadas exatas): 1,6 milhão de pontos
+    # mais um heatmap de 1,6 milhão de colunas travam o navegador; o mapa completo está na Fig. 1
+    um = pl.read_parquet(atlas_dir() / "tipos_umap_2025.parquet").select("sql_base", "umap1", "umap2")
+    sel = pl.DataFrame({"sql_base": gi["sql_base"]}).with_row_index("i").join(um, on="sql_base", how="inner").sort("i")
+    rows = sel["i"].to_numpy()
+    Z = Z[rows]
+    obs = obs.join(sel.select("i"), on="i", how="inner").sort("i")
+    U = sel.select("umap1", "umap2").to_numpy().astype(np.float32)
     keep = [i for i, n in enumerate(names) if not (public and n == "cnpj_mei")]
     X = Z[:, keep].astype(np.float32)
     var = [GENE_EN.get(names[i], names[i]) for i in keep]
@@ -105,44 +101,66 @@ def setores_anndata(public: bool):
     return a
 
 
-def config(lot_path: str, setor_path: str, base_url: str, public: bool):
+def config(lot_path: str, setor_path: str, base_url: str, public: bool, tipos: list[str] | None = None):
     from vitessce import AnnDataWrapper, VitessceConfig
     from vitessce import ViewType as vt
 
     vc = VitessceConfig(schema_version="1.0.16", name="CityOmics — São Paulo as a tissue" + ("" if public else " (local)"))
     lots = vc.add_dataset(name="Parcels (cells)").add_object(AnnDataWrapper(
         adata_url=f"{base_url}/{lot_path}", obs_feature_matrix_path="X", obs_set_paths=["obs/tipo", "obs/familia", "obs/dominio"],
-        obs_set_names=["Parcel type", "Family", "Tissue domain"], obs_embedding_paths=["obsm/X_umap"], obs_embedding_names=["UMAP"],
-        obs_points_path="obsm/spatial"))
+        obs_set_names=["Parcel type", "Family", "Tissue domain"], obs_embedding_paths=["obsm/spatial", "obsm/X_umap"],
+        obs_embedding_names=["Map", "UMAP"]))
     spots = vc.add_dataset(name="Census tracts (spots)").add_object(AnnDataWrapper(
         adata_url=f"{base_url}/{setor_path}", obs_feature_matrix_path="X", obs_set_paths=["obs/dominio"], obs_set_names=["Tissue domain"],
-        obs_spots_path="obsm/spatial"))
-    sp = vc.add_view(vt.SPATIAL, dataset=lots)
+        obs_embedding_paths=["obsm/spatial"], obs_embedding_names=["Map"]))
+    # o mapa é uma "imersão" com as coordenadas (km): a visão de dispersão colore milhões de pontos por tipo
+    mp = vc.add_view(vt.SCATTERPLOT, dataset=lots, mapping="Map")
     um = vc.add_view(vt.SCATTERPLOT, dataset=lots, mapping="UMAP")
     sets = vc.add_view(vt.OBS_SETS, dataset=lots)
     hm = vc.add_view(vt.HEATMAP, dataset=lots)
     genes = vc.add_view(vt.FEATURE_LIST, dataset=lots)
-    sp2 = vc.add_view(vt.SPATIAL, dataset=spots)
-    desc = vc.add_view(vt.DESCRIPTION)
-    desc.set_props(description=("Each point is a fiscal parcel (a 'cell'), coloured by its type. Census tracts are the 'spots'. "
-                                "Click a type to highlight it across the map, the UMAP and the heatmap. "
+    sp2 = vc.add_view(vt.SCATTERPLOT, dataset=spots, mapping="Map")
+    desc = vc.add_view(vt.DESCRIPTION, dataset=lots)
+    desc.set_props(description=("Each point is a fiscal parcel (a 'cell'), coloured by its type. Census tracts are the 'spots' (lower right). "
+                                "Click a type to highlight it across the map, the UMAP and the heatmap; pick an attribute ('gene') to colour by it. "
                                 + ("Predicted risk is shown only by district in this public version." if public else
-                                   "Local version: tract-level risk and observed counts (do not share).")))
-    vc.link_views([sp, um, sets, hm, genes], ["obsSetSelection", "obsColorEncoding"], [None, "cellSetSelection"])
-    vc.layout((sp | (um / sp2)) / (sets | genes | hm | desc))
+                                   "Local version: tract-level predicted risk and observed counts are tract features (do not share).")))
+    sel0 = [["Parcel type", x] for x in (tipos or [])] or None
+    colors = None
+    if tipos:
+        from cityomics.viz.palette import type_colors
+
+        perfil = pl.read_parquet(atlas_dir() / "tipos_perfil_2025.parquet")
+        fam = dict(zip(perfil["nome"].to_list(), perfil["familia"].to_list())) | {"Sem cadastro": "sem_cadastro", "Favela (FCU)": "favela"}
+        hexes = type_colors(tipos, [fam.get(x, "sem_cadastro") for x in tipos], [0.0] * len(tipos), dark=True)
+        colors = [{"path": ["Parcel type", x], "color": [int(hexes[x][i:i + 2], 16) for i in (1, 3, 5)]} for x in tipos]
+    vc.link_views([mp, um, sets, hm, genes], ["obsSetSelection", "obsColorEncoding", "featureSelection", "obsSetColor"],
+                  [sel0, "cellSetSelection", None, colors])
+    vc.layout((mp | (um / sp2)) / (sets | genes | hm | desc))
     return vc
 
 
-def build(public: bool, port: int = 8790, log=print) -> dict:
+def build(public: bool, port: int = 8790, reuse: bool = False, log=print) -> dict:
+    """``reuse=True`` mantém os zarr já gravados e só refaz a configuração e a página."""
+    import anndata as ad
+
+    ad.settings.zarr_write_format = 2  # o Vitessce 3.9 lê zarr v2 (.zarray/.zgroup)
     d = OUT / ("public" if public else "local")
-    if d.exists():
-        shutil.rmtree(d)
-    (d / "data").mkdir(parents=True)
-    lots = lots_anndata(public)
-    lots.write_zarr(d / "data" / "lotes.zarr")
-    spots = setores_anndata(public)
-    spots.write_zarr(d / "data" / "setores.zarr")
-    vc = config("data/lotes.zarr", "data/setores.zarr", f"http://localhost:{port}", public)
+    if reuse and (d / "data" / "lotes.zarr").exists() and (d / "data" / "setores.zarr").exists():
+        lots, spots = ad.read_zarr(d / "data" / "lotes.zarr"), ad.read_zarr(d / "data" / "setores.zarr")
+    else:
+        if d.exists():
+            shutil.rmtree(d)
+        (d / "data").mkdir(parents=True)
+        import numcodecs
+
+        comp = numcodecs.Blosc(cname="lz4", clevel=5, shuffle=numcodecs.Blosc.SHUFFLE)  # o zstd do anndata não abre no Vitessce
+        lots = lots_anndata(public)
+        ad.io.write_zarr(d / "data" / "lotes.zarr", lots, compressor=comp)
+        spots = setores_anndata(public)
+        ad.io.write_zarr(d / "data" / "setores.zarr", spots, compressor=comp)
+    vc = config("data/lotes.zarr", "data/setores.zarr", f"http://localhost:{port}", public,
+                tipos=sorted(lots.obs["tipo"].astype(str).unique().tolist()))
     cfg = vc.to_dict(base_url=f"http://localhost:{port}")
     (d / "config.json").write_text(json.dumps(cfg, ensure_ascii=False, indent=1))
     (d / "index.html").write_text(INDEX_HTML.replace("__TITLE__", cfg.get("name", "CityOmics")))
@@ -168,13 +186,17 @@ def check_public(d) -> None:
 INDEX_HTML = """<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>__TITLE__</title>
-<link rel="stylesheet" href="https://unpkg.com/vitessce@3.9.7/dist/esm/index.css" onerror="this.remove()">
 <style>html,body,#root{margin:0;height:100%;background:#0b0b0e;color:#ddd;font-family:Arial,Helvetica,sans-serif}</style>
-</head><body><div id="root">Loading…</div>
+<script type="importmap">{"imports": {
+  "react": "https://esm.sh/react@18.2.0",
+  "react-dom": "https://esm.sh/react-dom@18.2.0",
+  "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+  "react/jsx-runtime": "https://esm.sh/react@18.2.0/jsx-runtime"}}</script>
+</head><body><div id="root">Loading the CityOmics explorer…</div>
 <script type="module">
-import React from "https://esm.sh/react@18.2.0";
-import { createRoot } from "https://esm.sh/react-dom@18.2.0/client";
-import { Vitessce } from "https://esm.sh/vitessce@3.9.7?deps=react@18.2.0,react-dom@18.2.0";
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { Vitessce } from "https://cdn.jsdelivr.net/npm/vitessce@3.9.7/dist/index.min.js";
 const config = await (await fetch("config.json")).json();
 createRoot(document.getElementById("root")).render(
   React.createElement(Vitessce, { config, height: window.innerHeight, theme: "dark" }));

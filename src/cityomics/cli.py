@@ -183,11 +183,12 @@ def figures(periodo: str = typer.Option("dev", help="dev (2025) ou 2026 (só com
 
 @app.command("explorer")
 def explorer(public: bool = typer.Option(False, "--public", help="Versão pública por lista branca (D49, D60)."),
-             port: int = typer.Option(8790, help="Porta do servidor local.")) -> None:
+             port: int = typer.Option(8790, help="Porta do servidor local."),
+             reuse: bool = typer.Option(False, "--reuse", help="Reaproveita os zarr e refaz só a configuração.")) -> None:
     """Monta o explorador Vitessce em explorer/local/ ou explorer/public/."""
     from cityomics.explorer.build import build
 
-    build(public=public, port=port, log=typer.echo)
+    build(public=public, port=port, reuse=reuse, log=typer.echo)
 
 
 if __name__ == "__main__":
