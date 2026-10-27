@@ -1,0 +1,87 @@
+{
+  "modo": "confirmação no cofre",
+  "data": "2026-10-27",
+  "familia": [
+    "A-R1",
+    "A-R2",
+    "A-R6",
+    "A-R7",
+    "A-R8"
+  ],
+  "n_dev": 77,
+  "n_teste": 19,
+  "resultados": {
+    "A-R1": {
+      "estatistica": 0.7124505928853756,
+      "p": 0.0003,
+      "classes": 23,
+      "p_holm": 0.0012,
+      "criterio": 0.7,
+      "sustentada": true
+    },
+    "A-R2": {
+      "estatistica": 0.535064935064935,
+      "p": 0.0065,
+      "classes": 21,
+      "p_holm": 0.013,
+      "criterio": 0.0,
+      "sustentada": true
+    },
+    "A-R6": {
+      "estatistica": 0.8468379446640316,
+      "p": 0.0001,
+      "fenotipos": [
+        "furto_outros",
+        "celular_furto",
+        "celular_roubo",
+        "roubo_outros",
+        "furto_veiculo",
+        "lesao_dolosa",
+        "transito",
+        "roubo_veiculo",
+        "fios_cabos",
+        "comercio",
+        "interior_veiculo",
+        "residencia",
+        "carga",
+        "letal",
+        "coletivo"
+      ],
+      "por_fenotipo": {
+        "furto_outros": 0.8814229249011858,
+        "celular_furto": 0.824110671936759,
+        "celular_roubo": 0.8952569169960475,
+        "roubo_outros": 0.884387351778656,
+        "furto_veiculo": 0.9407114624505929,
+        "lesao_dolosa": 0.9575098814229249,
+        "transito": 0.8754940711462451,
+        "roubo_veiculo": 0.8300395256916996,
+        "fios_cabos": 0.58300395256917,
+        "comercio": 0.9249011857707511,
+        "interior_veiculo": 0.8468379446640316,
+        "residencia": 0.7075098814229249,
+        "carga": 0.83300395256917,
+        "letal": 0.7737154150197629,
+        "coletivo": 0.7164031620553359
+      },
+      "p_holm": 0.0005,
+      "criterio": 0.7,
+      "sustentada": true
+    },
+    "A-R7": {
+      "estatistica": 0.16644084154257816,
+      "p": 0.001,
+      "eventos": 32886,
+      "p_holm": 0.003,
+      "criterio": null,
+      "sustentada": true
+    },
+    "A-R8": {
+      "estatistica": 0.12038154122419711,
+      "p": 0.3268365817091454,
+      "p_holm": 0.3268365817091454,
+      "criterio": 0.0,
+      "sustentada": false
+    }
+  }
+}
