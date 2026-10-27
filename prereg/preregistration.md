@@ -2,7 +2,7 @@
 
 **Template:** OSF *Preregistration for secondary data analysis* (van den Akker et al., 2021), adapted.
 **Status:** DRAFT v0.2 (2026-10-15; v0.1 of 2026-10-14 plus the amendments A1–A9 listed in `prereg/AMENDMENTS.md`). **Registration timing (D33):** this plan will be registered on OSF at the final stage of the project. Before the 2026 vault is opened, a freeze commit records frozen-model hashes and best-in-class selections; that commit is the software key to the vault. Consequently, the 2026 validation is reported as a **sealed retrospective hold-out**, and the prospective window (§5.5) is the fully clean test.
-**Authors:** [fill in: name(s), affiliation, supervisor]
+**Authors:** Marcos Lemes Toquetão (PhD student) and Helder I. Nakaya (supervisor), Innovation Center, University of São Paulo (InovaUSP), São Paulo, Brazil
 **Project repository:** https://github.com/MarcosToquetao/CityOmics (private until publication). Design documents: `spec-overview.md`, `spec-dados.md`, `spec-benchmark.md`, `spec-atlas.md`. Decision IDs (Dn) refer to the Decisions Log in `spec-overview.md`.
 
 ---

@@ -2,9 +2,9 @@
 title: "Crime as a phenotype of urban tissue"
 ---
 
-[AUTHORS]^1^
+Marcos Lemes Toquetão^1^ & Helder I. Nakaya^1^
 
-^1^[AFFILIATIONS]. Correspondence: [CORRESPONDING]
+^1^Innovation Center, University of São Paulo (InovaUSP), São Paulo, Brazil. Correspondence: Marcos Lemes Toquetão ([E-MAIL])
 
 <!--ABSTRACT-->
 ## Abstract
@@ -139,16 +139,20 @@ Extended Data Figs. 6–9 compare each omics-derived module with an urban analog
 
 Unless stated, intervals are 95% percentile intervals from district bootstrap resamples, ρ is Spearman's correlation across classes, r is Pearson's correlation and P values are two-sided. The confirmatory family (C1–C5) uses one-sided tests with Holm correction and the criteria of Table 1, dated in amendment A11. The benchmark hypothesis H1 is that the best cross-domain model has a lower CRPS than the negative binomial baseline in 2026.
 
-### Privacy and ethics
+### Privacy
 
-The study uses public administrative records and a public survey without contact with people. Report numbers, addresses and coordinates stayed on a local machine; outputs are aggregated to tracts or classes, tract-level crime maps are rasterized, and the public explorer shows no per-tract risk. Class profiles are not intended for area-wide policing or for inferring the characteristics of residents. [ETHICS: institutional review statement and any stakeholder consultation.]
-
-### Use of large language models
-
-[AUTHORS TO CONFIRM: describe the use of AI assistance in code, analysis and drafting, per Nature Portfolio policy.]
+The study uses public administrative records and a public survey without contact with people. Report numbers, addresses and coordinates stayed on a local machine; outputs are aggregated to tracts or classes, tract-level crime maps are rasterized, and the public explorer shows no per-tract risk. Class profiles are not intended for area-wide policing or for inferring the characteristics of residents.
 <!--/METHODS-->
 
 <!--END-->
+## Ethics statement
+
+The study used only publicly available records and surveys (crime reports, property-tax and business registries, census and mobility survey data) and had no contact with people. Under Resolution 510/2016 of Brazil's National Health Council (article 1, sole paragraph, item II), research that uses information of public access under Law 12.527/2011 is not registered or evaluated by the CEP/CONEP system, so no committee review was required. Results are reported for classes of places, districts and tracts and not for individuals.
+
+## Use of large language models
+
+The authors used Claude (Anthropic; Claude Code with the Claude Opus 5.5 and Sonnet 5.5 models, several instances working in parallel as agents) as an assistant for code, analysis and writing. Under the authors' direction it wrote and refactored the analysis code, tests and figure scripts, ran the analyses, drafted and edited the text and the Supplementary Information, checked the numbers in the text against the output files and the references against Crossref records, and produced simulated peer-review critiques. The authors defined the research questions, the design and the confirmatory claims, decided which critiques and analyses to adopt (including recomputing the parcel typing and the dated amendments), reviewed the results and the text, and approved the submitted material. The model is not an author. The authors take full responsibility for the content, including its accuracy and the citations. The code and outputs are archived so that every analysis can be reproduced without the assistant.
+
 ## Data availability
 
 The crime, cadastral, registry, census and survey data are public{ssp_data,geosampa,cnpj,ibge2022,metro2023,metro2017}. Aggregated outputs at the level of classes, districts and tracts (excluding per-tract crime risk) will be deposited at Zenodo [DOI].
@@ -163,7 +167,7 @@ The code is available at [REPOSITORY] and will be archived at Zenodo [DOI].
 
 ## Author contributions
 
-[CRediT STATEMENT]
+M.L.T.: conceptualization, data curation, formal analysis, investigation, methodology, software, validation, visualization, writing (original draft). H.I.N.: conceptualization, methodology, supervision, writing (review and editing).
 
 ## Competing interests
 
