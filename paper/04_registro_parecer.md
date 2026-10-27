@@ -67,27 +67,27 @@ Estados: **edição** = resolvido por edição; **análise** = resolvido por an�
 
 ## 4. Pendências
 
-**Suas decisões:**
-1. Datar a A11. A C5 foi redefinida para "polos × ruas locais" e a C2 continua fraca (ρ > 0).
-2. Datar a A12 (CRPS) e refazer `prereg/selection.json`. Hoje ele aponta o modelo da rodada com VIIRS; repontuar também `pred_viirs_*`.
-3. Rodar a confirmação uma vez, e depois o FREEZE-A e o FREEZE-B.
-4. Preencher as declarações (R17).
-5. Decidir a revista.
+**Feito em 2026-10-27 (sob autorização do autor):**
+- A11 (família B, A-R5 exploratória), A12 (CRPS) e A13 (modelos congelados; H4 exploratório) datadas em `prereg/AMENDMENTS.md`; `prereg/selection.json` completo e aplicado.
+- 14 modelos de crime, pesos do ensemble, recalibradores do Laya e do comparador do H2 e Markov do destino congelados em `data/models/frozen/` (`cityomics freeze models`).
+- **Confirmação única no cofre espacial** (`prereg/atlas_confirmacao.json`, 19 distritos, Holm):
+  - A-R1 sustentada: ρ = 0,71 (critério 0,7; margem estreita), P = 0,001;
+  - A-R2 sustentada: ρ = 0,54, P = 0,013;
+  - A-R6 sustentada: mediana de ρ = 0,85, P < 0,001;
+  - A-R7 sustentada: H = 0,17, P = 0,003;
+  - **A-R8 não sustentada:** diferença de 0,12 (0,33 na exploração), P = 0,33. A queda mais lenta nos polos continua exploratória e o texto diz isso.
+- `freeze.py` em duas etapas (A e B); manuscrito, Tabela 1, limitações e cronologia do SI atualizados; texto principal com 3.493 palavras.
 
-**Técnicas:**
-- Modelo hierárquico da sobredispersão mensal (fora desta rodada).
-- **Feitas em 2026-10-26:**
-  - rodada VIIRS repontuada com o CRPS corrigido: o ensemble fica em primeiro e `lgbm_sem_crime` piora em relação ao GLM; registrado na A12, com a proposta para `selection.json`, que não foi tocado;
-  - módulos novos registrados em `cityomics atlas run`;
-  - OD 2023 no manifesto de fontes externas (sha256 1844d38a…) e em `freeze.ATLAS` (`presenca_od2023`);
-  - `figures/legends.py` com os nomes da tipagem nova;
-  - explorador local e público refeitos com a tipagem nova, com tipos, famílias, domínios e participações em inglês legível.
-- **Bloqueios do FREEZE-A achados por `freeze check`, anteriores ao parecer (F5 incompleta):**
-  - não há modelo em `data/models/frozen/`;
-  - em `selection.json` faltam `laya_ft`, `lightgbm_compressed_state` e `markov_fate_baseline`.
-  - É preciso reajustar e salvar os modelos finais (≤ 2025) e escolher as três identidades. O Laya roda no Colab.
+**Faltam, só do autor:**
+1. Rodar `notebooks/colab/laya_hash_pesos.ipynb` no Colab e salvar o `pesos_sha256.json` em `data/models/frozen/laya_ft/`. É o único bloqueio do `cityomics freeze check --etapa A`.
+2. FREEZE-A, depois FREEZE-B (grava a chave do cofre de 2026). Antes do FREEZE-B o código exige o FREEZE-A commitado e inalterado.
+3. Preencher as declarações (R17) e decidir a revista.
+4. Rodar o H1 em 2026 depois de aberto o cofre (`congelar.prever`) e preencher o último `[CONFIRMATION]`.
 
-**Nada foi commitado.**
+**Técnicas, fora desta rodada:**
+- Modelo hierárquico da sobredispersão mensal.
+- `figures/legends.py` e o explorador já usam a tipagem nova.
+- O Laya-FT foi ajustado só em 2024-H1, com soft cross-entropy (não RLCD em 2022–2024); a A13 corrige o texto do protocolo.
 
 ## 5. Prontidão
 
