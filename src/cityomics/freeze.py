@@ -110,10 +110,14 @@ def check(run_tests: bool = True, etapa: str = "B") -> list[str]:
             problems.append(f"{MANIFEST_A} não está commitado")
         else:
             a = json.loads((REPO_ROOT / MANIFEST_A).read_text())
-            atual = manifest(etapa="A")
-            for k in ("inputs", "selection", "models", "atlas", "core_covariates"):
-                if a.get(k) != atual.get(k):
-                    problems.append(f"'{k}' mudou depois do FREEZE-A")
+            try:
+                atual = manifest(etapa="A")
+            except FileNotFoundError as e:
+                problems.append(f"não foi possível recalcular os hashes do FREEZE-A: {e.filename}")
+            else:
+                for k in ("inputs", "selection", "models", "atlas", "core_covariates"):
+                    if a.get(k) != atual.get(k):
+                        problems.append(f"'{k}' mudou depois do FREEZE-A")
         if not (REPO_ROOT / CONFIRMACAO).exists():
             problems.append("confirmação do atlas no cofre espacial ainda não rodou (atlas.confirmacao.confirmar)")
     if _git("status", "--porcelain", "--untracked-files=no"):
