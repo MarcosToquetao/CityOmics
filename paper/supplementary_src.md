@@ -94,6 +94,7 @@ All dates are 2026 unless stated and can be checked against the version history 
 | 20 October | Robustness analyses requested in review. Street-segment assignment and the CRPS of fractional counts corrected; atlas and event study recomputed on exploration districts only (this version) | Exploration results only |
 | 21 October | Parcel typing recomputed with the same crime-free procedure, on an exact k-nearest-neighbour graph, because the earlier typing (computed before repeated parcel polygons were unified) could not be reproduced (ARI = 0.58). Atlas recomputed on the new 16 types; C5 redefined as hubs (stations, terminals, commercial and service types) against local streets. Earlier versions preserved in the repository | Crime results of the earlier typing in exploration districts |
 | 27 October | Authors dated amendments A11 (confirmatory criteria), A12 (CRPS correction) and A13 (frozen models; H4 made exploratory). Single confirmatory test run in the 19 vault districts: C1–C4 supported, C5 not (Table 1) | Vault districts (atlas claims only) |
-| Pending | First freeze (benchmark, frozen models, atlas inputs). Second freeze. Opening of 2026 (sealed hold-out, January–September 2026) | — |
+| 27 October | First freeze (commit 25a25cd: benchmark selection, 14 frozen crime models, hash of the fine-tuned decision-model weights, atlas inputs) and second freeze (commit cde1bda: amendments A11–A13 and the confirmatory result); the vault key was issued and the vault remained closed | — |
+| Pending | Opening of 2026 (sealed hold-out, January–September 2026) | — |
 | November 2026–March 2027 | Prospective window: months that did not exist when the plan and criteria were written | — |
 <!--/S1-->

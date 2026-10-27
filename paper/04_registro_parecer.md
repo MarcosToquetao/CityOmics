@@ -78,11 +78,14 @@ Estados: **edição** = resolvido por edição; **análise** = resolvido por an�
   - **A-R8 não sustentada:** diferença de 0,12 (0,33 na exploração), P = 0,33. A queda mais lenta nos polos continua exploratória e o texto diz isso.
 - `freeze.py` em duas etapas (A e B); manuscrito, Tabela 1, limitações e cronologia do SI atualizados; texto principal com 3.493 palavras.
 
+**Congelamento (2026-10-27, o hash dos pesos do Laya veio do Colab depois que o autor restaurou a pasta do Drive):**
+- FREEZE-A `25a25cd` (benchmark, modelos, hash do Laya, atlas) e FREEZE-B `cde1bda` (A11–A13 e confirmação). Chave `FREEZE-CDE1BDA` gravada em `prereg/UNSEAL_KEY` (`ca712ae`). O cofre de 2026 continua fechado.
+- `model.safetensors` do Laya-FT: sha256 `4c56e1cd…1fa0`. A pasta do Drive não pode mais mudar nem ser apagada; guardar uma cópia.
+
 **Faltam, só do autor:**
-1. Rodar `notebooks/colab/laya_hash_pesos.ipynb` no Colab e salvar o `pesos_sha256.json` em `data/models/frozen/laya_ft/`. É o único bloqueio do `cityomics freeze check --etapa A`.
-2. FREEZE-A, depois FREEZE-B (grava a chave do cofre de 2026). Antes do FREEZE-B o código exige o FREEZE-A commitado e inalterado.
-3. Preencher as declarações (R17) e decidir a revista.
-4. Rodar o H1 em 2026 depois de aberto o cofre (`congelar.prever`) e preencher o último `[CONFIRMATION]`.
+1. Preencher as declarações (R17) e decidir a revista.
+2. Rodar o H1 em 2026 depois de aberto o cofre (`congelar.prever`) e preencher o último `[CONFIRMATION]`.
+3. Registrar no OSF (DOI) e anexar o `ACCESS_LOG`.
 
 **Técnicas, fora desta rodada:**
 - Modelo hierárquico da sobredispersão mensal.
