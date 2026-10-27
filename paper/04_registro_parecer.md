@@ -92,6 +92,8 @@ Estados: **edição** = resolvido por edição; **análise** = resolvido por an�
 - **Referências:** 67 no total, 49 no texto principal. Metadados da Crossref coerentes com autor e ano de cada chave, nenhuma retratação ou preocupação editorial, todos os links institucionais respondem (HTTP 200) e cada citação foi lida contra a frase em que aparece. O texto principal fecha em 3.500 palavras (limite 3.500) e os Methods em 2.987.
 - Uma frase dos Methods dizia que a correção do CRPS era "amendment pending registration"; agora cita a A12, datada.
 
+- **`sealed.py` endurecido depois do FREEZE-B** (commit posterior ao `cde1bda`): a chave `FREEZE-<sha>` agora precisa ser o commit que **introduziu** `prereg/FREEZE_MANIFEST.json`. Antes, qualquer commit posterior ao congelamento herdava o manifesto e abria o cofre. A chave emitida (`FREEZE-CDE1BDA`) continua válida. Mudança só restritiva, não altera hashes nem dados.
+
 **Técnicas, fora desta rodada:**
 - Modelo hierárquico da sobredispersão mensal.
 - `figures/legends.py` e o explorador já usam a tipagem nova.

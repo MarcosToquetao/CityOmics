@@ -64,6 +64,10 @@ def _commit_has_manifest(sha: str) -> bool:
     out = _git("show", f"{sha.lower()}:prereg/FREEZE_MANIFEST.json")
     if out is None or out.returncode != 0:
         return False
+    # tem de ser o commit que introduziu o manifesto: os commits posteriores o herdam, e não são o congelamento
+    add = _git("log", "--diff-filter=A", "--format=%H", "--", "prereg/FREEZE_MANIFEST.json")
+    if add is None or add.returncode != 0 or not add.stdout.split() or not add.stdout.split()[-1].startswith(sha.lower()):
+        return False
     try:
         return json.loads(out.stdout).get("complete") is True
     except ValueError:
