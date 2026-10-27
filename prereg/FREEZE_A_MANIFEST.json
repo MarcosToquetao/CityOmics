@@ -1,0 +1,64 @@
+{
+  "etapa": "A",
+  "complete": false,
+  "created_at": "2026-10-27T05:06:40+00:00",
+  "code_commit": "baf98871b6ad0f4bcae12f6db0bbc902e3567598",
+  "inputs": {
+    "snapshot_bo": "f066c0cc05207d12c5fe8ed269004e4da97037ede653e37d804be20b13bbf4cb",
+    "manifesto_externas": "a539c967941161a346807fff0150604a29cfc960fdb4eaf8e8c5e54004c11230",
+    "painel_covariaveis": "5f2dbf997999d291dd746d5f67649874d274e66d1086cfbed62ff54f0d2ddc55",
+    "alvo_celular": "c09e593992aa15bceb8ce1e167eae85d1210023e9f028b5cceecf01acdf102e1",
+    "alvo_letal": "1f8933dd472f4482d06773086cd10be0d0f01ddd65f2729375cfcc6d874179d3"
+  },
+  "locks": {
+    "conda-linux-64.lock": "4c925ded4512e904ad3fe8ecdb3f695da18c22d0e11c55a731eb92cc222406bb",
+    "requirements-pip.lock": "a14b6e3cb1cef61c0c0f8b9fd31c9b0c4fa2681c4a9c914a0452f918ba5b75b0",
+    "R/versions.lock": "c46dc6d8844fdb2ea996aea59accfdd9109afd8d8b2d35127a1ad4be1fb93fe0"
+  },
+  "core_covariates": "fb1e06c0f6a5ada6655b2c50b837e8dfc71f27a7da5850f5e8e01d0faf38ff27",
+  "selection": {
+    "best_baseline_crps": "glm",
+    "best_baseline_pai1": "media_historica",
+    "best_crossdomain_crps": "ensemble",
+    "best_crossdomain_pai1": "ensemble",
+    "laya_ft": "laya_ft",
+    "lightgbm_compressed_state": "lgbm_estado",
+    "markov_fate_baseline": "markov_familia_dominio",
+    "status": "final: CRPS corrigido (A12) e modelos congelados (A13), dados até 2025-12"
+  },
+  "models": {
+    "MANIFESTO.json": "1fd37159141ed2f05971813cf7f23251b3f5f48e700b6e9019c9932a590d21b4",
+    "crime/bym2.joblib": "14099c3c808098879774f9bde1170297c299b99432c37e6ec5cdcde292e11b5a",
+    "crime/chronos.joblib": "98953199d8e34a644ace6c4a700d16e8f2a11bdf98b3f624d134278126e55453",
+    "crime/ensemble.json": "5a89e1b61f7ccbdb6863d6abdd361aac18429eac4fe4831f216933c106a90ba8",
+    "crime/glm.joblib": "11a340c17bdd87bad4a630b7573151a70c17a1f97a1d06463fe4b6c9441f3073",
+    "crime/gnn.joblib": "db39446361798813f2be99b9dc83592d6a3f0e90fcb11d3d9c9b93e23848a097",
+    "crime/gwr_distrito.joblib": "6e6c0610439af6abc3611e97c39a93dee07d5f271db6532a76c398b89c0192ba",
+    "crime/hawkes.joblib": "e1be37a1e983e53de966760e711097cc0d2beb048adb6780dc35118d917a3245",
+    "crime/kde.joblib": "6641749bee0158d0ea6f0f49dfdad8212a71ee59947761befc895bbb5b864203",
+    "crime/lgbm_completo.joblib": "68fd63b8041efa32bb5ca353f13c56ba694f6d061d5c70e27a1bd4ef06619af3",
+    "crime/lgbm_nucleo.joblib": "9e7967d76dc5e4704cfc96b6392f924768c2cb08cdf1fb1b4032548b8bcf6c0b",
+    "crime/lgbm_sem_crime.joblib": "381f9adb94fbd49520b22c2d7d5187dcda8ebfb5a8d17d7c11d87641daf02c08",
+    "crime/maxent.joblib": "f4c5945922c63d06263eaadbdeaa5368d5c01abf09e458ed38f1944de99851f2",
+    "crime/media_historica.joblib": "3de0dec5bbb5d25854a03c42657d8aceb6adef4b14174183b6e8eaf9d1091ae1",
+    "crime/painel_espacial.joblib": "1ad0d0946b264c244377ba83a73d8dbc7c0a49fb9fd198cf56146259f250f8dd",
+    "crime/spde.joblib": "6457370c8dc86d56dd168be5e56d7fcac6d274f12c0af540616ba81edd584dc6",
+    "destino/markov_familia_dominio.parquet": "2a9a1522914a5f367c1833f80f015457475549b8a2a74e3558b18c367075dc2a",
+    "laya_ft/pesos_sha256.json": "4730aaf1a7c44e314451ede0c5b9f63625fbb560f084591f11b147325c83ba52",
+    "laya_ft/recalibrador_isotonico_2025.joblib": "5a7cd8d9dfd23816b51da3a510ba1a9032e82e74ff128bf3c71bc30171e3e1b6",
+    "lgbm_estado/features.json": "2464f24afa4f215bded90bfe9c07dfa72ddcd332ef400fd0d74704f71f9ec692",
+    "lgbm_estado/lgbm_estado.txt": "35de4bb2511a30af118866c0dd3d0916d77baa7e451414669ebdd1978f0c6634",
+    "lgbm_estado/recalibrador_isotonico_2025.joblib": "34a8df8fb0f9adf433eaa53573f187ee9c45115904379c9f694996fb8dd325dc"
+  },
+  "atlas": {
+    "tipos_lote": "d658d856af96084bfcd4da89a8f80cfef874999b85c8564961fc0733d7e992e4",
+    "dominios_setor": "8f660a1331fb703422e48868de8b0f419de2a7b4586ad726f9dbfe681e39008d",
+    "composicao_setor": "736e9db8b13d30ddb431bdc3de7308a47cc05a8fe370d0572fcb49aafec39849",
+    "cofre_espacial": "1843feebb3fb159aa708c364fe8b04037b4d94ed4df809419fc34bab901219c1",
+    "banco_ligante_receptor": "63ee8cf9f8603a1bd595ef610fb74fc3bb8aa0b3846ef517c8b8fb25901303e2",
+    "alvos_fenotipo": "d99da95e4107bc8429c99b57b7091229fbc62bfb324e285b66aae800423176bd",
+    "presenca_od2017": "1529ba8a938a08240e8b735cdb69d374fc012d3bc06088231fa62a40ddf2f54a",
+    "presenca_od2023": "14587194e9ad7fc9d63341e80925c32829fb26dbd4db3b114a717b37624bac6d",
+    "codigo_confirmacao": "2108e8a681921fd76c11319701821b4cd67d3487d7af83fab1af6353bd93967b"
+  }
+}
