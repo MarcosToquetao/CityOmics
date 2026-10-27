@@ -9,10 +9,18 @@ O commit de congelamento fixa, antes de qualquer leitura do cofre de 2026:
 - os modelos congelados (sha256 dos arquivos em ``data/models/frozen/``) e a identidade dos
   melhores da classe (``prereg/selection.json``).
 
-``cityomics freeze check`` lista o que falta. ``cityomics freeze commit --confirm`` grava
-``prereg/FREEZE_MANIFEST.json``, faz o commit de congelamento e, num segundo commit, grava
-``prereg/UNSEAL_KEY`` com ``FREEZE-<sha do primeiro>``. O cofre só abre se o commit da chave
-contiver um manifesto completo (ver ``sealed.py``).
+Duas etapas (D52, A11):
+
+- **FREEZE-A** (``cityomics freeze commit --etapa A --confirm``): benchmark, modelos congelados
+  (``cityomics freeze models``), seleção e artefatos do atlas; grava ``prereg/FREEZE_A_MANIFEST.json``
+  e faz o commit, **sem** chave do cofre. Exige as emendas A12 e A13 datadas e o sha256 dos pesos do Laya.
+- **FREEZE-B** (``--etapa B``): exige a A11 datada, a confirmação do atlas no cofre espacial feita
+  (``prereg/atlas_confirmacao.json``) e os hashes do FREEZE-A inalterados; grava
+  ``prereg/FREEZE_MANIFEST.json``, faz o commit e, num segundo commit, grava ``prereg/UNSEAL_KEY`` com
+  ``FREEZE-<sha do primeiro>``. O cofre de 2026 só abre se o commit da chave contiver um manifesto
+  completo (ver ``sealed.py``).
+
+``cityomics freeze check --etapa A|B`` lista o que falta.
 """
 
 from __future__ import annotations
@@ -26,6 +34,10 @@ from cityomics.ingest.snapshot import sha256
 from cityomics.paths import REPO_ROOT, data_dir, processed_dir, sealed_dir
 
 MANIFEST = "prereg/FREEZE_MANIFEST.json"
+MANIFEST_A = "prereg/FREEZE_A_MANIFEST.json"
+CONFIRMACAO = "prereg/atlas_confirmacao.json"
+LAYA_PESOS = "laya_ft/pesos_sha256.json"   # dentro de models_dir(); ver models.congelar
+EMENDAS = {"A": ("A12", "A13"), "B": ("A11",)}
 SELECTION = "prereg/selection.json"
 CORE = "prereg/core_covariates.json"
 LOCKS = ["conda-linux-64.lock", "requirements-pip.lock", "R/versions.lock"]
@@ -43,6 +55,11 @@ ATLAS = {
     "composicao_setor": lambda: processed_dir() / "atlas" / "setor_composicao_2025.parquet",
     "cofre_espacial": lambda: REPO_ROOT / "prereg" / "atlas_vault.json",
     "banco_ligante_receptor": lambda: REPO_ROOT / "src" / "cityomics" / "atlas" / "lr_pairs.json",
+    # narrativa B (D63, D68): alvos dos fenótipos, presença da OD 2017 e o código pré-especificado da confirmação
+    "alvos_fenotipo": lambda: processed_dir() / "atlas" / "fenotipo" / "fenotipo_setor_ano.parquet",
+    "presenca_od2017": lambda: processed_dir() / "atlas" / "presenca" / "setor_presenca_hora.parquet",
+    "presenca_od2023": lambda: processed_dir() / "atlas" / "presenca_2023" / "setor_presenca_hora.parquet",  # a principal (revisão, 2026-10)
+    "codigo_confirmacao": lambda: REPO_ROOT / "src" / "cityomics" / "atlas" / "confirmacao.py",
 }
 # identidades que a seleção pré-2026 precisa declarar (spec-benchmark §5; prereg §5.2)
 SELECTION_KEYS = ["best_baseline_crps", "best_baseline_pai1", "best_crossdomain_crps", "best_crossdomain_pai1",
@@ -70,9 +87,35 @@ def model_hashes() -> dict[str, str]:
     return {str(p.relative_to(d)): sha256(p) for p in sorted(d.rglob("*")) if p.is_file()}
 
 
-def check(run_tests: bool = True) -> list[str]:
-    """Pendências que impedem o congelamento (lista vazia = pronto)."""
+def emenda_datada(codigo: str) -> bool:
+    """A emenda está em AMENDMENTS.md numa linha de tabela com data (não só no rascunho)."""
+    import re
+
+    am = REPO_ROOT / "prereg" / "AMENDMENTS.md"
+    return am.exists() and any(re.match(rf"^\|\s*20\d\d-\d\d-\d\d\s*\|.*\b{codigo}\b", ln)
+                               for ln in am.read_text().splitlines())
+
+
+def check(run_tests: bool = True, etapa: str = "B") -> list[str]:
+    """Pendências que impedem o congelamento da etapa ``A`` ou ``B`` (lista vazia = pronto)."""
     problems: list[str] = []
+    for e in ("A", "B") if etapa == "B" else ("A",):
+        problems += [f"emenda {c} não datada em prereg/AMENDMENTS.md" for c in EMENDAS[e] if not emenda_datada(c)]
+    if not (models_dir() / LAYA_PESOS).exists():
+        problems.append(f"sha256 dos pesos do Laya ausente ({models_dir() / LAYA_PESOS}; caderno notebooks/colab/laya_hash_pesos.py)")
+    if etapa == "B":
+        if not (REPO_ROOT / MANIFEST_A).exists():
+            problems.append("FREEZE-A ainda não feito")
+        elif _git("log", "--oneline", "-1", "--", MANIFEST_A) == "":
+            problems.append(f"{MANIFEST_A} não está commitado")
+        else:
+            a = json.loads((REPO_ROOT / MANIFEST_A).read_text())
+            atual = manifest(etapa="A")
+            for k in ("inputs", "selection", "models", "atlas", "core_covariates"):
+                if a.get(k) != atual.get(k):
+                    problems.append(f"'{k}' mudou depois do FREEZE-A")
+        if not (REPO_ROOT / CONFIRMACAO).exists():
+            problems.append("confirmação do atlas no cofre espacial ainda não rodou (atlas.confirmacao.confirmar)")
     if _git("status", "--porcelain", "--untracked-files=no"):
         problems.append("árvore git com alterações não commitadas")
     if run_tests:
@@ -113,9 +156,13 @@ def check(run_tests: bool = True) -> list[str]:
     return problems
 
 
-def manifest() -> dict:
+def manifest(etapa: str = "B") -> dict:
     sel = json.loads((REPO_ROOT / SELECTION).read_text())
-    return {
+    extra = {}
+    if etapa == "B":
+        extra = {"freeze_a": sha256(REPO_ROOT / MANIFEST_A), "confirmacao_atlas": sha256(REPO_ROOT / CONFIRMACAO),
+                 "amendments": sha256(REPO_ROOT / "prereg" / "AMENDMENTS.md")}
+    return {"etapa": etapa,
         "complete": True,
         "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "code_commit": _git("rev-parse", "HEAD"),
@@ -125,17 +172,27 @@ def manifest() -> dict:
         "selection": sel,
         "models": model_hashes(),
         "atlas": {n: sha256(fn()) for n, fn in ATLAS.items() if fn().exists()},
+        **extra,
     }
 
 
-def freeze(log=print) -> str:
-    """Grava o manifesto, faz o commit de congelamento e a chave. Devolve a chave ``FREEZE-<sha>``."""
-    problems = check()
+def freeze(log=print, etapa: str = "B") -> str:
+    """Etapa A: manifesto parcial e commit, sem chave. Etapa B: manifesto completo, commit e chave ``FREEZE-<sha>``."""
+    problems = check(etapa=etapa)
     if problems:
         raise RuntimeError("congelamento bloqueado:\n- " + "\n- ".join(problems))
+    if etapa == "A":
+        m = manifest(etapa="A") | {"complete": False}
+        (REPO_ROOT / MANIFEST_A).write_text(json.dumps(m, indent=2, ensure_ascii=False) + "\n")
+        _git("add", MANIFEST_A, SELECTION, CORE)
+        _git("commit", "-m", "F4: FREEZE-A (benchmark, modelos congelados, seleção e atlas)\n\n"
+             "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>")
+        sha = _git("rev-parse", "--short", "HEAD")
+        log(f"FREEZE-A: {sha}")
+        return f"FREEZE-A-{sha.upper()}"
     path = REPO_ROOT / MANIFEST
-    path.write_text(json.dumps(manifest(), indent=2, ensure_ascii=False) + "\n")
-    _git("add", MANIFEST, SELECTION, CORE)
+    path.write_text(json.dumps(manifest(etapa="B"), indent=2, ensure_ascii=False) + "\n")
+    _git("add", MANIFEST, SELECTION, CORE, CONFIRMACAO, "prereg/AMENDMENTS.md")
     _git("commit", "-m", "F4: congelamento do plano antes de abrir 2026 (manifesto de hashes)\n\n"
          "Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>")
     sha = _git("rev-parse", "--short", "HEAD")

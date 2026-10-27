@@ -92,3 +92,15 @@ def test_type_colors_share_family_hue():
 
     c = type_colors(["a", "b", "c"], ["res_horizontal", "res_horizontal", "comercio"], [0, 1, 0])
     assert c["a"] != c["b"] and len(set(c.values())) == 3
+
+
+def test_save_enforces_minimum_font(tmp_path, monkeypatch):
+    from cityomics.viz import style as S
+
+    monkeypatch.setattr(S, "out_dir", lambda periodo: tmp_path)
+    fig = S.figure(S.SINGLE, 40)
+    ax = fig.add_subplot(111)
+    t = ax.text(0.5, 0.5, "tiny", fontsize=3.5)
+    ax.set_xlabel("x", fontsize=4.0)
+    S.save(fig, "teste", png=False)
+    assert t.get_fontsize() >= S.FONT_MIN and ax.xaxis.label.get_fontsize() >= S.FONT_MIN

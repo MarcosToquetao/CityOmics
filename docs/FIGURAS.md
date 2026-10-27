@@ -1,11 +1,12 @@
 # Figuras do artigo e explorador — como regerar
 
-Spec: [spec-figuras.md](../spec-figuras.md) e [spec-explorer.md](../spec-explorer.md). Decisões D34–D62.
+Spec: [spec-figuras.md](../spec-figuras.md) e [spec-explorer.md](../spec-explorer.md). Decisões D34–D70; narrativa B em [NARRATIVA.md](NARRATIVA.md).
 
 ## Ordem
 
 ```bash
 cityomics atlas run            # genes → ruas → tipagem → spots → nichos → atribuição → variância → preditores → comunicação → destino → letal
+cityomics atlas run fenotipo presenca memoria previsibilidade perturbacao ensaio   # narrativa B (D63); a OD 2017 precisa estar em data/external/od/
 cityomics figures --periodo dev
 cityomics explorer             # versão local (com risco por setor; não compartilhar)
 cityomics explorer --public    # versão pública por lista branca (D49, D60)
@@ -48,3 +49,14 @@ cityomics explorer --public    # versão pública por lista branca (D49, D60)
   - **versão pública:** ainda não mostra o risco por distrito previsto na D49. Hoje ela é mais restritiva, sem nenhum risco;
   - **OD 2017:** ficou fora do multiverso (base não baixada);
   - **GNN:** a ablação de arestas não foi feita.
+
+## Estado em 2026-10-19 (narrativa B, D63–D70)
+
+- **Figuras:** Figs. 2–6 refeitas e ED1–ED10 em `figures/out/dev/`.
+  - Os layouts antigos das Figs. 3–6 viraram bibliotecas de painéis (`figures/painel_*.py`).
+  - Os rótulos ficam em `figures/rotulos.py` e os ED novos em `figures/ed_b.py`.
+- **Legendas:** o `cityomics figures` gera `figures/legendas_<periodo>.md` no fim de uma execução completa, com os números lidos dos JSONs.
+- **Dados novos:**
+  - OD 2017 em `data/external/od/` (sha256 no manifesto);
+  - saídas em `data/processed/atlas/fenotipo/`, `presenca/` e `perturbacao/`;
+  - as tabelas por setor ficam locais (D49, D60).

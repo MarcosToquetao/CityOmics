@@ -46,3 +46,7 @@ graphify-out/
 figures/out/
 explorer/local/
 explorer/public/
+
+# Manuscrito: PDF e DOCX saem do build (paper/build.py, build_pdf.py)
+paper/**/*.pdf
+paper/**/*.docx

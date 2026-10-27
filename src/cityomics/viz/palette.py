@@ -11,6 +11,8 @@ import colorsys
 
 import numpy as np
 
+from cityomics.viz.names import GROUP_EN
+
 FAMILIAS = {
     #                  clara      escura (mapa)
     "res_horizontal": ("#9CC3E6", "#4F86C6"),
@@ -33,12 +35,7 @@ GRUPOS = {
     "espacial": "#7A8FA6", "contexto_temporal": "#A3A3A3", "outras_atividade": "#F2B48E",
     "outras_social": "#C4B2E2", "outras_cpted": "#92CFC6", "tamanho": "#D9D9D9", "outras": "#D0D0D0",
 }
-NOMES_GRUPOS_EN = {
-    "atividade_rotineira": "Routine activity", "desorganizacao_social": "Social disorganization", "cpted": "CPTED",
-    "mercado_imobiliario": "Real-estate market", "historico_crime": "Crime history", "identidade": "Cell-class identity",
-    "espacial": "Spatial (district)", "contexto_temporal": "Temporal context", "outras_atividade": "Other activity",
-    "outras_social": "Other social", "outras_cpted": "Other CPTED", "tamanho": "Size", "outras": "Other",
-}
+NOMES_GRUPOS_EN = GROUP_EN  # nomes centralizados em viz/names.py
 FAMILIAS_MODELO = {
     "baseline": "#9E9E9E", "sismologia": "#D1495B", "epidemiologia": "#2A9D8F", "ecologia": "#6A994E",
     "astronomia": "#3D5A80", "aprendizado": "#E9C46A", "fundacao": "#8E6CC2", "decisao": "#F4A261", "ensemble": "#264653",

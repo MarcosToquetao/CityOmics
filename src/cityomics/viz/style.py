@@ -26,6 +26,7 @@ INK = "#1A1A1A"
 MUTED = "#6B6B6B"
 GRID = "#E3E3E3"
 FONT_SIZES = {"small": 5.5, "base": 6.0, "large": 7.0, "label": 8.0}
+FONT_MIN = 5.0  # piso do padrão Nature (D36; spec-figuras §9), aplicado em save()
 
 
 def font_family() -> str:
@@ -90,7 +91,43 @@ def out_dir(periodo: str) -> Path:
     return d
 
 
+def plain_log_ticks(fig) -> None:
+    """Marcas de eixos log em números simples (0.01, 1, 100): os expoentes em mathtext saem com 70% do corpo (< 5 pt)."""
+    from matplotlib.ticker import FuncFormatter, LogFormatter, NullFormatter
+
+    for ax in fig.axes:
+        for axis in (ax.xaxis, ax.yaxis):
+            if axis.get_scale() == "log" and isinstance(axis.get_major_formatter(), LogFormatter):
+                axis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}".replace("-", "−")))
+                axis.set_minor_formatter(NullFormatter())
+
+
+def enforce_min_font(fig, minimum: float = FONT_MIN) -> int:
+    """Sobe para ``minimum`` todo texto menor (rótulos, ticks, legendas, anotações). Devolve quantos mudaram.
+
+    Desenha a figura antes, para alcançar as marcas criadas no desenho (barras de cor), e fixa o corpo das
+    marcas no próprio eixo, para que não voltem ao tamanho antigo quando forem recriadas ao salvar.
+    """
+    from matplotlib.text import Text
+
+    fig.canvas.draw()
+    n = 0
+    for ax in fig.axes:
+        for which, axis in (("x", ax.xaxis), ("y", ax.yaxis)):
+            labs = [t for t in axis.get_ticklabels() if t.get_text().strip()]
+            if labs and min(t.get_fontsize() for t in labs) < minimum:
+                ax.tick_params(axis=which, labelsize=minimum)
+                n += 1
+    for t in fig.findobj(Text):
+        if t.get_text().strip() and t.get_fontsize() < minimum:
+            t.set_fontsize(minimum)
+            n += 1
+    return n
+
+
 def save(fig, name: str, periodo: str = "dev", png: bool = True) -> Path:
+    plain_log_ticks(fig)
+    enforce_min_font(fig)
     d = out_dir(periodo)
     pdf = d / f"{name}.pdf"
     fig.savefig(pdf, facecolor=fig.get_facecolor())

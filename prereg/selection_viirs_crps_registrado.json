@@ -1,0 +1,286 @@
+{
+  "selecao": {
+    "best_baseline_crps": "glm",
+    "best_baseline_pai1": "media_historica",
+    "best_crossdomain_crps": "lgbm_sem_crime",
+    "best_crossdomain_pai1": "ensemble"
+  },
+  "crps_medio": {
+    "media_historica": 0.619331858882754,
+    "glm": 0.6192883404391212,
+    "kde": 0.7725634496247746,
+    "chronos": 0.6696768498482211,
+    "gwr_distrito": 0.605539769753809,
+    "painel_espacial": 0.6131877137806905,
+    "maxent": 0.7033884034024026,
+    "bym2": 0.6359894366870907,
+    "spde": 0.6557749726673042,
+    "hawkes": 0.5974065056895015,
+    "lgbm_nucleo": 0.6043246559509882,
+    "lgbm_sem_crime": 0.5925033373152229,
+    "lgbm_completo": 0.6029308317771916,
+    "gnn": 0.5983896085201004,
+    "ensemble": 0.6000835855955836
+  },
+  "pai1_mensal": {
+    "media_historica": 27.6001563672031,
+    "glm": 27.58899367523156,
+    "kde": 13.15216543327584,
+    "chronos": 25.51688628678517,
+    "gwr_distrito": 27.994382135186367,
+    "painel_espacial": 27.84880107193753,
+    "maxent": 20.899662099846708,
+    "bym2": 27.53722925806821,
+    "spde": 25.42137707489448,
+    "hawkes": 27.66901660823764,
+    "lgbm_nucleo": 28.09709743568435,
+    "lgbm_sem_crime": 26.66118072320519,
+    "lgbm_completo": 27.922461949315025,
+    "gnn": 28.2095163957748,
+    "ensemble": 28.229449978001327
+  },
+  "h1a": {
+    "diff": -0.026785003123898272,
+    "ci_low": -0.03415805447686343,
+    "ci_high": -0.020171647835575904,
+    "p": 0.0005,
+    "n_clusters": 96,
+    "p_adj": 0.001,
+    "reject": true
+  },
+  "h1b": {
+    "diff": 0.6595242366947958,
+    "ci_low": -0.3287889886914667,
+    "ci_high": 1.7925798768532206,
+    "p": 0.2205,
+    "n_clusters": 96,
+    "p_adj": 0.2205,
+    "reject": false
+  },
+  "contra_melhor_baseline": {
+    "chronos": {
+      "diff": 0.05038850940909992,
+      "ci_low": 0.04483848391800238,
+      "ci_high": 0.05714085040718846,
+      "p": 0.0005,
+      "n_clusters": 96,
+      "p_adj": 0.006,
+      "reject": true
+    },
+    "gwr_distrito": {
+      "diff": -0.013748570685312171,
+      "ci_low": -0.021462125591656993,
+      "ci_high": -0.006645650351696562,
+      "p": 0.001,
+      "n_clusters": 96,
+      "p_adj": 0.006,
+      "reject": true
+    },
+    "painel_espacial": {
+      "diff": -0.006100626658430739,
+      "ci_low": -0.011003343029432929,
+      "ci_high": -0.0016089980845260504,
+      "p": 0.014,
+      "n_clusters": 96,
+      "p_adj": 0.014,
+      "reject": true
+    },
+    "maxent": {
+      "diff": 0.08410006296328151,
+      "ci_low": 0.06475995734973407,
+      "ci_high": 0.10559653059946153,
+      "p": 0.0005,
+      "n_clusters": 96,
+      "p_adj": 0.006,
+      "reject": true
+    },
+    "bym2": {
+      "diff": 0.016701096247969633,
+      "ci_low": 0.009962860481108182,
+      "ci_high": 0.022587968053379717,
+      "p": 0.0005,
+      "n_clusters": 96,
+      "p_adj": 0.006,
+      "reject": true
+    },
+    "spde": {
+      "diff": 0.03648663222818304,
+      "ci_low": 0.031550721721908315,
+      "ci_high": 0.04160471696181112,
+      "p": 0.0005,
+      "n_clusters": 96,
+      "p_adj": 0.006,
+      "reject": true
+    },
+    "hawkes": {
+      "diff": -0.02188183474961962,
+      "ci_low": -0.027165085888478848,
+      "ci_high": -0.01699257030025581,
+      "p": 0.0005,
+      "n_clusters": 96,
+      "p_adj": 0.006,
+      "reject": true
+    },
+    "lgbm_nucleo": {
+      "diff": -0.01496368448813298,
+      "ci_low": -0.023074596717095004,
+      "ci_high": -0.0076104070502528536,
+      "p": 0.001,
+      "n_clusters": 96,
+      "p_adj": 0.006,
+      "reject": true
+    },
+    "lgbm_sem_crime": {
+      "diff": -0.026785003123898272,
+      "ci_low": -0.03415805447686343,
+      "ci_high": -0.020171647835575904,
+      "p": 0.0005,
+      "n_clusters": 96,
+      "p_adj": 0.006,
+      "reject": true
+    },
+    "lgbm_completo": {
+      "diff": -0.016357508661929438,
+      "ci_low": -0.0235808574422512,
+      "ci_high": -0.009387919528614348,
+      "p": 0.0005,
+      "n_clusters": 96,
+      "p_adj": 0.006,
+      "reject": true
+    },
+    "gnn": {
+      "diff": -0.020898731919020745,
+      "ci_low": -0.030239443461876545,
+      "ci_high": -0.012476055755431596,
+      "p": 0.0005,
+      "n_clusters": 96,
+      "p_adj": 0.006,
+      "reject": true
+    },
+    "ensemble": {
+      "diff": -0.01920475484353752,
+      "ci_low": -0.028189139103195846,
+      "ci_high": -0.011397242259087892,
+      "p": 0.0005,
+      "n_clusters": 96,
+      "p_adj": 0.006,
+      "reject": true
+    }
+  },
+  "finalistas": {
+    "gnn vs ensemble": {
+      "diff": -0.0016939770754832233,
+      "ci_low": -0.004297479818086651,
+      "ci_high": 0.0010751702359499463,
+      "p": 0.2295,
+      "n_clusters": 96,
+      "p_adj": 0.918,
+      "reject": false
+    },
+    "gnn vs lgbm_completo": {
+      "diff": -0.004541223257091308,
+      "ci_low": -0.009289828040637157,
+      "ci_high": -0.0004342075367629533,
+      "p": 0.0495,
+      "n_clusters": 96,
+      "p_adj": 0.396,
+      "reject": false
+    },
+    "gnn vs lgbm_nucleo": {
+      "diff": -0.005935047430887762,
+      "ci_low": -0.009557260151189084,
+      "ci_high": -0.0024359864159456505,
+      "p": 0.0035,
+      "n_clusters": 96,
+      "p_adj": 0.035,
+      "reject": true
+    },
+    "gnn vs hawkes": {
+      "diff": 0.0009831028305988803,
+      "ci_low": -0.008854271449606741,
+      "ci_high": 0.010449925561926903,
+      "p": 0.827,
+      "n_clusters": 96,
+      "p_adj": 1.0,
+      "reject": false
+    },
+    "ensemble vs lgbm_completo": {
+      "diff": -0.0028472461816080826,
+      "ci_low": -0.007775675860236943,
+      "ci_high": 0.0010477697559111287,
+      "p": 0.1775,
+      "n_clusters": 96,
+      "p_adj": 0.897,
+      "reject": false
+    },
+    "ensemble vs lgbm_nucleo": {
+      "diff": -0.004241070355404534,
+      "ci_low": -0.008267337628122545,
+      "ci_high": -0.0006469532093332154,
+      "p": 0.028,
+      "n_clusters": 96,
+      "p_adj": 0.252,
+      "reject": false
+    },
+    "ensemble vs hawkes": {
+      "diff": 0.0026770799060820975,
+      "ci_low": -0.006681716338942564,
+      "ci_high": 0.011405636723552413,
+      "p": 0.5645,
+      "n_clusters": 96,
+      "p_adj": 1.0,
+      "reject": false
+    },
+    "lgbm_completo vs lgbm_nucleo": {
+      "diff": -0.0013938241737964485,
+      "ci_low": -0.004072988084902229,
+      "ci_high": 0.0020352028143177017,
+      "p": 0.371,
+      "n_clusters": 96,
+      "p_adj": 1.0,
+      "reject": false
+    },
+    "lgbm_completo vs hawkes": {
+      "diff": 0.005524326087690193,
+      "ci_low": -0.0017697659356196783,
+      "ci_high": 0.01338429989986894,
+      "p": 0.1495,
+      "n_clusters": 96,
+      "p_adj": 0.897,
+      "reject": false
+    },
+    "lgbm_nucleo vs hawkes": {
+      "diff": 0.0069181502614866445,
+      "ci_low": -0.001334926703765584,
+      "ci_high": 0.014525799103745648,
+      "p": 0.087,
+      "n_clusters": 96,
+      "p_adj": 0.609,
+      "reject": false
+    }
+  },
+  "brier_contra_baseline": {
+    "ensemble": {
+      "diff": -0.0026652816236048876,
+      "ci_low": -0.002928698242210357,
+      "ci_high": -0.0024023601369297493,
+      "p": 0.0005,
+      "n_clusters": 96
+    },
+    "gnn": {
+      "diff": -0.0014062455502436859,
+      "ci_low": -0.0016180326635297669,
+      "ci_high": -0.0011800859262217813,
+      "p": 0.0005,
+      "n_clusters": 96
+    },
+    "lgbm_completo": {
+      "diff": -0.0015449990627684565,
+      "ci_low": -0.0017443219999352846,
+      "ci_high": -0.0013401682310920135,
+      "p": 0.0005,
+      "n_clusters": 96
+    }
+  },
+  "n_boot": 2000
+}

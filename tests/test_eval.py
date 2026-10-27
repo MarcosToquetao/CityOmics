@@ -24,6 +24,19 @@ def test_crps_real_valued_observation_is_between_neighbors_and_nonnegative():
     mu, phi = np.array([1.2] * 3), np.array([2.0] * 3)
     c = scores.crps_nb(np.array([1.0, 1.4, 2.0]), mu, phi)
     assert (c >= 0).all() and c[1] <= max(c[0], c[2]) + 1e-9
+    # interpolação estrita: o valor fracionário não coincide com o do inteiro de cima
+    assert min(c[0], c[2]) - 1e-9 <= c[1] and abs(c[1] - c[2]) > 1e-4
+
+
+@pytest.mark.parametrize("y,mu,phi", [(0.03, 0.5, 3.0), (0.6, 0.5, 3.0), (1.3, 2.0, 3.0), (7.4, 5.0, 1.5)])
+def test_crps_matches_definition_for_real_values(y, mu, phi):
+    got = scores.crps_nb(np.array([y]), np.array([mu]), np.array([phi]))[0]
+    assert got == pytest.approx(_crps_by_definition(y, mu, phi), abs=1e-6)
+
+
+def test_crps_registrado_is_crps_of_ceiling():
+    y, mu, phi = np.array([0.03, 0.6, 1.3]), np.array([0.5, 0.5, 2.0]), 3.0
+    assert np.allclose(scores.crps_nb_registrado(y, mu, phi), scores.crps_nb(np.ceil(y), mu, phi))
 
 
 def test_fit_phi_recovers_dispersion():

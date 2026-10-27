@@ -1,196 +1,106 @@
-"""Fig. 6 — Fora da amostra e equidade (parametrizada: 2025 em dev; 2026 depois do FREEZE, D52).
+"""Fig. 6 — A variação mês a mês é concentrada e mal prevista (narrativa B; D63, D67, D68; parecer R16).
 
-a: desempenho dos finalistas (CRPS, Brier) no teste; em dev, 2025 com o espaço de 2026 lacrado;
-b: habilidade mês a mês contra o NB-GLM;
-c: mapa de acerto/erro no top 5% da área (rasterizado, D60);
-d: habilidade por domínio do tecido (fora do cofre espacial, D53);
-e: auditoria por quintil de renda: área sinalizada, crime capturado e calibração;
-f: janela prospectiva (vazia até existir).
+a: captura ao sinalizar os setores de maior risco (acaso, média histórica, ensemble, teto de ruído, oráculo);
+b: previsibilidade por escala: R² alcançado e R² máximo sem modelo (variância acima do ruído de Poisson),
+   entre e dentro das unidades e só dentro (mês a mês);
+c: onde mora a dinâmica mensal: parte do crime e do excesso de variância sobre o Poisson acumulada nos
+   setores de maior contagem;
+d: ΔCRPS de cada método contra o NB-GLM (bootstrap por distrito; Holm de ``prereg/selection_dev.json``, CRPS corrigido);
+e: equidade: área sinalizada e crime registrado por quintil de renda do setor.
+
+Saíram (R16): o contraste celular × letal (agora Extended Data Fig. 5g) e o quadro de confirmação (Tabela 1).
 """
 
 from __future__ import annotations
 
+import json
+
 import numpy as np
 import polars as pl
 
+import painel_previsao as PP
+import painel_teste as PT
 from common import ax_mm, check_periodo
-from cityomics.atlas import guard
 from cityomics.atlas.genes_lote import atlas_dir
-from cityomics.eval import scores
-from cityomics.paths import processed_dir
 from cityomics.viz import figdata as F
-from cityomics.viz import maps as M
-from cityomics.viz import palette as P
 from cityomics.viz import style as S
 
-FINAL = ["glm", "hawkes", "lgbm_completo", "gnn", "ensemble"]
-COR = {"glm": "#9E9E9E", "hawkes": "#D1495B", "lgbm_completo": "#E9C46A", "gnn": "#F4A261", "ensemble": "#264653"}
+ESCALAS = [("setor", "mes", "Tract ×\nmonth"), ("setor", "trimestre", "Tract ×\nquarter"), ("setor", "ano", "Tract ×\nyear"),
+           ("distrito", "mes", "District ×\nmonth"), ("distrito", "trimestre", "District ×\nquarter"), ("distrito", "ano", "District ×\nyear")]
 
 
-def _setup(tag):
-    ev, mu, phi, dist = F.load_eval(tag)
-    y = ev["y"].to_numpy().astype(float)
-    crps = {m: scores.crps_nb(y, mu[m], phi[m]) for m in FINAL}
-    return ev, mu, phi, dist, y, crps
-
-
-def panel_test(ax, ev, mu, phi, y, crps):
-    br = {m: float(np.mean((scores.prob_ge1(mu[m], phi[m]) - (y >= 0.5)) ** 2)) for m in FINAL}
-    x = np.arange(len(FINAL))
-    ax.bar(x - 0.18, [float(np.mean(crps[m])) for m in FINAL], 0.34, color=[COR[m] for m in FINAL], label="2025 (development)")
-    lo_, hi_ = min(float(np.mean(crps[m])) for m in FINAL) * 0.95, max(float(np.mean(crps[m])) for m in FINAL) * 1.02
-    for i in x:
-        ax.add_patch(__import__("matplotlib").patches.Rectangle((i + 0.01, lo_), 0.34, (hi_ - lo_) * 0.25, fill=False,
-                                                               edgecolor="#BDBDBD", hatch="//////", lw=0.4))
-    from matplotlib.patches import Patch
-
-    h1 = Patch(facecolor="#9E9E9E", label="2025 (development)")
-    h2 = Patch(facecolor="white", edgecolor="#BDBDBD", hatch="//////", lw=0.4, label="2026 (sealed; no values yet)")
+def panel_escala(ax, t: pl.DataFrame):
+    x = np.arange(len(ESCALAS))
+    for med, c, dx, lab in (("onde_e_quando", "#264653", -0.12, "Between and within units"),
+                             ("quando", "#D1495B", 0.12, "Within units (month to month)")):
+        mx, ob = [], []
+        for e, tp, _ in ESCALAS:
+            r = t.filter((pl.col("espaco") == e) & (pl.col("tempo") == tp) & (pl.col("medida") == med))
+            mx.append(float(r["r2_max_sem_modelo"][0]) if r.height else np.nan)
+            ob.append(float(r["r2_observado"][0]) if r.height else np.nan)
+        for i in range(len(x)):
+            if not np.isnan(mx[i]):
+                ax.plot([x[i] + dx] * 2, [ob[i], mx[i]], color=c, lw=0.7, alpha=0.6)
+        ax.scatter(x + dx, mx, s=14, facecolor="white", edgecolor=c, linewidth=0.8, zorder=3)
+        ax.scatter(x + dx, ob, s=14, color=c, zorder=3, label=lab)
     ax.set_xticks(x)
-    ax.set_xticklabels([F.NOMES_MODELO[m].replace("Graph neural network", "GNN") for m in FINAL], rotation=30, ha="right", rotation_mode="anchor")
-    lo = min(float(np.mean(crps[m])) for m in FINAL)
-    ax.set_ylim(lo * 0.95, max(float(np.mean(crps[m])) for m in FINAL) * 1.02)
-    ax.set_ylabel("CRPS (lower is better)")
-    ax.legend(handles=[h1, h2], loc="upper right", handlelength=1.2, fontsize=5)
-    for i, m in enumerate(FINAL):
-        ax.text(i - 0.18, float(np.mean(crps[m])) * 1.002, f"{br[m]:.3f}", ha="center", va="bottom", fontsize=4.4, rotation=90, color=S.MUTED)
+    ax.set_xticklabels([lab for _, _, lab in ESCALAS], fontsize=4.6)
+    ax.set_ylim(0, 1.02)
+    ax.set_ylabel("R² (filled: ensemble; open: noise ceiling)")
+    ax.legend(loc="lower left", bbox_to_anchor=(0.0, 1.0), ncol=2, fontsize=5, handletextpad=0.1, borderaxespad=0.2,
+              columnspacing=1.0)
 
 
-def panel_monthly(ax, ev, crps):
-    mes = ev["mes"].to_numpy()
-    months = sorted(np.unique(mes))
-    for m in FINAL[1:]:
-        sk = [1 - np.mean(crps[m][mes == k]) / np.mean(crps["glm"][mes == k]) for k in months]
-        ax.plot(range(len(months)), np.array(sk) * 100, color=COR[m], lw=1.1 if m == "ensemble" else 0.8, marker="o", ms=1.6,
-                label=F.NOMES_MODELO[m].replace("Graph neural network", "GNN"))
-    ax.axhline(0, color=S.INK, lw=0.5)
-    ax.set_xticks(range(len(months)))
-    ax.set_xticklabels([k[5:] for k in months])
-    ax.set_xlabel("Month of 2025")
-    ax.set_ylabel("CRPS skill vs NB-GLM (%)")
-    ax.legend(loc="lower left", ncol=2, fontsize=4.8, handlelength=1.2, columnspacing=0.8)
+def panel_concentracao(ax, d: pl.DataFrame, rep: dict):
+    d = d.filter(pl.col("media_mensal") > 0).sort("media_mensal", descending=True)
+    n = d.height
+    xs = np.arange(1, n + 1) / n * 100
+    crime = np.cumsum(d["media_mensal"].to_numpy()) / d["media_mensal"].sum() * 100
+    exc = np.cumsum(d["excesso"].to_numpy()) / max(d["excesso"].sum(), 1e-12) * 100
+    ax.plot(xs, exc, color="#D1495B", lw=1.1, label="Extra-Poisson monthly variance")
+    ax.plot(xs, crime, color="#264653", lw=1.1, label="Phone crime")
+    ax.plot(xs, xs, color="#D9D9D9", lw=0.6)
+    ax.set_xscale("log")
+    ax.set_xlim(0.05, 100)
+    ax.set_ylim(0, 102)
+    ax.axvline(1, color="#BDBDBD", lw=0.5, ls=(0, (2, 2)))
+    ax.set_xlabel("Tracts, ranked by phone crime (cumulative %)")
+    ax.set_ylabel("Cumulative share (%)")
+    from matplotlib.ticker import FixedLocator, NullLocator
 
-
-def panel_hitmiss(ax, ev, mu, share=0.05):
-    an = ev.with_columns(pl.Series("mu", mu["ensemble"])).group_by("cd_setor").agg(
-        pl.col("mu").sum(), pl.col("y").sum(), pl.col("area_km2").first())
-    a = an["area_km2"].to_numpy()
-    def top(score):
-        o = np.argsort(-score)
-        k = np.searchsorted(np.cumsum(a[o]), share * a.sum()) + 1
-        sel = np.zeros(len(a), bool)
-        sel[o[:k]] = True
-        return sel
-    flag = top(an["mu"].to_numpy() / a)
-    real = top(an["y"].to_numpy() / a)
-    cls = np.where(flag & real, 1, np.where(flag & ~real, 2, np.where(~flag & real, 3, 4)))
-    arr, bounds = M.setor_raster(dict(zip(an["cd_setor"].to_list(), cls.tolist())), res=40.0, fill=0)
-    arr = np.nan_to_num(arr).astype(int)
-    rgba = M.to_rgba(arr, {1: "#F5C451", 2: "#5B9BD5", 3: "#D1495B", 4: "#26262E"}, mask=(arr > 0).astype(int), bg=S.DARK_BG)
-    S.dark(ax)
-    ax.set_facecolor("white")
-    M.show(ax, rgba, bounds)
-    ax.set_xlabel("")
-    ax.set_ylabel("")
-    hit = (flag & real).sum() / max(real.sum(), 1)
-    for i, (c, t) in enumerate((("#F5C451", "Flagged and in observed top 5%"), ("#5B9BD5", "Flagged only"), ("#D1495B", "Missed (observed top 5%)"))):
-        ax.add_patch(__import__("matplotlib").patches.Rectangle((0.02, -0.06 - i * 0.05), 0.05, 0.03, color=c, transform=ax.transAxes, clip_on=False))
-        ax.text(0.09, -0.045 - i * 0.05, t, transform=ax.transAxes, fontsize=4.8, va="center", color=S.INK)
-    ax.text(0.02, -0.22, f"{hit * 100:.0f}% of observed top-5% tracts flagged (annual 2025)", transform=ax.transAxes, fontsize=4.8, color=S.INK)
-
-
-def panel_niche(ax, ev, crps):
-    dom = pl.read_parquet(atlas_dir() / "setor_dominio_2025.parquet")
-    d = ev.select("cd_setor").join(dom, on="cd_setor", how="left")
-    setd = pl.read_parquet(processed_dir() / "units" / "setores_2022.parquet", columns=["cd_setor", "cd_dist"]).with_columns(
-        pl.col("cd_setor").cast(pl.String), pl.col("cd_dist").cast(pl.String))
-    keep = guard.explore_mask(ev.select("cd_setor").join(setd, on="cd_setor", how="left")["cd_dist"].to_numpy())
-    lab = d["dominio"].fill_null(-1).to_numpy()
-    rows = []
-    for k in sorted(set(lab[lab >= 0])):
-        i = (lab == k) & keep
-        rows.append((k, 1 - np.mean(crps["ensemble"][i]) / np.mean(crps["glm"][i]), i.sum()))
-    rows.sort(key=lambda r: r[1])
-    from figures_fig3_colors import DOM_COLORS
-
-    y = np.arange(len(rows))
-    ax.barh(y, [r[1] * 100 for r in rows], color=[DOM_COLORS[r[0] % len(DOM_COLORS)] for r in rows], height=0.65)
-    ax.set_yticks(y)
-    from cityomics.viz.names import domain_labels
-
-    dl = domain_labels(short=True)
-    ax.set_yticklabels([dl[r[0]] for r in rows], fontsize=4.8)
-    ax.axvline(0, color=S.INK, lw=0.5)
-    ax.set_xlabel("Ensemble CRPS skill vs NB-GLM (%)")
-    ax.tick_params(axis="y", length=0)
-
-
-def panel_equity(ax, ev, mu):
-    renda = pl.read_parquet(processed_dir() / "covariaveis" / "setor_censo2022.parquet")
-    col = next((c for c in renda.columns if "renda" in c and "media" in c), None)
-    r = renda.select(pl.col("cd_setor").cast(pl.String), pl.col(col).alias("renda"))
-    an = ev.with_columns(pl.Series("mu", mu["ensemble"])).group_by("cd_setor").agg(
-        pl.col("mu").sum(), pl.col("y").sum(), pl.col("area_km2").first()).join(r, on="cd_setor", how="left")
-    an = an.filter(pl.col("renda").is_not_null())
-    q = an["renda"].qcut(5, labels=["Q1", "Q2", "Q3", "Q4", "Q5"]).cast(pl.String).to_numpy()
-    a = an["area_km2"].to_numpy()
-    o = np.argsort(-(an["mu"].to_numpy() / a))
-    k = np.searchsorted(np.cumsum(a[o]), 0.05 * a.sum()) + 1
-    flag = np.zeros(len(a), bool)
-    flag[o[:k]] = True
-    yv, mv = an["y"].to_numpy(), an["mu"].to_numpy()
-    qs = ["Q1", "Q2", "Q3", "Q4", "Q5"]
-    share_area = [a[(q == g) & flag].sum() / a[flag].sum() * 100 for g in qs]
-    share_crime = [yv[q == g].sum() / yv.sum() * 100 for g in qs]
-    calib = [mv[q == g].sum() / max(yv[q == g].sum(), 1) for g in qs]
-    x = np.arange(5)
-    ax.bar(x - 0.18, share_area, 0.34, color="#264653", label="Flagged area (top 5%)")
-    ax.bar(x + 0.18, share_crime, 0.34, color="#BDBDBD", label="Observed thefts")
-    ax.set_xticks(x)
-    ax.set_xticklabels([f"{g}\n×{c:.2f}" for g, c in zip(qs, calib)])
-    ax.set_ylabel("Share (%)")
-    ax.set_xlabel("Tract income quintile (predicted/observed)")
-    ax.legend(loc="upper left", fontsize=4.8, handlelength=1.0)
-
-
-def panel_prospective(ax):
-    ax.set_xlim(0, 5)
-    ax.set_ylim(0, 1)
-    for i, m in enumerate(["Nov 26", "Dec 26", "Jan 27", "Feb 27", "Mar 27"]):
-        ax.add_patch(__import__("matplotlib").patches.Rectangle((i + 0.1, 0.25), 0.8, 0.5, fill=False, edgecolor="#BDBDBD", hatch="//////", lw=0.4))
-        ax.text(i + 0.5, 0.15, m, ha="center", fontsize=4.8, color=S.MUTED)
-    ax.text(2.5, 0.85, "Prospective window: forecasts frozen, outcomes pending", ha="center", fontsize=5, color=S.MUTED)
-    ax.axis("off")
+    ax.xaxis.set_major_locator(FixedLocator([0.1, 1, 10, 100]))
+    ax.set_xticklabels(["0.1", "1", "10", "100"])
+    ax.xaxis.set_minor_locator(NullLocator())
+    ax.legend(loc="lower right", fontsize=4.6, handlelength=1.4)
+    rob = json.loads((atlas_dir() / "fenotipo" / "robustez.json").read_text())["escala_do_excesso"]
+    ax.set_title(f"Top 1% of tracts: {rob['parte_excesso_top1_observada'] * 100:.0f}% of extra-Poisson variance\n"
+                 f"({rob['parte_excesso_top1_esperada_theta_comum'] * 100:.0f}% expected from scale alone)",
+                 fontsize=4.8, loc="left", color=S.MUTED)
 
 
 def make(periodo: str = "dev"):
     check_periodo(periodo)
-    import sys
-    import types
-
-    m3 = types.ModuleType("figures_fig3_colors")
-    m3.DOM_COLORS = ["#E8743B", "#5B9BD5", "#2A9D8F", "#B99BF0", "#E3B23C", "#8C7B6B", "#D1495B", "#6A994E", "#264653",
-                     "#F4A261", "#9C89B8", "#7FB3EE"]
-    sys.modules["figures_fig3_colors"] = m3
     tag = "dev" if periodo == "dev" else periodo
-    ev, mu, phi, dist, y, crps = _setup(tag)
-    fig = S.figure(S.DOUBLE, 130)
-    a = ax_mm(fig, 12, 6, 44, 40)
-    panel_test(a, ev, mu, phi, y, crps)
-    S.fig_label(fig, "a", 1, 3)
-    b = ax_mm(fig, 72, 6, 50, 40)
-    panel_monthly(b, ev, crps)
-    S.fig_label(fig, "b", 62, 3)
-    c = ax_mm(fig, 134, 4, 46, 66)
-    panel_hitmiss(c, ev, mu)
-    S.fig_label(fig, "c", 128, 2)
-    d = ax_mm(fig, 34, 70, 28, 46)
-    panel_niche(d, ev, crps)
-    S.fig_label(fig, "d", 1, 66)
-    e = ax_mm(fig, 76, 70, 46, 38)
-    panel_equity(e, ev, mu)
-    S.fig_label(fig, "e", 68, 66)
-    f = ax_mm(fig, 128, 108, 54, 16)
-    panel_prospective(f)
-    S.fig_label(fig, "f", 126, 102)
+    fd = atlas_dir() / "fenotipo"
+    t = pl.read_parquet(fd / "previsibilidade_escala.parquet")
+    disp = pl.read_parquet(fd / "dispersao_setor.parquet")
+    prev = json.loads((fd / "previsibilidade.json").read_text())
+
+    fig = S.figure(S.DOUBLE, 140)
+    a = ax_mm(fig, 14, 6, 40, 42)
+    PP.panel_capture(a, F.capture_curves(tag))
+    S.fig_label(fig, "a", 1, 2)
+    b = ax_mm(fig, 72, 11, 54, 34)
+    panel_escala(b, t)
+    S.fig_label(fig, "b", 62, 2)
+    c = ax_mm(fig, 142, 9, 36, 39)
+    panel_concentracao(c, disp, prev)
+    S.fig_label(fig, "c", 132, 2)
+    d = ax_mm(fig, 40, 68, 40, 56)
+    PP.panel_forest(d, F.forest(tag))
+    S.fig_label(fig, "d", 1, 64)
+    ev, mu, phi, dist = F.load_eval(tag)
+    e = ax_mm(fig, 118, 70, 60, 40)
+    PT.panel_equity(e, ev, mu)
+    S.fig_label(fig, "e", 104, 64)
     return S.save(fig, "fig6", periodo)

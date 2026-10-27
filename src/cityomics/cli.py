@@ -128,11 +128,12 @@ app.add_typer(freeze_app, name="freeze")
 
 
 @freeze_app.command("check")
-def freeze_check(skip_tests: bool = typer.Option(False, "--skip-tests", help="Não roda o pytest.")) -> None:
+def freeze_check(skip_tests: bool = typer.Option(False, "--skip-tests", help="Não roda o pytest."),
+                 etapa: str = typer.Option("A", "--etapa", help="A (benchmark e atlas) ou B (A11 e confirmação; grava a chave).")) -> None:
     """Lista o que falta para congelar o plano."""
     from cityomics import freeze
 
-    problems = freeze.check(run_tests=not skip_tests)
+    problems = freeze.check(run_tests=not skip_tests, etapa=etapa.upper())
     for p in problems:
         typer.echo(f"- {p}", err=True)
     if problems:
@@ -141,32 +142,50 @@ def freeze_check(skip_tests: bool = typer.Option(False, "--skip-tests", help="N�
 
 
 @freeze_app.command("commit")
-def freeze_commit(confirm: bool = typer.Option(False, "--confirm", help="Confirma o congelamento (irreversível).")) -> None:
+def freeze_commit(confirm: bool = typer.Option(False, "--confirm", help="Confirma o congelamento (irreversível)."),
+                  etapa: str = typer.Option(..., "--etapa", help="A (benchmark e atlas) ou B (A11 e confirmação; grava a chave).")) -> None:
     """Grava o manifesto, faz o commit de congelamento e grava prereg/UNSEAL_KEY."""
     from cityomics import freeze
 
     if not confirm:
         typer.echo("Use --confirm: depois do congelamento a seleção de modelos não pode mais mudar.", err=True)
         raise typer.Exit(code=2)
-    typer.echo(freeze.freeze(log=typer.echo))
+    typer.echo(freeze.freeze(log=typer.echo, etapa=etapa.upper()))
+
+
+@freeze_app.command("models")
+def freeze_models(partes: list[str] = typer.Argument(None, help="crime, laya, markov (padrão: todas).")) -> None:
+    """Reajusta e grava os modelos congelados em data/models/frozen/ (dados até 2025-12; prereg §5.2)."""
+    from cityomics.models import congelar
+
+    congelar.run(partes=tuple(partes or ("crime", "laya", "markov")), log=typer.echo)
 
 
 atlas_app = typer.Typer(help="F6: atlas mínimo (tipos, nichos, comunicação, atribuição).")
 app.add_typer(atlas_app, name="atlas")
 
 ATLAS_STEPS = ["genes", "ruas", "tipagem", "spots", "nichos", "atribuicao", "variancia", "preditores", "comunicacao", "destino", "letal"]
+ATLAS_PILOTOS = ["fenotipo", "presenca", "memoria", "previsibilidade", "perturbacao", "ensaio", "robustez",  # narrativa B (D63); só quando pedidos
+                 "reconciliacao", "identificacao", "ritmo_queda", "presenca_od2023", "repontua_crps"]  # revisão pelo parecer (2026-10)
 
 
 @atlas_app.command("run")
-def atlas_run(steps: list[str] = typer.Argument(None, help=f"Etapas, na ordem: {', '.join(ATLAS_STEPS)} (padrão: todas).")) -> None:
+def atlas_run(steps: list[str] = typer.Argument(None, help=f"Etapas, na ordem: {', '.join(ATLAS_STEPS)} (padrão: todas); pilotos: {', '.join(ATLAS_PILOTOS)}.")) -> None:
     """Roda as etapas do atlas. Nada de 2026 é lido; o crime exclui o cofre espacial (D53)."""
-    from cityomics.atlas import attribution, communication, fate, genes_lote, niches, predictors, spots, streets, typing, variance
-    from cityomics.models import letal_run
+    from cityomics.atlas import (attribution, communication, confirmacao, fate, fenotipo, genes_lote, identificacao, memoria, niches,
+                                 perturbacao, predictors, presenca, presenca_od2023, previsibilidade, reconciliacao, ritmo_queda,
+                                 robustez, spots, streets, typing, variance)
+    from cityomics.models import letal_run, repontua_crps
     from cityomics.units.setores import load_setores
 
     run = {"genes": genes_lote.build, "ruas": lambda log: streets.build(load_setores(), log=log), "tipagem": typing.run,
            "spots": spots.build, "nichos": niches.run, "atribuicao": attribution.run, "variancia": variance.run,
-           "preditores": predictors.shap_celular, "comunicacao": communication.run, "destino": fate.run, "letal": letal_run.run}
+           "preditores": predictors.shap_celular, "comunicacao": communication.run, "destino": fate.run, "letal": letal_run.run,
+           "fenotipo": fenotipo.run, "presenca": presenca.run, "memoria": memoria.run, "previsibilidade": previsibilidade.run,
+           "perturbacao": perturbacao.run, "ensaio": lambda log: confirmacao.ensaiar(log=log),
+           "robustez": robustez.run, "reconciliacao": reconciliacao.run, "identificacao": identificacao.run,
+           "ritmo_queda": ritmo_queda.run, "presenca_od2023": presenca_od2023.run,
+           "repontua_crps": lambda log: [repontua_crps.run(tag, log=log) for tag in ("dev", "viirs")]}
     for s in steps or ATLAS_STEPS:
         typer.echo(f"== {s}")
         run[s](log=typer.echo)

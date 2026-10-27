@@ -106,6 +106,21 @@
 - **Cofre espacial:** ~20% dos distritos, sorteados com semente registrada em `prereg/atlas_vault.json`, ficam fora de toda análise de crime do atlas até a confirmação.
 - **Emenda A11 (antes do FREEZE-B):** registra as escolhas, a família do atlas com Holm e a redefinição de H4.
 
+### 3.7 Narrativa B — emenda de 2026-10-19 (D63–D68)
+
+Módulos novos, todos exploratórios até a confirmação no cofre (D40, D53), com os tipos já fixados:
+
+| Módulo | Código | Análogo ômico | Comparador urbano | Resultado (desenvolvimento) |
+|---|---|---|---|---|
+| Painel de fenótipos | `atlas/fenotipo.py` (`assinaturas`, `programas`) | Matriz-assinatura (CIBERSORTx), programas (cNMF) | Quociente de localização por setor | 15 fenótipos; 11 classes distintas no topo; validação pontual mediana ρ = 0,85; 4 programas |
+| Relógio do tecido | `atlas/fenotipo.py` (`relogio`) | Expressão circadiana por tipo celular | Sinais temporais por uso do solo | furto: P = 0,005 nos dois anos, réplica r = 0,93; residencial popular: 39% do roubo entre 4 h e 6 h |
+| População presente | `atlas/presenca.py` | Normalização por tamanho de biblioteca | População ambiente (OD 2017) | ordem das classes sobrevive à multidão (ρ 0,75–0,90); o relógio não segue os pedestres (r mediano 0,03) |
+| Memória do lugar | `atlas/memoria.py` | Estado celular além do tipo | Trajetórias de hot spots | tecido 42%, memória estável 48%; resíduo r = 0,63 em 3 anos |
+| Mudança | `atlas/fenotipo.py` (`queda`) | Expressão diferencial | Shift-share | queda de 20%; ruas locais 0,76 da cidade; estações e comércio médio estáveis |
+| Previsibilidade | `atlas/previsibilidade.py` | — | Teto de Poisson | mês a mês Poisson em 96% dos setores; 88% do excesso no 1% de setores |
+| Perturbação | `atlas/perturbacao.py` | Perturbação in situ (Perturb-map) | Diferenças em diferenças escalonadas | nulo; efeito mínimo detectável 4–11% |
+| Confirmação | `atlas/confirmacao.py` | — | — | família A-R1, A-R2, A-R6, A-R7, A-R8; ensaio em pseudo-cofre: todas sustentadas; bloqueada até a A11 |
+
 ## 4. Módulos suplementares — D17
 
 | Módulo | Método | Baseline | Observação |

@@ -38,6 +38,14 @@ def _classe(h) -> str:
     return "local"
 
 
+def setor_do_ponto_medio(e: gpd.GeoDataFrame, setores: gpd.GeoDataFrame) -> np.ndarray:
+    """Setor que contém o ponto médio de cada segmento, na ordem das linhas de ``e`` (qualquer índice)."""
+    mid = e.geometry.interpolate(0.5, normalized=True)
+    pts = gpd.GeoDataFrame({"i": np.arange(len(e))}, geometry=mid.values, crs=e.crs)
+    j = gpd.sjoin(pts, setores[["cd_setor", "geometry"]], how="left", predicate="within").drop_duplicates("i")
+    return j.sort_values("i")["cd_setor"].to_numpy()
+
+
 def segments(setores: gpd.GeoDataFrame, log=print) -> gpd.GeoDataFrame:
     import osmnx as ox
 
@@ -46,13 +54,13 @@ def segments(setores: gpd.GeoDataFrame, log=print) -> gpd.GeoDataFrame:
     g = load_graph(log=log)
     e = ox.graph_to_gdfs(g, nodes=False).reset_index()
     e["par"] = [tuple(sorted(x)) for x in zip(e["u"], e["v"])]
-    e = e.drop_duplicates(["par", "key"]).to_crs(CRS)
+    # índice refeito depois de tirar os sentidos duplicados: o GeoDataFrame dos pontos médios alinha a
+    # geometria pelo índice, e um índice com buracos trocava o setor de 99,8% dos segmentos (corrigido em
+    # 2026-10-20; paper/review/parecer/C_ritmo_queda.md)
+    e = e.drop_duplicates(["par", "key"]).reset_index(drop=True).to_crs(CRS)
     e["classe"] = e["highway"].map(_classe)
     e["comprimento_m"] = e.geometry.length
-    mid = e.geometry.interpolate(0.5, normalized=True)
-    pts = gpd.GeoDataFrame({"i": np.arange(len(e))}, geometry=mid, crs=CRS)
-    j = gpd.sjoin(pts, setores[["cd_setor", "geometry"]], how="left", predicate="within").drop_duplicates("i")
-    e["cd_setor"] = j.sort_values("i")["cd_setor"].to_numpy()
+    e["cd_setor"] = setor_do_ponto_medio(e, setores)
     out = e[["classe", "comprimento_m", "cd_setor", "geometry"]].reset_index(drop=True)
     log(f"ruas: {len(out):,} segmentos; {out['comprimento_m'].sum() / 1e3:,.0f} km "
         f"({out.groupby('classe')['comprimento_m'].sum().div(1e3).round(0).to_dict()})")

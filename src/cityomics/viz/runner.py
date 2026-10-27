@@ -31,4 +31,6 @@ def run(periodo: str = "dev", only: list[str] | None = None, log=print) -> list:
         path = load(name).make(periodo)
         log(f"{name}: {path}")
         out.append(path)
+    if not only:  # legendas com os números dos resultados (figures/legendas_<periodo>.md)
+        log(f"legendas: {load('legends').build(periodo)}")
     return out

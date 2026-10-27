@@ -65,14 +65,14 @@
     <text x="88" y="6.0" text-anchor="end">Cell</text>
     <text x="88" y="9.9" text-anchor="end">Spot</text>
     <text x="88" y="13.8" text-anchor="end">Interstitium and vessels</text>
-    <text x="88" y="17.7" text-anchor="end">Niche</text>
-    <text x="88" y="21.6" text-anchor="end">Ligand–receptor signal</text>
+    <text x="88" y="17.7" text-anchor="end">Cell type</text>
+    <text x="88" y="21.6" text-anchor="end">Cell state beyond type</text>
     <text x="88" y="25.5" text-anchor="end">Phenotype</text>
     <text x="96.5" y="6.0">Parcel (lot)</text>
     <text x="96.5" y="9.9">Census tract</text>
     <text x="96.5" y="13.8">Streets and stations</text>
-    <text x="96.5" y="17.7">Neighbourhood composition</text>
-    <text x="96.5" y="21.6">Crime generator → target</text>
+    <text x="96.5" y="17.7">Parcel type</text>
+    <text x="96.5" y="21.6">Persistent place effect</text>
     <text x="96.5" y="25.5">Crime</text>
   </g>
   <g stroke="#1A1A1A" stroke-width="0.3" marker-end="url(#seta)">

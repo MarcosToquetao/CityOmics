@@ -1,231 +1,210 @@
-"""Fig. 3 — Arquitetura do tecido: nichos e comunicação (spec-figuras §3; D39, D40, D59).
+"""Fig. 3 — Fenótipo: que crime cada classe de célula expressa (narrativa B; D63–D65, D69).
 
-a: enriquecimento de vizinhança tipo × tipo (nulo restrito a distrito × densidade);
-b: mapa dos domínios (composição suavizada dos setores);
-c: covariáveis marcadoras por domínio (d de Cohen);
-d: círculo emissor → receptor (força L–R agregada, ℓ = 500 m, pares com p < 0,05);
-e: bolhas dos pares L–R por par de tipos;
-f: campo vetorial do sinal do par com maior atividade (estilo COMMOT).
+a: taxa atribuída de roubo e furto de celular por classe (por km de frente ou de rua; estações por unidade),
+   IC de bootstrap por distrito, nas mesmas linhas de b;
+b: assinatura classe × fenótipo (15 fenótipos): tamanho = participação da classe no crime esperado do
+   fenótipo; cor = log2 do enriquecimento contra a média dos fenótipos (a "matriz-assinatura");
+c: validação pontual por fenótipo (Spearman entre a taxa atribuída e a observada ligando cada ponto ao
+   segmento de rua e aos lotes lindeiros);
+d: programas de crime (NMF, k = 4): carga de cada fenótipo;
+e: uso dos programas por setor (mapas rasterizados, D60; cofre espacial em cinza);
+f: Sankey grupo teórico → classe → roubo de celular (mantido por D47/D57).
 """
 
 from __future__ import annotations
 
 import json
 
+import matplotlib.patches as mpatches
 import numpy as np
 import polars as pl
 
-from common import ax_mm, check_periodo
+import painel_onde as PO
+import rotulos as R
+from common import ax_mm, check_periodo, row_swatches
+from cityomics.atlas import guard
 from cityomics.atlas.genes_lote import atlas_dir
-from cityomics.paths import processed_dir
 from cityomics.viz import maps as M
+from cityomics.viz import names as N
 from cityomics.viz import palette as P
 from cityomics.viz import style as S
-from cityomics.viz.chord import circle
-from cityomics.viz.fields import signal_field, stream, to_grid
 
-DOM_COLORS = ["#E8743B", "#5B9BD5", "#2A9D8F", "#B99BF0", "#E3B23C", "#8C7B6B", "#D1495B", "#6A994E", "#264653",
-              "#F4A261", "#9C89B8", "#7FB3EE"]
-COV_EN = {
-    "infra_dist_estacao_trilhos_m": "Distance to rail station", "infra_dist_terminal_onibus_m": "Distance to bus terminal",
-    "infra_dens_ponto_onibus_km2": "Bus-stop density", "cnpj_estoque_bar_restaurante": "Bars and restaurants",
-    "cnpj_estoque_comercio_varejista": "Retail shops", "cnpj_estoque_financeiro": "Banks", "agencias_estoque": "Bank branches",
-    "osm_dens_poi_bar_noturno_km2": "Nightlife density", "osm_dens_poi_banco_atm_km2": "ATM density",
-    "osm_dens_poi_alimentacao_km2": "Food outlets", "osm_dens_poi_comercio_km2": "Shop density", "osm_dist_bar_noturno_m": "Distance to nightlife",
-    "pop_dasi": "Resident population", "censo2022_dens_pop_km2": "Population density", "ipvs_ipvs_codigo": "Social vulnerability (IPVS)",
-    "censo_interp_renda_media_resp": "Household income", "censo2022_cv_renda_resp": "Income inequality", "censo_d_renda_rel": "Income change",
-    "censo_interp_frac_homens_15_29": "Young men share", "censo_interp_taxa_analfabetismo_15": "Illiteracy",
-    "censo2022_frac_dom_nao_ocupados": "Vacant dwellings", "censo2022_moradores_por_dom": "Crowding", "censo_g_pop": "Population growth",
-    "infra_dist_favela_m": "Distance to favela", "censo2022_frac_cortico": "Tenements (cortiços)",
-    "censo2022_frac_faces_iluminacao": "Street lighting (census)", "infra_dens_iluminacao_km2": "Lamp-post density",
-    "censo2022_frac_faces_calcada": "Sidewalks", "censo2022_frac_faces_pavimentadas": "Paved streets", "osm_dens_intersecoes_km2": "Intersection density",
-    "osm_betweenness_media": "Street betweenness", "osm_frac_becos": "Dead ends", "sp156_iluminacao_s6": "Lighting complaints",
-    "sp156_limpeza_entulho_s6": "Debris complaints", "sp156_imovel_abandonado_s12": "Abandoned-property complaints", "luz_noturna": "Night lights (VIIRS)",
-    "n_transacoes_s12": "Property sales", "preco_m2_mediana_m12": "Price per m²", "frac_financiada_m12": "Mortgage share",
-    "cnpj_entradas_construcao_imobiliario_s12": "New construction firms",
-}
-LR_EN = {"fluxo_trilhos": "Rail flow", "fluxo_onibus": "Bus flow", "vida_noturna": "Nightlife", "varejo": "Retail", "dinheiro": "Cash",
-         "alvos_a_pe": "Pedestrian targets", "pouca_iluminacao": "Poor lighting", "rotas_de_fuga": "Escape routes",
-         "abandono": "Disorder", "desvantagem": "Disadvantage"}
+PROG_CORES = ["#7FB3EE", "#F2A65A", "#9AD18B", "#E07A8C"]
 
 
-def meta():
-    perfil = pl.read_parquet(atlas_dir() / "tipos_perfil_2025.parquet")
-    tipos = perfil["nome"].to_list() + ["Favela (FCU)"]
-    fam = perfil["familia"].to_list() + ["favela"]
-    key = (perfil["padrao_alto"] * 2 + perfil["pavimentos"] / 10).to_list() + [0.0]
-    from cityomics.viz.names import SHORT
-
-    en = dict(zip(perfil["nome"].to_list(), perfil["name_en"].to_list())) | {"Favela (FCU)": "Favelas"}
-    en = {k: SHORT.get(v, v) for k, v in en.items()}
-    n = dict(zip(perfil["nome"].to_list(), perfil["n_lotes"].to_list()))
-    return tipos, fam, key, en, n
+def fen_ordem(prog: dict) -> list[str]:
+    H = {p["programa"]: p["fenotipos"] for p in prog["programas"]}
+    fen = list(next(iter(H.values())))
+    dono = {f: max(H, key=lambda p: H[p][f]) for f in fen}
+    return sorted(fen, key=lambda f: (list(H).index(dono[f]), -H[dono[f]][f]))
 
 
-def panel_nhood(ax, ne: pl.DataFrame, order: list[str], en: dict):
-    order = [t for t in order if t in set(ne["a"].to_list())]
-    K = len(order)
-    Z = np.zeros((K, K))
-    idx = {t: i for i, t in enumerate(order)}
-    for r in ne.iter_rows(named=True):
-        if r["a"] in idx and r["b"] in idx:
-            Z[idx[r["a"]], idx[r["b"]]] = r["z"]
-    np.fill_diagonal(Z, np.nan)
-    vmax = np.nanpercentile(np.abs(Z), 95)
-    cm = P.cmap("vik").copy()
-    cm.set_bad("#E6E6E6")
-    im = ax.imshow(np.clip(Z, -vmax, vmax), cmap=cm, vmin=-vmax, vmax=vmax)
-    lab = [en.get(t, t) for t in order]
-    ax.set_xticks(range(K))
-    ax.set_xticklabels(lab, rotation=60, ha="right", rotation_mode="anchor", fontsize=5)
-    ax.set_yticks(range(K))
-    ax.set_yticklabels(lab, fontsize=5)
+def panel_rates_rows(ax, lam: pl.DataFrame, rows: list[str], cols: dict):
+    d = {r["classe"]: r for r in lam.iter_rows(named=True)}
+    for i, c in enumerate(rows):
+        r = d.get(c)
+        if r is None or r["lambda"] <= 0:
+            continue
+        lo, hi = max(r["lambda_ic_lo"], r["lambda"] / 10, 3e-3), r["lambda_ic_hi"]
+        mk = "D" if c.startswith("n_") else "o"
+        ax.plot([lo, hi], [i, i], color=cols.get(c, "#888888"), lw=1.0)
+        ax.scatter(r["lambda"], i, s=10, marker=mk, color=cols.get(c, "#888888"), zorder=3, edgecolor="white", linewidth=0.3)
+    ax.set_xscale("log")
+    ax.set_ylim(len(rows) - 0.5, -0.5)
+    ax.set_yticks([])
+    ax.spines["left"].set_visible(False)
+    ax.set_xlabel("Phone crime per year,\nper km (diamonds: per station)", fontsize=5.0)
+    ax.grid(True, axis="x", color="#F0F0F0", lw=0.4)
+    ax.set_axisbelow(True)
+
+
+def panel_signature(ax, m: pl.DataFrame, rows: list[str], fen: list[str]):
+    d = m.filter(pl.col("classe").is_in(rows) & pl.col("fenotipo").is_in(fen))
+    xi = {f: i for i, f in enumerate(fen)}
+    yi = {c: i for i, c in enumerate(rows)}
+    z = np.clip(d["log2_enriq"].to_numpy(), -2.5, 2.5)
+    s = 1.0 + 130 * np.clip(d["participacao"].to_numpy(), 0, 0.35)
+    sc = ax.scatter([xi[f] for f in d["fenotipo"]], [yi[c] for c in d["classe"]], s=s, c=z, cmap=P.cmap("vik"), vmin=-2.5, vmax=2.5,
+                    edgecolors="#555555", linewidths=0.2)
+    ax.set_xticks(range(len(fen)))
+    ax.set_xticklabels([R.FEN_EN[f] for f in fen], rotation=55, ha="right", rotation_mode="anchor")
+    ax.set_yticks([])
+    ax.set_xlim(-0.6, len(fen) - 0.4)
+    ax.set_ylim(len(rows) - 0.5, -0.5)
+    for s_ in ax.spines.values():
+        s_.set_visible(False)
     ax.tick_params(length=0)
-    for s in ax.spines.values():
-        s.set_visible(False)
-    return im
-
-
-def panel_domains(ax, dom: pl.DataFrame):
-    vals = dict(zip(dom["cd_setor"].to_list(), (dom["dominio"] + 1).to_list()))
-    arr, bounds = M.setor_raster(vals, res=40.0, fill=0)
-    arr = np.nan_to_num(arr).astype(int)
-    k = int(dom["dominio"].max()) + 1
-    rgba = M.to_rgba(arr, {i + 1: DOM_COLORS[i % len(DOM_COLORS)] for i in range(k)}, mask=(arr > 0).astype(int), bg=S.DARK_BG)
-    S.dark(ax)
-    ax.set_facecolor("white")
-    M.show(ax, rgba, bounds)
-    M.scalebar(ax, 10_000, color="#1A1A1A", loc=(0.55, 0.03))
-    ax.set_xlabel("")
-    ax.set_ylabel("")
-
-
-def panel_markers(ax, mk: pl.DataFrame, names: dict, ntop: int = 2):
-    top = mk.sort("cohen_d", descending=True).group_by("dominio").head(ntop)["covariavel"].unique().to_list()
-    doms = sorted(mk["dominio"].unique().to_list())
-    covs = [c for c in COV_EN if c in top] + [c for c in top if c not in COV_EN]
-    D = np.zeros((len(doms), len(covs)))
-    for r in mk.filter(pl.col("covariavel").is_in(covs)).iter_rows(named=True):
-        D[doms.index(r["dominio"]), covs.index(r["covariavel"])] = r["cohen_d"]
-    im = ax.imshow(np.clip(D, -1.5, 1.5), cmap=P.cmap("vik"), vmin=-1.5, vmax=1.5, aspect="auto")
-    ax.set_xticks(range(len(covs)))
-    ax.set_xticklabels([COV_EN.get(c, c) for c in covs], rotation=60, ha="right", rotation_mode="anchor", fontsize=4.6)
-    ax.set_yticks(range(len(doms)))
-    from cityomics.viz.names import domain_labels
-
-    dl = domain_labels(short=True)
-    ax.set_yticklabels([dl[d] for d in doms], fontsize=4.6)
-    for i, d in enumerate(doms):
-        ax.add_patch(__import__("matplotlib").patches.Rectangle((-1.4, i - 0.4), 0.6, 0.8, color=DOM_COLORS[d % len(DOM_COLORS)], clip_on=False))
-    ax.tick_params(length=0)
-    for s in ax.spines.values():
-        s.set_visible(False)
-    return im
-
-
-def lr_matrix(lt: pl.DataFrame, tipos: list[str], ell: int = 500, pmax: float = 0.05):
-    d = lt.filter((pl.col("escala_m") == ell) & (pl.col("p") < pmax))
-    agg = d.group_by("emissor", "receptor_tipo").agg(pl.col("forca").sum())
-    idx = {t: i for i, t in enumerate(tipos)}
-    Smat = np.zeros((len(tipos), len(tipos)))
-    for r in agg.iter_rows(named=True):
-        if r["emissor"] in idx and r["receptor_tipo"] in idx:
-            Smat[idx[r["emissor"]], idx[r["receptor_tipo"]]] = r["forca"]
-    return Smat
-
-
-def panel_bubbles(ax, lt: pl.DataFrame, en: dict, ell: int = 500, ncol: int = 10):
-    d = lt.filter(pl.col("escala_m") == ell).with_columns((pl.col("ligante") + "→" + pl.col("receptor")).alias("par"),
-                                                          (pl.col("emissor") + " → " + pl.col("receptor_tipo")).alias("tt"))
-    toptt = d.group_by("tt").agg(pl.col("forca").sum()).sort("forca", descending=True).head(ncol)["tt"].to_list()
-    pares = d.select("par").unique().sort("par")["par"].to_list()
-    d = d.filter(pl.col("tt").is_in(toptt))
-    d = d.with_columns((pl.col("forca") / pl.col("forca").max().over("par")).alias("rel"))
-    xs = [toptt.index(t) for t in d["tt"]]
-    ys = [pares.index(p) for p in d["par"]]
-    size = 2 + 24 * np.clip(-np.log10(d["p"].to_numpy()) / 2.0, 0, 1)
-    sc = ax.scatter(xs, ys, s=size, c=d["rel"].to_numpy(), cmap=P.cmap("batlow"), vmin=0, vmax=1, edgecolor="#555555", linewidth=0.2)
-    ax.set_xticks(range(len(toptt)))
-    ax.set_xticklabels([" → ".join(en.get(x, x) for x in t.split(" → ")) for t in toptt], rotation=60, ha="right", rotation_mode="anchor", fontsize=4.6)
-    ax.set_yticks(range(len(pares)))
-    ax.set_yticklabels([" → ".join(LR_EN.get(x, x) for x in p.split("→")) for p in pares], fontsize=4.6)
-    ax.tick_params(length=0)
-    ax.set_xlim(-0.6, len(toptt) - 0.4)
-    ax.set_ylim(len(pares) - 0.5, -0.5)
-    for s in ax.spines.values():
-        s.set_visible(False)
     ax.grid(True, color="#F0F0F0", lw=0.4)
     ax.set_axisbelow(True)
     return sc
 
 
-def panel_field(ax, best: dict):
-    from cityomics.atlas.communication import kernel, setor_frame
+def panel_row_labels(ax, rows: list[str], longo: dict, cols: dict):
+    ax.set_ylim(len(rows) - 0.5, -0.5)
+    ax.set_xlim(0, 1)
+    ax.axis("off")
+    for i, c in enumerate(rows):
+        ax.add_patch(mpatches.Rectangle((0.92, i - 0.36), 0.08, 0.72, color=cols.get(c, "#888888"), clip_on=False))
+        ax.text(0.88, i, longo.get(c, c), ha="right", va="center", fontsize=5.5)
 
-    setor, _ = setor_frame()
-    s = setor.filter(pl.col("x").is_not_null())
-    xy = s.select("x", "y").to_numpy()
-    K = kernel(xy, float(best["escala_m"]))
-    V, mag = signal_field(xy, s[best["ligante"]].to_numpy(), s[best["receptor"]].to_numpy(), K)
-    _, dist = M._bounds()
-    bounds = tuple(dist.total_bounds)
-    gx, gy, U, W = to_grid(xy, V, bounds, n=140)
-    from scipy.ndimage import gaussian_filter
 
-    U, W = gaussian_filter(U, 2.0), gaussian_filter(W, 2.0)
+def panel_validation_fen(ax, val: dict, fen: list[str]):
+    y = np.arange(len(fen))
+    for i, f in enumerate(fen):
+        v = val.get(f, {})
+        if v.get("spearman_lotes") is None:
+            ax.text(0.02, i, f"coverage {v.get('cobertura', 0):.0%} (not tested)", va="center", fontsize=4.8, color=S.MUTED)
+            continue
+        ax.plot([v["spearman"], v["spearman_lotes"]], [i, i], color="#BDBDBD", lw=0.6, zorder=1)
+        ax.scatter(v["spearman_lotes"], i, s=12, color="#264653", zorder=3)
+        ax.scatter(v["spearman"], i, s=12, facecolor="white", edgecolor="#264653", linewidth=0.7, zorder=3)
+    ax.set_yticks(y)
+    ax.set_yticklabels([R.FEN_EN[f] for f in fen])
+    ax.set_ylim(len(fen) - 0.5, -0.5)
+    ax.set_xlim(0, 1)
+    ax.set_xlabel("Finer-scale check, Spearman ρ")
+    ax.tick_params(axis="y", length=0)
+    ax.spines["left"].set_visible(False)
+    ax.grid(True, axis="x", color="#F0F0F0", lw=0.4)
+    ax.set_axisbelow(True)
+    from matplotlib.lines import Line2D
+
+    ax.legend([Line2D([], [], marker="o", ls="", color="#264653", ms=3), Line2D([], [], marker="o", ls="", mfc="white", mec="#264653", ms=3)],
+              ["parcel types only", "all cell classes"], loc="center left", bbox_to_anchor=(0.0, 0.45), fontsize=4.8,
+              handletextpad=0.2, borderaxespad=0.2)
+
+
+def prog_nome(p: dict, curto: dict) -> str:
+    return N.program_label(p, curto)
+
+
+def panel_programs(ax, prog: dict, fen: list[str], curto: dict):
+    ps = prog["programas"]
+    H = np.array([[p["fenotipos"][f] for f in fen] for p in ps])
+    cm = P.cmap("bilbao")
+    lum = lambda c: 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]  # noqa: E731
+    if lum(cm(0.0)) < lum(cm(1.0)):  # claro = zero, escuro = carga alta
+        cm = cm.reversed()
+    im = ax.imshow(H, cmap=cm, vmin=0, vmax=max(0.5, float(H.max())), aspect="auto")
+    ax.set_yticks(range(len(ps)))
+    ax.set_yticklabels([prog_nome(p, curto) for p in ps], fontsize=5)
+    ax.set_xticks(range(len(fen)))
+    ax.set_xticklabels([R.FEN_EN[f] for f in fen], rotation=55, ha="right", rotation_mode="anchor", fontsize=4.8)
+    ax.tick_params(length=0)
+    row_swatches(ax, [PROG_CORES[i % 4] for i in range(len(ps))], h=0.8)
+    for s_ in ax.spines.values():
+        s_.set_visible(False)
+    return im
+
+
+def panel_program_map(ax, uso: pl.DataFrame, p: str, color: str, titulo: str):
+    from matplotlib.colors import LinearSegmentedColormap
+
+    v = dict(zip(uso["cd_setor"].to_list(), uso[p].to_list()))
+    st = pl.read_parquet(atlas_dir() / f"setor_composicao_2025.parquet", columns=["cd_setor", "cd_dist"])
+    cof = st.filter(pl.Series(~guard.explore_mask(st["cd_dist"].to_numpy())))["cd_setor"].to_list()
+    vmax = float(np.nanpercentile(uso[p].to_numpy(), 97))
+    v |= {c: -1.0 for c in cof}
+    arr, bounds = M.setor_raster(v, res=60.0)
+    cm = LinearSegmentedColormap.from_list("p", ["#15151B", color])
+    cm.set_under("#2E2E36")
+    cm.set_bad(S.DARK_BG)
     S.dark(ax)
-    dist.plot(ax=ax, color="#15151B", edgecolor="#2A2A33", linewidth=0.25)
-    stream(ax, gx, gy, U, W, P.cmap("lipari"), density=1.5)
-    ax.set_xlabel("")
-    ax.set_ylabel("")
-    ax.set_xlim(bounds[0], bounds[2])
-    ax.set_ylim(bounds[1], bounds[3])
+    x0, y0, x1, y1 = bounds
+    ax.imshow(np.ma.masked_invalid(arr), cmap=cm, vmin=0.0, vmax=vmax, extent=(x0, x1, y0, y1), origin="upper",
+              interpolation="nearest", rasterized=True)
+    ax.set_xlim(x0, x1)
+    ax.set_ylim(y0, y1)
     ax.set_aspect("equal")
-    ax.text(0.03, 0.97, f"{LR_EN[best['ligante']]} → {LR_EN[best['receptor']]}", transform=ax.transAxes, color="white",
-            fontsize=5.5, va="top")
+    ax.text(0.03, 0.97, titulo, transform=ax.transAxes, color="white", fontsize=5.0, va="top")
 
 
 def make(periodo: str = "dev"):
     check_periodo(periodo)
-    tipos, fam, key, en, n = meta()
-    cols = P.type_colors(tipos, fam, key)
-    order = P.ordered_types(tipos, fam, key)
-    ne = pl.read_parquet(atlas_dir() / "nhood_enrichment_2025.parquet")
-    dom = pl.read_parquet(atlas_dir() / "setor_dominio_2025.parquet")
-    mk = pl.read_parquet(atlas_dir() / "dominio_marcadores_2025.parquet")
-    lt = pl.read_parquet(atlas_dir() / "comunicacao" / "lr_tipos.parquet")
-    act = pl.read_parquet(atlas_dir() / "comunicacao" / "lr_atividade.parquet")
-    best = act.sort("ganho_pct", descending=True).row(0, named=True)
-    fig = S.figure(S.DOUBLE, 158)
-    a = ax_mm(fig, 22, 4, 42, 42)
-    im = panel_nhood(a, ne, order, en)
-    S.fig_label(fig, "a", 1, 2)
-    cb = ax_mm(fig, 66, 10, 2.2, 22)
-    c1 = fig.colorbar(im, cax=cb)
-    c1.set_label("Neighbourhood enrichment (z)", fontsize=5.0)
+    fd = atlas_dir() / "fenotipo"
+    m = pl.read_parquet(fd / "assinaturas.parquet")
+    a_rep = json.loads((fd / "assinaturas.json").read_text())
+    prog = json.loads((fd / "programas.json").read_text())
+    uso = pl.read_parquet(fd / "programas_uso_setor.parquet")
+    lam = pl.read_parquet(atlas_dir() / "atribuicao_celular_2025.parquet")
+    fl = pl.read_parquet(atlas_dir() / "sankey_celular_2025.parquet")
+    tipos, fam, key, longo, curto = R.classes()
+    rows = R.ordem_linhas()
+    cols = R.cores()
+    fen = fen_ordem(prog)
+
+    fig = S.figure(S.DOUBLE, 216)
+    lab = ax_mm(fig, 2, 6, 40, 68)
+    panel_row_labels(lab, rows, curto, cols)  # nomes curtos: os longos com qualificador não cabem
+    a = ax_mm(fig, 44, 6, 26, 68)
+    panel_rates_rows(a, lam, rows, cols)
+    S.fig_label(fig, "a", 42, 1)
+    b = ax_mm(fig, 76, 6, 104, 68)
+    sc = panel_signature(b, m, rows, fen)
+    S.fig_label(fig, "b", 72, 1)
+    cb = ax_mm(fig, 80, 99, 22, 2.0)
+    c1 = fig.colorbar(sc, cax=cb, orientation="horizontal")
+    c1.set_label("log₂ enrichment vs mean crime type", fontsize=5.0)
     c1.ax.tick_params(labelsize=4.8, length=1.5)
-    b = ax_mm(fig, 82, 4, 44, 62)
-    panel_domains(b, dom)
-    S.fig_label(fig, "b", 76, 2)
-    c = ax_mm(fig, 158, 4, 24, 30)
-    im2 = panel_markers(c, mk, {})
-    S.fig_label(fig, "c", 130, 2)
-    cb2 = ax_mm(fig, 136, 64, 18, 2.0)
-    c2 = fig.colorbar(im2, cax=cb2, orientation="horizontal")
-    c2.set_label("Cohen's d", fontsize=5.0)
-    c2.ax.tick_params(labelsize=4.8, length=1.5)
-    d = ax_mm(fig, 10, 86, 56, 56)
-    Smat = lr_matrix(lt, tipos)
-    circle(d, tipos, np.array([n.get(t, 2000) for t in tipos], dtype=float), Smat, cols, labels=en, top=20)
-    S.fig_label(fig, "d", 1, 80)
-    e = ax_mm(fig, 96, 84, 36, 40)
-    sc = panel_bubbles(e, lt, en)
-    S.fig_label(fig, "e", 72, 80)
-    cb3 = ax_mm(fig, 96, 150, 16, 2.0)
-    c3 = fig.colorbar(sc, cax=cb3, orientation="horizontal")
-    c3.set_label("Strength relative to pair maximum", fontsize=4.8)
-    c3.ax.tick_params(labelsize=4.6, length=1.5)
-    f = ax_mm(fig, 136, 78, 46, 72)
-    panel_field(f, best)
-    S.fig_label(fig, "f", 132, 76)
+    lg = ax_mm(fig, 112, 96, 66, 6)
+    lg.axis("off")
+    lg.text(0.0, 0.5, "Share of crime type", fontsize=5.0, va="center", transform=lg.transAxes)
+    for i, f in enumerate((0.05, 0.15, 0.3)):
+        x = 0.36 + i * 0.2
+        lg.scatter([x], [0.5], s=1.0 + 130 * f, color="#BBBBBB", edgecolor="#555555", linewidth=0.2, transform=lg.transAxes, clip_on=False)
+        lg.text(x + 0.04, 0.5, f"{int(f * 100)}%", fontsize=4.8, va="center", transform=lg.transAxes)
+
+    c = ax_mm(fig, 32, 116, 38, 50)
+    panel_validation_fen(c, a_rep["validacao_pontual"], fen)
+    S.fig_label(fig, "c", 1, 112)
+    d = ax_mm(fig, 124, 116, 58, 16)
+    panel_programs(d, prog, fen, curto)
+    S.fig_label(fig, "d", 74, 112)
+
+    for i, p in enumerate(prog["programas"]):
+        ax = ax_mm(fig, 4 + i * 45, 172, 43, 40)
+        panel_program_map(ax, uso, p["programa"], PROG_CORES[i % 4], N.program_title(p["programa"]))
+        if i == 0:
+            M.scalebar(ax, 10_000, color="white", loc=(0.55, 0.05))
+    S.fig_label(fig, "e", 1, 168)
     return S.save(fig, "fig3", periodo)

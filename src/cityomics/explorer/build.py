@@ -37,7 +37,7 @@ def lots_anndata(public: bool):
     gi = g.filter(pl.col("tem_iptu")).select("sql_base", "cd_setor", "cd_dist")
     tipos = pl.read_parquet(atlas_dir() / "lote_tipos_2025.parquet").select("sql_base", "tipo", "familia")
     pts = pl.read_parquet(atlas_dir() / "lote_pontos.parquet").select("sql_base", "x", "y")
-    dom = pl.read_parquet(atlas_dir() / "setor_dominio_2025.parquet").select("cd_setor", "dominio_nome")
+    dom = pl.read_parquet(atlas_dir() / "setor_dominio_2025.parquet").select("cd_setor", "dominio")
     obs = (gi.with_row_index("i").join(tipos, on="sql_base", how="left").join(pts, on="sql_base", how="left")
            .join(dom, on="cd_setor", how="left").sort("i"))
     # o explorador usa a subamostra aleatória do UMAP (150 mil lotes, coordenadas exatas): 1,6 milhão de pontos
@@ -54,9 +54,14 @@ def lots_anndata(public: bool):
     xy = obs.select("x", "y").to_numpy().astype(np.float32)
     xy = np.nan_to_num(xy - np.nanmin(xy, axis=0)) / 1000.0  # km a partir do canto da cidade
     import pandas as pd
+    from cityomics.viz.names import FAMILY_EN, class_labels, domain_labels
 
-    o = pd.DataFrame({"tipo": obs["tipo"].fill_null("Sem cadastro").to_numpy(), "familia": obs["familia"].fill_null("sem_cadastro").to_numpy(),
-                      "dominio": obs["dominio_nome"].fill_null("—").to_numpy(), "distrito": obs["cd_dist"].cast(pl.String).fill_null("—").to_numpy()},
+    longo, _ = class_labels()  # nomes legíveis em inglês, os mesmos das figuras
+    dl = domain_labels(short=True)
+    o = pd.DataFrame({"tipo": [longo.get(x, x) for x in obs["tipo"].fill_null("Sem cadastro").to_list()],
+                      "familia": [FAMILY_EN.get(x, x) for x in obs["familia"].fill_null("sem_cadastro").to_list()],
+                      "dominio": [dl.get(x, "—") if x is not None else "—" for x in obs["dominio"].to_list()],
+                      "distrito": obs["cd_dist"].cast(pl.String).fill_null("—").to_numpy()},
                      index=obs["sql_base"].to_numpy())
     for c in o.columns:
         o[c] = o[c].astype("category")
@@ -71,8 +76,12 @@ def setores_anndata(public: bool):
     import geopandas as gpd
     import pandas as pd
 
+    from cityomics.viz.names import class_labels, domain_labels
+
+    longo, _ = class_labels()
+    dl = domain_labels(short=True)
     comp = pl.read_parquet(atlas_dir() / "setor_composicao_2025.parquet")
-    dom = pl.read_parquet(atlas_dir() / "setor_dominio_2025.parquet").select("cd_setor", "dominio_nome")
+    dom = pl.read_parquet(atlas_dir() / "setor_dominio_2025.parquet").select("cd_setor", "dominio")
     g = gpd.read_parquet(processed_dir() / "units" / "setores_2022.parquet", columns=["cd_setor", "geometry"])
     cen = g.geometry.representative_point()
     xy = pl.DataFrame({"cd_setor": g["cd_setor"].astype(str).to_numpy(), "x": cen.x.to_numpy(), "y": cen.y.to_numpy()})
@@ -80,8 +89,8 @@ def setores_anndata(public: bool):
     ecols = [c for c in s.columns if c.startswith("e|")]
     E = s.select(ecols).to_numpy().astype(np.float32)
     E = E / np.clip(E.sum(1, keepdims=True), 1e-9, None)
-    var = [f"share: {c[2:]}" for c in ecols]
-    o = pd.DataFrame({"dominio": s["dominio_nome"].fill_null("—").to_numpy(), "distrito": s["cd_dist"].cast(pl.String).to_numpy()},
+    var = [f"share: {longo.get(c[2:], c[2:])}" for c in ecols]
+    o = pd.DataFrame({"dominio": [dl.get(x, "—") if x is not None else "—" for x in s["dominio"].to_list()], "distrito": s["cd_dist"].cast(pl.String).to_numpy()},
                      index=s["cd_setor"].to_numpy())
     if not public:
         from cityomics.viz.figdata import load_eval
@@ -130,8 +139,10 @@ def config(lot_path: str, setor_path: str, base_url: str, public: bool, tipos: l
     if tipos:
         from cityomics.viz.palette import type_colors
 
-        perfil = pl.read_parquet(atlas_dir() / "tipos_perfil_2025.parquet")
-        fam = dict(zip(perfil["nome"].to_list(), perfil["familia"].to_list())) | {"Sem cadastro": "sem_cadastro", "Favela (FCU)": "favela"}
+        from cityomics.viz.names import class_labels, family_of
+
+        longo, _ = class_labels()
+        fam = {longo.get(k, k): f for k, f in family_of().items()}  # os tipos chegam com o nome em inglês
         hexes = type_colors(tipos, [fam.get(x, "sem_cadastro") for x in tipos], [0.0] * len(tipos), dark=True)
         colors = [{"path": ["Parcel type", x], "color": [int(hexes[x][i:i + 2], 16) for i in (1, 3, 5)]} for x in tipos]
     vc.link_views([mp, um, sets, hm, genes], ["obsSetSelection", "obsColorEncoding", "featureSelection", "obsSetColor"],

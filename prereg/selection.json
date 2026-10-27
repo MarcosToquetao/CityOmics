@@ -1,10 +1,10 @@
 {
   "best_baseline_crps": "glm",
   "best_baseline_pai1": "media_historica",
-  "best_crossdomain_crps": "lgbm_sem_crime",
+  "best_crossdomain_crps": "ensemble",
   "best_crossdomain_pai1": "ensemble",
-  "laya_ft": null,
-  "lightgbm_compressed_state": null,
-  "markov_fate_baseline": null,
-  "status": "provisional: periodo de tuning 2025; refazer apos incluir VIIRS e congelar os modelos"
+  "laya_ft": "laya_ft",
+  "lightgbm_compressed_state": "lgbm_estado",
+  "markov_fate_baseline": "markov_familia_dominio",
+  "status": "final: CRPS corrigido (A12) e modelos congelados (A13), dados até 2025-12"
 }

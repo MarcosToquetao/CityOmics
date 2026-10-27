@@ -70,7 +70,8 @@ def leiden(P: np.ndarray, resolution: float, seed: int, n_neighbors: int = 15) -
 
     a = ad.AnnData(np.zeros((P.shape[0], 1), dtype=np.float32))
     a.obsm["X_pca"] = P
-    sc.pp.neighbors(a, n_neighbors=n_neighbors, use_rep="X_pca", random_state=seed)
+    # kNN exato (scikit-learn): o grafo não depende do número de threads (D59; refeito em 2026-10-20)
+    sc.pp.neighbors(a, n_neighbors=n_neighbors, use_rep="X_pca", random_state=seed, transformer="sklearn")
     sc.tl.leiden(a, resolution=resolution, random_state=seed, flavor="igraph", n_iterations=2, directed=False)
     return a.obs["leiden"].astype(int).to_numpy()
 
@@ -174,11 +175,41 @@ def _nome(p: dict) -> tuple[str, str, str]:
     return "Residencial horizontal médio", "Low-rise residential, middle standard", "res_horizontal"
 
 
+# qualificador de um tipo que repete o nome-base de outro: o atributo em que mais excede o tipo maior do grupo
+QUALIFICADORES = {
+    "cnpj_mei": ("com microempreendedor", "with a home business"),
+    "cnpj_outros_servicos": ("com serviços", "with a service business"),
+    "cnpj_servicos_pessoais": ("com serviços pessoais", "with personal services"),
+    "cnpj_bar_restaurante": ("com bares e restaurantes", "with bars and restaurants"),
+    "cnpj_comercio_varejista": ("com lojas", "with shops"),
+    "cnpj_comercio_atacado": ("com atacado", "with wholesale"),
+    "cnpj_transporte_armazenagem": ("com transporte", "with transport businesses"),
+    "cnpj_educacao_saude": ("com educação e saúde", "with schools or clinics"),
+    "cnpj_construcao_imobiliario": ("com construção", "with construction businesses"),
+    "cnpj_industria": ("com indústria", "with manufacturing"),
+    "cnpj_financeiro": ("com finanças", "with finance businesses"),
+    "esquina": ("de esquina", "on corners"),
+    "n_unidades": ("multifamiliar", "multi-unit"),
+    "area_construida": ("de grande área construída", "large buildings"),
+    "area_terreno": ("de lote grande", "large lots"),
+    "idade": ("antigo", "older buildings"),
+    "valor_m2_terreno": ("valorizado", "high land value"),
+    "testada": ("de frente larga", "wide frontage"),
+    "uso_comercio": ("com comércio", "with retail use"),
+    "uso_servicos": ("com serviços", "with service use"),
+}
+
+
 def name_types(raw: np.ndarray, names: list[str], lab: np.ndarray) -> pl.DataFrame:
-    """Perfil médio bruto por tipo e nomes únicos (sufixo quando dois tipos caem no mesmo nome)."""
-    rows = []
+    """Perfil médio bruto por tipo e nomes únicos. Quando dois tipos caem no mesmo nome-base, o maior fica
+    com ele e os outros recebem o qualificador do atributo (``QUALIFICADORES``) em que mais excedem o maior,
+    em desvios-padrão da cidade; só sem qualificador disponível entra o sufixo numérico."""
+    rows, mus = [], {}
+    sd = raw.std(axis=0)
+    sd[sd == 0] = 1.0
     for k in np.unique(lab):
         m = raw[lab == k]
+        mus[int(k)] = m.mean(axis=0)
         prof = {n: float(np.mean(m[:, i])) for i, n in enumerate(names)}
         # contagens e áreas voltam da escala log1p
         for n in names:
@@ -187,13 +218,28 @@ def name_types(raw: np.ndarray, names: list[str], lab: np.ndarray) -> pl.DataFra
         pt, en, fam = _nome(prof)
         rows.append({"cluster": int(k), "nome": pt, "name_en": en, "familia": fam, "n_lotes": int(len(m))} | prof)
     df = pl.DataFrame(rows).sort("n_lotes", descending=True)
-    seen: dict[str, int] = {}
+    cand = [i for i, n in enumerate(names) if n in QUALIFICADORES]
+    base_de: dict[str, int] = {}
+    usados: dict[str, set] = {}
     nomes, ens = [], []
-    for pt, en in zip(df["nome"], df["name_en"]):
-        seen[pt] = seen.get(pt, 0) + 1
-        suf = "" if seen[pt] == 1 else f" {seen[pt]}"
-        nomes.append(pt + suf)
-        ens.append(en + suf)
+    for k, pt, en in zip(df["cluster"], df["nome"], df["name_en"]):
+        if pt not in base_de:
+            base_de[pt], usados[pt] = int(k), set()
+            nomes.append(pt)
+            ens.append(en)
+            continue
+        z = (mus[int(k)] - mus[base_de[pt]]) / sd
+        i = max(cand, key=lambda j: z[j])
+        q = names[i]
+        if z[i] > 0 and q not in usados[pt]:
+            usados[pt].add(q)
+            nomes.append(f"{pt} {QUALIFICADORES[q][0]}")
+            ens.append(f"{en}, {QUALIFICADORES[q][1]}")
+        else:
+            n = len(usados[pt]) + 2
+            usados[pt].add(f"#{n}")
+            nomes.append(f"{pt} {n}")
+            ens.append(f"{en} {n}")
     return df.with_columns(pl.Series("nome", nomes), pl.Series("name_en", ens))
 
 
@@ -222,6 +268,14 @@ def umap_coords(P: np.ndarray, idx: np.ndarray, seed: int = 0) -> np.ndarray:
     return umap.UMAP(n_neighbors=15, min_dist=0.3, random_state=seed, n_jobs=1).fit_transform(P[idx]).astype(np.float32)
 
 
+def _ambiente() -> dict:
+    import os
+    from importlib.metadata import version
+
+    return {"knn": "exato (scikit-learn)", "pacotes": {p: version(p) for p in ("scanpy", "igraph", "scikit-learn", "numpy")},
+            "threads": {k: os.environ.get(k) for k in ("OMP_NUM_THREADS", "NUMBA_NUM_THREADS", "MKL_NUM_THREADS")}}
+
+
 def run(n_ref: int = 80_000, min_share: float = 0.003, log=print) -> dict:
     from sklearn.cluster import MiniBatchKMeans
     from sklearn.metrics import adjusted_rand_score
@@ -236,6 +290,7 @@ def run(n_ref: int = 80_000, min_share: float = 0.003, log=print) -> dict:
     gi = g.filter(pl.col("tem_iptu"))
     ref = stratified_sample(gi["cd_dist"].cast(pl.String).fill_null("NA").to_numpy(), n_ref)
     lab_ref = leiden(P[ref], r, seed=0)
+    assert np.array_equal(lab_ref, leiden(P[ref], r, seed=0)), "Leiden não reprodutível"
     # tipos minúsculos (< min_share dos lotes de referência) vão para o centróide mais próximo
     ks, cnt = np.unique(lab_ref, return_counts=True)
     small = ks[cnt < min_share * len(lab_ref)]
@@ -277,7 +332,8 @@ def run(n_ref: int = 80_000, min_share: float = 0.003, log=print) -> dict:
     rep = {"resolucao": r, "estabilidade": {str(k): v for k, v in stab.items()}, "n_tipos": int(len(np.unique(lab))),
            "genes": names, "pca_variancia": float(evr.sum()), "ari_kmeans_vs_leiden": ari_km,
            "confianca_transferencia_mediana": float(np.median(conf)), "n_ref": int(len(ref)),
-           "lotes_tipados": int(mask.sum()), "sem_cadastro": int((~mask).sum())}
+           "lotes_tipados": int(mask.sum()), "sem_cadastro": int((~mask).sum()),
+           "reprodutibilidade": _ambiente()}
     (d / f"tipagem_{G.REF_YEAR}.json").write_text(json.dumps(rep, ensure_ascii=False, indent=2))
     log(f"tipagem: r={r}, {rep['n_tipos']} tipos; ARI k-means × Leiden = {ari_km:.2f}")
     return rep
@@ -303,11 +359,12 @@ def rename(log=print) -> pl.DataFrame:
     return perfil
 
 
-def subcluster_vertical(parent: str = "Misto residencial e comercial", min_floors: float = 4, min_units: float = 8, log=print) -> int:
-    """Sub-agrupamento por regra de genes (sem crime) do tipo misto, que absorveu os prédios no Leiden.
+def subcluster_vertical(parent: str | None = None, min_floors: float = 4, min_units: float = 8, log=print) -> int:
+    """Sub-agrupamento por regra de genes (sem crime): os prédios, que o Leiden não separa, viram um tipo.
 
-    É o refinamento usual de um grupo heterogêneo num atlas celular: os lotes do tipo-pai com
-    ≥ ``min_floors`` pavimentos ou ≥ ``min_units`` unidades viram um tipo próprio (renomeado pelas regras).
+    É o refinamento usual de um grupo heterogêneo num atlas celular: os lotes com ≥ ``min_floors`` pavimentos
+    ou ≥ ``min_units`` unidades viram um tipo próprio (renomeado pelas regras). Com ``parent=None`` (a regra
+    desde a refação de 2026-10-20) vale para todos os tipos; com um nome, só para aquele tipo-pai.
     """
     d = atlas_dir()
     tipos = pl.read_parquet(d / f"lote_tipos_{G.REF_YEAR}.parquet")
@@ -316,14 +373,15 @@ def subcluster_vertical(parent: str = "Misto residencial e comercial", min_floor
     g = pl.read_parquet(d / f"lote_genes_{G.REF_YEAR}.parquet", columns=["sql_base", "pavimentos", "n_unidades"])
     j = tipos.join(g, on="sql_base", how="left")
     new = int(tipos["cluster"].max()) + 1
-    vert = (pl.col("tipo") == parent) & ((pl.col("pavimentos") >= min_floors) | (pl.col("n_unidades") >= min_units))
+    alto = (pl.col("pavimentos") >= min_floors) | (pl.col("n_unidades") >= min_units)
+    vert = (alto & (pl.col("cluster") >= 0)) if parent is None else ((pl.col("tipo") == parent) & alto)
     j = j.with_columns(pl.when(vert).then(pl.lit(new)).otherwise(pl.col("cluster")).alias("cluster"), vert.alias("sub_vertical"))
     j.drop("pavimentos", "n_unidades").write_parquet(d / f"lote_tipos_{G.REF_YEAR}.parquet")
     n = int(j["sub_vertical"].sum())
     rep = json.loads((d / f"tipagem_{G.REF_YEAR}.json").read_text())
-    rep["subagrupamento_vertical"] = {"tipo_pai": parent, "min_pavimentos": min_floors, "min_unidades": min_units, "lotes": n}
+    rep["subagrupamento_vertical"] = {"tipo_pai": parent or "todos", "min_pavimentos": min_floors, "min_unidades": min_units, "lotes": n}
     rep["n_tipos"] = int(j.filter(pl.col("cluster") >= 0)["cluster"].n_unique())
     (d / f"tipagem_{G.REF_YEAR}.json").write_text(json.dumps(rep, ensure_ascii=False, indent=2))
-    log(f"subagrupamento vertical: {n:,} lotes de '{parent}' viram um tipo próprio")
+    log(f"subagrupamento vertical: {n:,} lotes de '{parent or 'todos os tipos'}' viram um tipo próprio")
     rename(log=log)
     return n

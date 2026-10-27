@@ -1,10 +1,12 @@
-"""Fig. 2 — Tipos de lote e genes marcadores (spec-figuras §3).
+"""Fig. 2 — Tipos de lote e arquitetura do tecido (narrativa B, spec-figuras §3; D63, D64).
 
 a: UMAP de 150 mil lotes, colorido por tipo;
 b: dotplot marcador × tipo;
 c: composição dos spots (pizzas por setor) num recorte do centro, como na deconvolução;
-d: composição de tipos por distrito (barras empilhadas);
-e: estabilidade da tipagem (ARI por resolução) e concordância com o k-means.
+d: enriquecimento de vizinhança tipo × tipo (nulo restrito a distrito × densidade);
+e: domínios do tecido (composição suavizada dos setores);
+f: estabilidade da tipagem (ARI por resolução) e concordância com o k-means.
+A composição por distrito (antiga 2d) e as covariáveis por domínio (antiga 3c) vão para o ED6 e o ED3.
 """
 
 from __future__ import annotations
@@ -20,6 +22,7 @@ from cityomics.atlas.genes_lote import atlas_dir
 from cityomics.paths import processed_dir
 from cityomics.viz import figdata as F
 from cityomics.viz import palette as P
+from cityomics.viz import names as N
 from cityomics.viz import style as S
 
 
@@ -28,8 +31,7 @@ def types_meta():
     tipos = perfil["nome"].to_list()
     fam = perfil["familia"].to_list()
     key = (perfil["padrao_alto"] * 2 + perfil["pavimentos"] / 10).to_list()
-    en = dict(zip(tipos, perfil["name_en"].to_list()))
-    en["Favela (FCU)"] = "Favela (census FCU)"
+    en = N.class_labels(perfil)[0]
     return perfil, tipos, fam, key, en
 
 
@@ -62,7 +64,7 @@ def panel_dotplot(ax, dp: pl.DataFrame, order: list[str], en: dict, cols: dict, 
     sc = ax.scatter([gi[g] for g in dp["gene"]], [ti[t] for t in dp["tipo"]], s=0.5 + 18 * dp["frac"].to_numpy(),
                     c=z, cmap=cm, vmin=-2, vmax=2, linewidths=0.2, edgecolors="#555555")
     ax.set_xticks(range(len(genes)))
-    ax.set_xticklabels([F.GENE_EN.get(g, g) for g in genes], rotation=55, ha="right", rotation_mode="anchor")
+    ax.set_xticklabels([N.ATTR_EN.get(g, g) for g in genes], rotation=55, ha="right", rotation_mode="anchor")
     ax.set_yticks(range(len(order)))
     ax.set_yticklabels([en.get(t, t) for t in order])
     for tl, t in zip(ax.get_yticklabels(), order):
@@ -159,7 +161,7 @@ def panel_stability(ax):
     ax.axhline(rep["ari_kmeans_vs_leiden"], color="#8C8C8C", lw=0.6, ls=(0, (2, 2)))
     ax.text(max(k), rep["ari_kmeans_vs_leiden"] + 0.015, "k-means vs Leiden", fontsize=5, color="#8C8C8C", ha="right")
     ax.set_xlabel("Number of parcel types")
-    ax.set_ylabel("ARI between subsamples")
+    ax.set_ylabel("Agreement between subsamples (ARI)")
     ax.set_ylim(0, 1)
 
 
@@ -176,34 +178,59 @@ def make(periodo: str = "dev"):
     dp = F.dotplot()
     mk = pl.read_parquet(atlas_dir() / "tipos_marcadores_2025.parquet")
     top = (mk.filter(pl.col("logfc") > 0).sort("score", descending=True).group_by("cluster").head(3)["gene"].unique().to_list())
-    pref = list(F.GENE_EN)
+    pref = list(N.ATTR_EN)
     genes = [g for g in pref if g in top] + [g for g in top if g not in pref]
-    fig = S.figure(S.DOUBLE, 140)
+    fig = S.figure(S.DOUBLE, 206)
     a = ax_mm(fig, 4, 6, 52, 52)
     panel_umap(a, cols_by_cluster)
     S.fig_label(fig, "a", 1, 3)
     b = ax_mm(fig, 100, 6, 80, 62)
     sc = panel_dotplot(b, dp, order, en, cols, genes)
     S.fig_label(fig, "b", 62, 3)
-    cb = ax_mm(fig, 100, 99, 22, 2.2)
+    cb = ax_mm(fig, 66, 80, 24, 2.2)
     cbar = fig.colorbar(sc, cax=cb, orientation="horizontal")
-    cbar.set_label("Mean expression (z)", fontsize=5.2)
+    cbar.set_label("Mean standardized value", fontsize=5.2)
     cbar.ax.tick_params(labelsize=5, length=1.5)
-    lg = ax_mm(fig, 132, 95, 48, 8)
+    lg = ax_mm(fig, 62, 94, 36, 7)
     lg.axis("off")
     for i, f in enumerate((0.1, 0.5, 1.0)):
-        lg.scatter([0.1 + i * 0.22], [0.5], s=0.5 + 18 * f, color="#BBBBBB", edgecolor="#555555", linewidth=0.2, transform=lg.transAxes, clip_on=False)
-        lg.text(0.1 + i * 0.22 + 0.05, 0.5, f"{int(f * 100)}%", fontsize=5, va="center", transform=lg.transAxes)
-    lg.text(0.1, 1.1, "Parcels expressing", fontsize=5.2, transform=lg.transAxes)
+        lg.scatter([0.1 + i * 0.3], [0.5], s=0.5 + 18 * f, color="#BBBBBB", edgecolor="#555555", linewidth=0.2, transform=lg.transAxes, clip_on=False)
+        lg.text(0.1 + i * 0.3 + 0.07, 0.5, f"{int(f * 100)}%", fontsize=5, va="center", transform=lg.transAxes)
+    lg.text(0.1, 1.1, "Parcels with the attribute", fontsize=5.2, transform=lg.transAxes)
     c = ax_mm(fig, 4, 76, 54, 54)
     panel_pies(c, cols_dark, tipos + ["Favela (FCU)"])
     S.fig_label(fig, "c", 1, 73)
-    d = ax_mm(fig, 72, 108, 70, 26)
-    panel_districts(d, {**cols, "Favela (FCU)": P.FAMILIAS["favela"][0]}, order + ["Favela (FCU)"])
-    S.fig_label(fig, "d", 62, 105)
-    e = ax_mm(fig, 155, 108, 25, 26)
-    panel_stability(e)
-    S.fig_label(fig, "e", 146, 105)
+    import painel_arquitetura as PA
+
+    tipos_a, fam_a, key_a, en_a, _ = PA.meta()
+    order_a = P.ordered_types(tipos_a, fam_a, key_a)
+    ne = pl.read_parquet(atlas_dir() / "nhood_enrichment_2025.parquet")
+    d = ax_mm(fig, 88, 120, 40, 40)
+    im = PA.panel_nhood(d, ne, order_a, en_a)
+    S.fig_label(fig, "d", 62, 112)
+    cbd = ax_mm(fig, 130, 124, 2.0, 22)
+    c1 = fig.colorbar(im, cax=cbd)
+    c1.set_label("Enrichment (z)", fontsize=5.0)
+    c1.ax.tick_params(labelsize=4.8, length=1.5)
+    dom = pl.read_parquet(atlas_dir() / "setor_dominio_2025.parquet")
+    e = ax_mm(fig, 140, 114, 42, 60)
+    PA.panel_domains(e, dom)
+    S.fig_label(fig, "e", 136, 112)
+    f_ = ax_mm(fig, 16, 146, 34, 24)
+    panel_stability(f_)
+    S.fig_label(fig, "f", 1, 141)
+    dl = N.domain_labels(short=True)
+    lgd = ax_mm(fig, 66, 180, 116, 22)
+    lgd.axis("off")
+    lgd.text(0.0, 1.02, f"Tissue domains (e), D1–D{len(dl)}, named by their most enriched cell classes", fontsize=5.2,
+             transform=lgd.transAxes)
+    nrow = -(-len(dl) // 2)
+    step = min(0.25, 0.95 / max(nrow, 1))
+    for i, k in enumerate(sorted(dl)):
+        x, y = (i // nrow) * 0.5, 0.80 - (i % nrow) * step
+        lgd.add_patch(mpatches.Rectangle((x, y - 0.07), 0.025, 0.14, color=PA.DOM_COLORS[k % len(PA.DOM_COLORS)],
+                                         transform=lgd.transAxes, clip_on=False))
+        lgd.text(x + 0.035, y, dl[k], fontsize=5.0, va="center", transform=lgd.transAxes)
     return S.save(fig, "fig2", periodo)
 
 

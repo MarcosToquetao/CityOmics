@@ -15,6 +15,7 @@ from common import ax_mm, check_periodo
 from cityomics.atlas.genes_lote import atlas_dir
 from cityomics.paths import REPO_ROOT, processed_dir
 from cityomics.viz import maps as M
+from cityomics.viz import names as N
 from cityomics.viz import palette as P
 from cityomics.viz import style as S
 
@@ -26,7 +27,7 @@ A_BOX = (0, 1, 183, 30)  # x, y_top, w, h em mm
 def type_table():
     perfil = pl.read_parquet(atlas_dir() / "tipos_perfil_2025.parquet")
     tipos = perfil["nome"].to_list() + ["Favela (FCU)", "Sem cadastro"]
-    en = perfil["name_en"].to_list() + ["Favela (census FCU)", "No cadastral record"]
+    en = perfil["name_en"].to_list() + [N.FIXED_LONG["Favela (FCU)"], N.FIXED_LONG["Sem cadastro"]]
     fam = perfil["familia"].to_list() + ["favela", "sem_cadastro"]
     key = (perfil["padrao_alto"] * 2 + perfil["pavimentos"] / 10).to_list() + [0.0, 0.0]
     return tipos, en, fam, key
@@ -137,9 +138,7 @@ def make(periodo: str = "dev"):
     y = 1.0
     step = 1.0 / (len(order) + 1.6 * nfam + 1)
     last = None
-    fam_en = {"res_horizontal": "Residential, low-rise", "res_vertical_medio": "Residential, high-rise",
-              "res_vertical_alto": "Residential, high standard", "comercio": "Commerce", "servicos": "Services",
-              "industria": "Industry", "vazio": "Vacant / green", "favela": "Informal", "sem_cadastro": "Unrecorded"}
+    fam_en = N.FAMILY_EN
     for t in order:
         f = fam[tipos.index(t)]
         if f != last:

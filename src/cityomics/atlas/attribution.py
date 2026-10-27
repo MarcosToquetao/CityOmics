@@ -72,6 +72,27 @@ def em_fit(E: np.ndarray, y: np.ndarray, groups: np.ndarray | None = None, n_ite
     return out
 
 
+def em_fit_multi(E: np.ndarray, Y: np.ndarray, n_iter: int = 500, tol: float = 1e-8) -> np.ndarray:
+    """O mesmo EM de ``em_fit`` (sem efeito de grupo) para várias saídas de uma vez: Y é n × F e
+    devolve Λ (K × F), uma coluna de taxas por saída. Para quando todas as colunas convergirem."""
+    keep = E.sum(axis=1) > 0
+    E, Y = E[keep], np.asarray(Y, dtype=float)[keep]
+    colsum = E.sum(axis=0)
+    lam = np.tile(Y.sum(axis=0) / max(colsum.sum(), 1e-12), (E.shape[1], 1))
+    lam[colsum == 0] = 0.0
+    ll_old = np.full(Y.shape[1], -np.inf)
+    for _ in range(n_iter):
+        mu = E @ lam
+        ratio = np.divide(Y, mu, out=np.zeros_like(Y), where=mu > 0)
+        lam = lam * np.divide(E.T @ ratio, colsum[:, None], out=np.zeros_like(lam), where=colsum[:, None] > 0)
+        mu = E @ lam
+        ll = np.sum(Y * np.log(np.clip(mu, 1e-300, None)) - mu, axis=0)
+        if np.all(np.abs(ll - ll_old) < tol * (1 + np.abs(ll))):
+            break
+        ll_old = ll
+    return lam
+
+
 def bootstrap(E, y, clusters, n_boot: int = 500, seed: int = 0) -> np.ndarray:
     rng = np.random.default_rng(seed)
     uc, inv = np.unique(clusters, return_inverse=True)
@@ -194,16 +215,22 @@ def shapley_flows(E: np.ndarray, Z: np.ndarray, B: np.ndarray, delta: np.ndarray
 # --- validação pontual --------------------------------------------------------------------------
 
 def point_validation(year: int = REF_YEAR, buffer_m: float = 40.0, max_dist: float = 60.0, station_m: float = 100.0,
-                     log=print) -> pl.DataFrame:
+                     ev: pl.DataFrame | None = None, distritos: set[str] | None = None, log=print) -> pl.DataFrame:
+    """``ev`` (latitude, longitude, cd_dist) troca o celular do ano por outro conjunto de eventos
+    geocodificados (painel de fenótipos, ``fenotipo.py``). ``distritos`` troca o recorte de exploração
+    por um conjunto explícito de distritos (só a confirmação no cofre usa, ``confirmacao.py``)."""
     import geopandas as gpd
     from shapely import STRtree
 
     from cityomics.units.setores import CRS
 
-    ev = (pl.scan_parquet(guard.pre2026(interim_dir() / "eventos_celular_atribuidos.parquet"))
-          .filter((pl.col("data_fato").dt.year() == year) & pl.col("coord_valida"))
-          .select("latitude", "longitude", "cd_dist").collect())
-    ev = ev.filter(pl.Series(guard.explore_mask(ev["cd_dist"].to_numpy())))
+    rotulo = f"de {year}" if ev is None else "do conjunto dado"
+    if ev is None:
+        ev = (pl.scan_parquet(guard.pre2026(interim_dir() / "eventos_celular_atribuidos.parquet"))
+              .filter((pl.col("data_fato").dt.year() == year) & pl.col("coord_valida"))
+              .select("latitude", "longitude", "cd_dist").collect())
+    keep = (lambda d: np.isin(np.asarray(d).astype(str), list(distritos))) if distritos is not None else guard.explore_mask
+    ev = ev.filter(pl.Series(keep(ev["cd_dist"].to_numpy())))
     pts = gpd.GeoSeries(gpd.points_from_xy(ev["longitude"], ev["latitude"]), crs="EPSG:4326").to_crs(CRS)
     seg = gpd.read_parquet(atlas_dir() / "ruas.parquet")
     from cityomics.atlas.streets import stations
@@ -218,7 +245,7 @@ def point_validation(year: int = REF_YEAR, buffer_m: float = 40.0, max_dist: flo
     seg_of = np.full((~is_st).sum(), -1)
     seg_of[q[0]] = q[1]
     cel = pl.read_parquet(atlas_dir() / f"celulas_{REF_YEAR}.parquet").filter(pl.col("x").is_not_null())
-    cel = cel.filter(pl.Series(guard.explore_mask(cel["cd_dist"].to_numpy())))
+    cel = cel.filter(pl.Series(keep(cel["cd_dist"].to_numpy())))
     lp = gpd.GeoSeries(gpd.points_from_xy(cel["x"], cel["y"]), crs=CRS)
     used = np.unique(seg_of[seg_of >= 0])
     lt = STRtree(lp.values)
@@ -244,7 +271,7 @@ def point_validation(year: int = REF_YEAR, buffer_m: float = 40.0, max_dist: flo
               "exposicao": float(seg.loc[seg["classe"] == c, "comprimento_m"].sum())} for c in ("arterial", "coletora", "local")]
     rows.append({"classe": "estacoes", "eventos": float(is_st.sum()), "exposicao": float(len(st))})
     out = pl.DataFrame(rows).with_columns((pl.col("eventos") / pl.col("exposicao")).alias("taxa_observada"))
-    log(f"validação pontual: {len(pts):,} eventos de {year} fora do cofre; {is_st.sum():,} em estações; "
+    log(f"validação pontual: {len(pts):,} eventos {rotulo} fora do cofre; {is_st.sum():,} em estações; "
         f"{(seg_of >= 0).sum():,} ligados a um segmento")
     del seg_len
     return out

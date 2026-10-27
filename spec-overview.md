@@ -13,7 +13,7 @@
 | **Unidades** | Lote fiscal (célula) → setor censitário 2022 (spot) → distrito (órgão) |
 | **Modelo de decisão** | Laya (`laya-typed-decisions`, encoder de 421M) com fine-tuning e recalibração |
 | **Validação** | Treino até 2025, validação em jan–set/2026, confirmação prospectiva em nov/2026–mar/2027 |
-| **Produtos** | Artigo 1 (data science): benchmark preditivo · Artigo 2 (ciências urbanas): atlas CityOmics |
+| **Produtos** | Artigo único integrado para a Nature Cities (D34), com a narrativa B: "o crime é um fenótipo do tecido urbano" (D63, [docs/NARRATIVA.md](docs/NARRATIVA.md)); benchmark detalhado no suplemento |
 
 ## Problema
 
@@ -118,6 +118,7 @@ IBGE/GeoSampa/... ──┘    (snapshot)     (lote→setor→distrito)         
 | D34 | Estrutura de publicação | **Substitui D8.** Artigo único integrado (atlas + predição) para a Nature Cities; benchmark detalhado no suplemento; submissão após F7 (~meados de 2027). Detalhes em spec-figuras.md | O tecido explica onde o crime se organiza e o benchmark mede o que resta prever; versão mais forte para alto impacto | Interview | 2026-10-16 |
 | D41 | Violência letal no artigo | No corpo, como contraste (celular = tecido fino, setor × mês; letal = órgão, distrito × trimestre), com comparador pareado do celular em distrito × trimestre e macrotipos (D61) | Desfecho pré-registrado; o contraste fortalece a história sem confundir escala com desfecho | Interview | 2026-10-16 |
 | D52 | FREEZE em duas etapas | FREEZE-A até o início de dez/2026 (benchmark + features mínimas do atlas, com hash dos rótulos por lote) e FREEZE-B (emenda A11 + multiverso) antes de abrir 2026; `freeze.py` inclui os artefatos do atlas. O ato de congelar é do autor | A janela prospectiva começa em nov/2026; o atlas não estava no manifesto | Red Team | 2026-10-16 |
+| D63 | Narrativa do artigo | **Substitui D35.** Narrativa B: o crime é um fenótipo do tecido (onde, que crime, a que hora); o mês a mês é ruído de Poisson fora dos polos. Novos módulos: painel de 15 fenótipos, relógio do tecido, presença pela OD 2017, memória do lugar, limite de previsibilidade, perturbação natural (nulo) e confirmação no cofre pré-especificada. Detalhes em spec-figuras.md (D63–D70) | Análise e pilotos de 2026-10-19 (`docs/NARRATIVA.md`); pedido do autor | Interview | 2026-10-19 |
 
 ## Dependency Graph & Implementation Order
 
@@ -213,6 +214,7 @@ F0 specs + repo
 - [ ] SVG (nnSVG, SPARK-X, Hotspot) vs Moran's I
 - [ ] Destino semestral: Markov, CellRank, LightGBM, Laya ZS/FT (amostra estratificada)
 - [ ] Suplementares: MISTy, COMMOT (OD 2017), predição por imagem
+- [x] Narrativa B (D63): fenótipos, relógio, presença (OD 2017), memória, previsibilidade, perturbação e confirmação pré-especificada (`atlas/fenotipo.py`, `presenca.py`, `memoria.py`, `previsibilidade.py`, `perturbacao.py`, `confirmacao.py`)
 
 ### F7 — Avaliação e artigos
 - [ ] Abrir 2026 uma única vez; métricas, mês a mês, equidade

@@ -141,3 +141,90 @@ Na escala do órgão (distrito), os métodos não se separam.
 | OD 2017 e ablação do GNN | Não rodados (base OD indisponível localmente; GNN fora desta versão) | Registrados na tabela multiverso |
 
 A escolha do que vai para o corpo do artigo é do autor (D40), via `prereg/A11_DRAFT.md`. A confirmação no cofre espacial só roda depois da emenda.
+
+## 9. Narrativa B: painel de fenótipos (`fenotipo.py`, D63, D64)
+
+- **Eventos:** 15 fenótipos (1,83 milhão de eventos em 2022–2025 na cidade), a partir da base principal da SSP e dos eventos de celular e letal (`data/interim/eventos_multi_atribuidos.parquet`).
+  - Os BOs de celular saem de FURTO/ROUBO - OUTROS (chave delegacia × ano × número).
+  - Ficam fora: iniciativa policial, estupro e lesão dolosa em residência.
+- **Alvos:** reconciliação estratificada por fenótipo, setor × ano (`fenotipo/fenotipo_setor_ano.parquet`).
+- **Assinaturas (2024–2025):** EM do Poisson linear para todos os fenótipos de uma vez (`attribution.em_fit_multi`).
+  - 11 classes distintas no topo do enriquecimento.
+  - Correlação mediana entre os perfis dos fenótipos: 0,58.
+  - Controle positivo: o trânsito tem a maior taxa por km nas vias arteriais (1,50 contra 0,62 nas locais).
+  - Validação pontual mediana entre tipos de lote: ρ = 0,85, em 12 fenótipos.
+- **Programas (NMF):** o menor k ≥ 3 estável entre sementes dá k = 4 (estabilidade 0,96): transporte, centro denso, logística periférica e residencial.
+
+## 10. Relógio do tecido (`fenotipo.relogio`, D65)
+
+| Fenótipo | Resultado |
+|---|---|
+| Furto de celular | P = 0,005 em 2024 e em 2025 (200 permutações dos períodos dentro do distrito); réplica r = 0,93 |
+| Roubo de celular | P = 0,005 em 2024 e 0,07 em 2025; réplica r = 0,90 |
+| Residencial horizontal popular | 39% do roubo entre 4 h e 6 h |
+| Comércio | pico entre 19 h e 22 h |
+| Estações | pico às 18 h |
+
+## 11. População presente (`presenca.py`, OD 2017, D65)
+
+- **Construção:** a partir da OD 2017 (183.092 registros), por setor × hora.
+  - Presença: linha do tempo das pessoas pelo FE_PESS. Às 3 h, 12,2 milhões de pessoas no município.
+  - Pessoas a pé na rua: minutos andando nas pontas de cada viagem, pelo FE_VIA. São 4,0 milhões de pessoas-hora por dia.
+  - Tudo vai para uma grade de 100 m com suavização de 300 m.
+- **A ordem das classes sobrevive à multidão:**
+  - Spearman entre o ranking por km e o ranking por pedestre: roubo 0,75, furto 0,86;
+  - por pessoa presente: 0,84 e 0,90.
+- **O relógio não segue os pedestres:**
+  - correlação mediana por classe entre o perfil horário do roubo e o dos pedestres: 0,03;
+  - risco por pedestre na cidade: máximo às 3 h (19× a média), mínimo ao meio-dia.
+- **Ressalva:** a OD é de 2017 e só cobre dias úteis.
+
+## 12. Memória do lugar (`memoria.py`)
+
+- **Variância entre setores do log da taxa anual (2022–2025):**
+
+  | Recorte | Tecido | Memória estável além do tecido | Transitória | Covariância |
+  |---|---|---|---|---|
+  | Todos os setores | 42% | 48% | 23% | −13% |
+  | Setores com ≥ 10 casos esperados por ano | 18% | 58% | — | — |
+
+- **Persistência do resíduo:** 0,70, 0,65 e 0,63 com 1, 2 e 3 anos de defasagem.
+
+## 13. Queda de 2022 a 2025 (`fenotipo.queda`)
+
+- **Celular nos setores de exploração:** −20%, de 151,6 mil para 121,4 mil. É uma queda do roubo (−40%), não do furto (−2%).
+- **Com a composição de 2025 fixa:**
+  - caíram mais que a cidade: ruas locais (razão relativa 0,76, IC 0,65–0,87) e residencial horizontal popular e de esquina (0,27–0,28);
+  - mantiveram a taxa: estações (86 → 87 por estação) e comércio médio (70 → 71 por km);
+  - subiram em relação à cidade: estações (1,27) e misto (1,48).
+- **Concentração:** as três classes que mais contribuíram para a queda somam 21 pontos acima da participação delas em 2022.
+
+## 14. Limite de previsibilidade (`previsibilidade.py`)
+
+- **No total ("onde e quando"):** o ensemble alcança 87% a 99% do R² máximo sem modelo, em todas as escalas.
+- **Dentro do setor (o mês a mês):**
+  - R² de 0,018, para um máximo de 0,56;
+  - o teste de dispersão por setor mostra que 96% dos setores são compatíveis com ruído de Poisson;
+  - o 1% de setores com mais crime concentra 34% do crime e 88% do excesso de variância.
+
+## 15. Perturbação natural (`perturbacao.py`)
+
+- **Desenho:** CNPJ do snapshot de 2025-12 (5,9 milhões de estabelecimentos, inclusive os baixados), dos quais 3,07 milhões ligados a um lote pelo endereço.
+- **Seis variantes:** abertura de bar, abertura de varejo e fechamento de bar; cada uma com qualquer CNPJ e com só não-MEI em lote comercial.
+- **Resultado:** sem pré-tendência e sem efeito em 12 meses. Efeitos acima de 4–11% da base ficam excluídos.
+
+## 16. Confirmação no cofre (`confirmacao.py`, D68)
+
+- **Família de B:** A-R1, A-R2, A-R6, A-R7 e A-R8, com Holm.
+- **Trava:** o código só roda com a A11 datada em `prereg/AMENDMENTS.md`, e uma única vez.
+- **Ensaio em pseudo-cofre** (19 distritos de exploração sorteados): todas as cinco sustentadas.
+
+  | Afirmação | Estatística | p de Holm |
+  |---|---|---|
+  | A-R1 | ρ 0,92 | 0,001 |
+  | A-R2 | ρ 0,63 | 0,010 |
+  | A-R6 | 0,85 | 0,001 |
+  | A-R7 | — | 0,004 |
+  | A-R8 | 0,82 | 0,004 |
+
+- **A-R5 (fora da família):** ΔR² = −0,018 (p = 0,89).

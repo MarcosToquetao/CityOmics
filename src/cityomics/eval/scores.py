@@ -1,12 +1,18 @@
 """Escores probabilísticos para contagens com distribuição binomial negativa (NB2).
 
 A NB2 tem média ``mu`` e dispersão ``phi`` (variância ``mu + mu²/phi``). Para o pré-registro
-(§5.3) a observação é real (contagem reconciliada), então o CRPS é calculado como
+(§5.3, emenda A6) a observação é real (contagem reconciliada), e o CRPS é
 
-    CRPS(F, y) = Σₖ (F(k) − 1{k ≥ y})²,   k = 0, 1, 2, ...
+    CRPS(F, y) = ∫ (F(x) − 1{x ≥ y})² dx.
 
-que vale para ``y`` real porque ``F`` só tem saltos nos inteiros. Para ``y`` inteiro coincide com
-``E|X − y| − ½ E|X − X'|`` (verificado nos testes).
+Como ``F`` é constante em cada [k, k + 1), para ``y`` em [j, j + 1) a integral vale
+Σ_{k≠j} (F(k) − 1{k ≥ y})² + (y − j)·F(j)² + (j + 1 − y)·(F(j) − 1)², a interpolação linear entre o
+CRPS de ⌊y⌋ e o de ⌈y⌉. Para ``y`` inteiro coincide com ``E|X − y| − ½ E|X − X'|`` (testes).
+
+Correção de 2026-10-20 (parecer crítico; paper/review/parecer/A_reconciliacao.md): a versão anterior
+usava Σₖ (F(k) − 1{k ≥ y})², a fórmula escrita no §5.3, que com ``y`` fracionário dá o CRPS de ⌈y⌉
+(trata uma contagem de 0,03 como um evento). ``crps_nb_registrado`` mantém essa fórmula para
+reproduzir os números anteriores; a emenda que registra a correção está em ``prereg/A12_DRAFT.md``.
 """
 
 from __future__ import annotations
@@ -33,7 +39,23 @@ def log_score(y, mu, phi):
 
 
 def crps_nb(y, mu, phi, chunk: int = 50_000):
-    """CRPS da NB2 contra ``y`` (real ou inteiro), vetorizado em blocos ordenados pela média."""
+    """CRPS da NB2 contra ``y`` real ou inteiro: o da fórmula registrada em ⌈y⌉ menos
+    (⌈y⌉ − y)·(2F(⌊y⌋) − 1), que é a integral exata no intervalo [⌊y⌋, ⌈y⌉)."""
+    y = np.asarray(y, dtype="float64")
+    mu = np.broadcast_to(np.asarray(mu, dtype="float64"), y.shape)
+    phi = np.broadcast_to(np.asarray(phi, dtype="float64"), y.shape)
+    teto = np.ceil(y)
+    out = crps_nb_registrado(teto, mu, phi, chunk)
+    frac = teto > y
+    if frac.any():
+        n, p = nb_scipy(mu[frac], phi[frac])
+        out[frac] -= (teto[frac] - y[frac]) * (2.0 * stats.nbinom.cdf(np.floor(y[frac]), n, p) - 1.0)
+    return out
+
+
+def crps_nb_registrado(y, mu, phi, chunk: int = 50_000):
+    """Σₖ (F(k) − 1{k ≥ y})², a fórmula do §5.3: o CRPS para ``y`` inteiro e o CRPS de ⌈y⌉ para ``y``
+    fracionário. Só para reproduzir os números anteriores à correção; use ``crps_nb``."""
     y = np.asarray(y, dtype="float64")
     mu = np.broadcast_to(np.asarray(mu, dtype="float64"), y.shape)
     phi = np.broadcast_to(np.asarray(phi, dtype="float64"), y.shape)

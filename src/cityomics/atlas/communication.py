@@ -402,6 +402,11 @@ def lee(setor: pl.DataFrame, n_perm: int = 99, log=print) -> pl.DataFrame:
 
 # --- execução e tabela multiverso ---------------------------------------------------------------
 
+# a OD 2017 foi baixada em 2026-10-19 para a população presente (P5, presenca.py); os fluxos contra o
+# modelo gravitacional continuam exploratórios na narrativa B (comunicação no Extended Data, D63)
+OD_STATUS = "não rodado: OD 2017 usada só para a população presente (P5); fluxos × gravitacional pendentes"
+
+
 def run(log=print) -> pl.DataFrame:
     d = atlas_dir() / "comunicacao"
     d.mkdir(parents=True, exist_ok=True)
@@ -446,7 +451,7 @@ def run(log=print) -> pl.DataFrame:
                   "usa_crime": True, "status": "rodado"})
     multi.append({"abordagem": "fluxos OD 2017 × gravitacional", "escala": "zona OD", "estatistica": None,
                   "ganho_fora_amostra_pct": None, "estabilidade": None, "pares_tipo_significativos": None,
-                  "usa_crime": False, "status": "não rodado: base OD 2017 não disponível localmente"})
+                  "usa_crime": False, "status": OD_STATUS})
     multi.append({"abordagem": "ablação de arestas do GNN", "escala": "setor", "estatistica": None,
                   "ganho_fora_amostra_pct": None, "estabilidade": None, "pares_tipo_significativos": None,
                   "usa_crime": True, "status": "não rodado nesta versão"})

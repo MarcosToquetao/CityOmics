@@ -85,6 +85,16 @@ def run(log=print) -> dict:
         trans.append(j.group_by(f"f{a}", f"f{b}").len().rename({f"f{a}": "de", f"f{b}": "para"}).with_columns(pl.lit(b).alias("ano")))
         lot_change.append(j.select("sql_base", (pl.col(f"f{a}") != pl.col(f"f{b}")).alias("mudou")).with_columns(pl.lit(b).alias("ano")))
     T = pl.concat(trans).group_by("de", "para").agg(pl.col("len").sum().alias("n"))
+    # as mesmas transições por domínio do tecido do setor do lote: base do Markov congelado do H4 (models.congelar)
+    dom = tipos.select("sql_base", "cd_setor").join(pl.read_parquet(d / f"setor_dominio_{REF_YEAR}.parquet").select("cd_setor", "dominio"),
+                                                     on="cd_setor", how="left").select("sql_base", pl.col("dominio").fill_null(-1))
+    td = []
+    for a, b in zip(yrs[:-1], yrs[1:]):
+        if b - a == 1:
+            td.append(fam_by_year[a].join(fam_by_year[b], on="sql_base", how="inner").join(dom, on="sql_base", how="inner")
+                      .group_by("dominio", f"f{a}", f"f{b}").len().rename({f"f{a}": "de", f"f{b}": "para"}))
+    (pl.concat(td).group_by("dominio", "de", "para").agg(pl.col("len").sum().alias("n"))
+     .write_parquet(d / "transicoes_familia_dominio.parquet"))
     T = T.with_columns((pl.col("n") / pl.col("n").sum().over("de")).alias("taxa"))
     ch = pl.concat(lot_change).join(tipos.select("sql_base", "cd_setor", "cd_dist"), on="sql_base", how="inner")
     ren = ch.group_by("cd_setor", "cd_dist").agg(pl.col("mudou").mean().alias("renovacao"), pl.len().alias("n_obs"))

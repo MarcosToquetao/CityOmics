@@ -14,13 +14,9 @@ import polars as pl
 
 from cityomics.eval import inference, scores
 from cityomics.paths import processed_dir
+from cityomics.viz.names import ATTR_EN, MODEL_EN
 
-NOMES_MODELO = {
-    "media_historica": "Historical mean", "glm": "NB-GLM", "kde": "KDE", "chronos": "Chronos (zero-shot)",
-    "gwr_distrito": "GWR (district)", "painel_espacial": "Spatial panel", "maxent": "MaxEnt", "bym2": "BYM2",
-    "spde": "SPDE / LGCP", "hawkes": "Hawkes", "lgbm_nucleo": "LightGBM (core)", "lgbm_sem_crime": "LightGBM (no crime history)",
-    "lgbm_completo": "LightGBM (full)", "gnn": "Graph neural network", "ensemble": "Ensemble",
-}
+NOMES_MODELO = MODEL_EN  # nomes centralizados em viz/names.py
 
 
 def figdata_dir():
@@ -29,9 +25,11 @@ def figdata_dir():
     return d
 
 
-def _cached(name: str, fn, refresh: bool = False) -> pl.DataFrame:
+def _cached(name: str, fn, refresh: bool = False, deps=()) -> pl.DataFrame:
+    """Cache em parquet; refaz se pedido ou se alguma dependência (arquivo de entrada) for mais nova que o cache."""
     p = figdata_dir() / f"{name}.parquet"
-    if p.exists() and not refresh:
+    stale = any(d.exists() and d.stat().st_mtime > p.stat().st_mtime for d in deps) if p.exists() else True
+    if p.exists() and not refresh and not stale:
         return pl.read_parquet(p)
     df = fn()
     df.write_parquet(p)
@@ -66,7 +64,9 @@ def forest(tag: str = "dev", refresh: bool = False) -> pl.DataFrame:
             rows.append({"modelo": m, "nome": NOMES_MODELO[m], "diff": r["diff"], "ci_low": r["ci_low"], "ci_high": r["ci_high"],
                          "p_adj": pre.get("p_adj", np.nan), "crps": float(np.mean(crps[m])), "crps_glm": float(np.mean(crps["glm"]))})
         return pl.DataFrame(rows).sort("diff")
-    return _cached(f"fig5_forest_{tag}", build, refresh)
+    deps = (processed_dir().parents[1] / "prereg" / f"selection_{tag}.json",
+            processed_dir() / "modelo" / f"resultados_benchmark_{tag}.json")
+    return _cached(f"fig5_forest_{tag}", build, refresh, deps)
 
 
 def capture_curves(tag: str = "dev", models=("media_historica", "ensemble"), shares=None, n_sim: int = 50,
@@ -154,18 +154,7 @@ def district_contrast() -> pl.DataFrame:
     return pl.DataFrame(rows)
 
 
-GENE_EN = {
-    "area_terreno": "Lot area", "area_construida": "Built area", "n_unidades": "Units", "pavimentos": "Floors",
-    "valor_m2_terreno": "Land value / m²", "valor_m2_construcao": "Building value / m²", "testada": "Street frontage",
-    "aproveitamento": "Floor-area ratio", "uso_residencial": "Residential use", "uso_comercio": "Commercial use",
-    "uso_servicos": "Service use", "uso_industria": "Industrial use", "uso_terreno": "Vacant land",
-    "padrao_baixo": "Low building standard", "padrao_medio": "Middle building standard", "padrao_alto": "High building standard",
-    "esquina": "Corner lot", "idade": "Building age", "cnpj_bar_restaurante": "Bars and restaurants",
-    "cnpj_comercio_varejista": "Retail shops", "cnpj_comercio_atacado": "Wholesale", "cnpj_financeiro": "Banks and finance",
-    "cnpj_industria": "Manufacturing firms", "cnpj_transporte_armazenagem": "Transport and storage", "cnpj_alojamento": "Lodging",
-    "cnpj_educacao_saude": "Education and health", "cnpj_construcao_imobiliario": "Construction and real estate",
-    "cnpj_servicos_pessoais": "Personal services", "cnpj_outros_servicos": "Other services", "cnpj_mei": "Micro-entrepreneurs (MEI)",
-}
+GENE_EN = ATTR_EN  # nomes centralizados em viz/names.py (também usado pelo explorador)
 
 
 def dotplot(refresh: bool = False) -> pl.DataFrame:
@@ -187,4 +176,7 @@ def dotplot(refresh: bool = False) -> pl.DataFrame:
                 expr = raw[i, j] > (0 if (n.startswith("cnpj_") or n in ("esquina",) or n.startswith("uso_") or n.startswith("padrao_")) else med[j])
                 rows.append({"tipo": t, "gene": n, "frac": float(expr.mean()), "z": float(Z[i, j].mean())})
         return pl.DataFrame(rows)
-    return _cached("fig2_dotplot", build, refresh)
+    from cityomics.atlas.genes_lote import atlas_dir
+
+    deps = (atlas_dir() / "lote_tipos_2025.parquet", atlas_dir() / "lote_genes_2025.parquet")
+    return _cached("fig2_dotplot", build, refresh, deps)

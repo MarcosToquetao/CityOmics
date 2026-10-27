@@ -106,6 +106,42 @@ def events_celular(df: pd.DataFrame) -> pd.DataFrame:
     return ev
 
 
+# Painel de fenótipos do atlas (docs/NARRATIVA.md, P1). Ficam fora a iniciativa policial (tráfico,
+# porte), o estupro e a violência doméstica (D14). Celular e letal vêm dos próprios eventos; os BOs
+# com celular saem de FURTO/ROUBO - OUTROS para os fenótipos não se sobreporem.
+FENOTIPO_CONDUTA = {
+    "fios_cabos": {"FIOS E CABOS"},
+    "interior_veiculo": {"INTERIOR DE VEICULO"},
+    "residencia": {"RESIDENCIA", "CONDOMINIO RESIDENCIAL"},
+    "comercio": {"ESTABELECIMENTO COMERCIAL", "INTERIOR ESTABELECIMENTO", "ESTABELECIMENTO-OUTROS",
+                 "CONDOMINIO COMERCIAL"},
+    "coletivo": {"INTERIOR TRANSPORTE COLETIVO", "COLETIVO"},
+}
+FENOTIPO_NATUREZA = {
+    "furto_veiculo": {"FURTO DE VEICULO"},
+    "roubo_veiculo": {"ROUBO DE VEICULO"},
+    "carga": {"ROUBO DE CARGA", "FURTO DE CARGA"},
+    "lesao_dolosa": {"LESAO CORPORAL DOLOSA"},
+    "transito": {"LESAO CORPORAL CULPOSA POR ACIDENTE DE TRANSITO", "HOMICIDIO CULPOSO POR ACIDENTE DE TRANSITO"},
+}
+
+
+def fenotipo_ssp(df: pd.DataFrame, bo_celular: pd.Series) -> pd.Series:
+    """Fenótipo de cada linha da base principal (NA = fora do painel). ``bo_celular`` marca as
+    linhas cujo BO está na base de celulares."""
+    nat = df["natureza_norm"].fillna("")
+    cond = df["conduta"].fillna("").map(norm_text)
+    outros = nat.isin({"FURTO - OUTROS", "ROUBO - OUTROS"}) & ~bo_celular.fillna(False).astype(bool)
+    out = pd.Series(pd.NA, index=df.index, dtype="string")
+    for f, conds in FENOTIPO_CONDUTA.items():
+        out = out.mask(outros & cond.isin(conds) & out.isna(), f)
+    pessoa = outros & cond.isin({"OUTROS", "TRANSEUNTE"}) & out.isna()
+    out = out.mask(pessoa & nat.eq("ROUBO - OUTROS"), "roubo_outros").mask(pessoa & nat.eq("FURTO - OUTROS"), "furto_outros")
+    for f, nats in FENOTIPO_NATUREZA.items():
+        out = out.mask(nat.isin(nats) & out.isna(), f)
+    return out
+
+
 def to_events(ev: pd.DataFrame) -> pd.DataFrame:
     ev = ev.copy()
     ev["evento_id"] = event_id(ev)

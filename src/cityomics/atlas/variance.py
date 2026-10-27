@@ -59,9 +59,11 @@ def r2_cv(X: np.ndarray, y: np.ndarray, groups: np.ndarray, folds: int = 5, seed
     return float(1 - np.sum((y - oof) ** 2) / np.sum((y - y.mean()) ** 2))
 
 
-def run(log=print) -> dict:
-    from cityomics.atlas.attribution import GROUPS, crime_setor, group_scores
-    from cityomics.atlas.spots import ESTACOES, RUAS
+def frame(mask: str = "exploracao") -> pl.DataFrame:
+    """Setores de 2025 com crime, média histórica, grupos teóricos, domínio e genes agregados.
+
+    ``mask``: "exploracao" (padrão, fora do cofre) ou "todos" (só para a confirmação, ``confirmacao.py``)."""
+    from cityomics.atlas.attribution import crime_setor, group_scores
 
     d = atlas_dir()
     s = pl.read_parquet(d / f"setor_composicao_{REF_YEAR}.parquet")
@@ -71,24 +73,40 @@ def run(log=print) -> dict:
     s = (s.join(hist, on="cd_setor", how="left").join(group_scores(), on="cd_setor", how="left")
          .join(pl.read_parquet(d / f"setor_dominio_{REF_YEAR}.parquet"), on="cd_setor", how="left")
          .join(genes_por_setor(), on="cd_setor", how="left").fill_null(0))
-    s = s.filter(pl.Series(guard.explore_mask(s["cd_dist"].to_numpy())))
+    if mask == "exploracao":
+        s = s.filter(pl.Series(guard.explore_mask(s["cd_dist"].to_numpy())))
+    return s
+
+
+def conjuntos(s: pl.DataFrame, n_dominios: int | None = None) -> tuple[dict[str, np.ndarray], np.ndarray, np.ndarray]:
+    """Os cinco conjuntos de variáveis do comparador de H3 (D55), o alvo (log da taxa) e os distritos."""
+    from cityomics.atlas.attribution import GROUPS
+    from cityomics.atlas.spots import ESTACOES, RUAS
+
     area = s["area_km2"].to_numpy().clip(1e-3)
     y = np.log1p(s["y"].to_numpy() / area)
-    groups = s["cd_dist"].to_numpy()
     ecols = [c for c in s.columns if c.startswith("e|")]
     E = s.select(ecols).to_numpy().astype(float)
     shares = E / np.clip(E.sum(1, keepdims=True), 1e-9, None)
     tipos = np.column_stack([shares, np.log1p(E.sum(1)), np.log(area)])
     gcols = [c for c in s.columns if c.startswith(("gm|", "gs|"))]
     genes = np.column_stack([s.select(gcols).to_numpy().astype(float), np.log(area)])
-    dom = np.eye(int(s["dominio"].max()) + 1)[s["dominio"].to_numpy().astype(int)]
+    k = n_dominios or int(s["dominio"].max()) + 1
+    dom = np.eye(k)[s["dominio"].to_numpy().astype(int)]
     tecido = np.column_stack([tipos, dom, np.log1p(s.select(RUAS + ESTACOES).to_numpy().astype(float))])
     full = np.column_stack([tecido, s.select(GROUPS).to_numpy()])
     histv = np.column_stack([np.log1p(s["hist"].to_numpy() / area)])
+    X = {"tipos": tipos, "genes_sem_tipagem": genes, "tecido": tecido, "tecido_mais_covariaveis": full, "media_historica": histv}
+    return X, y, s["cd_dist"].to_numpy()
+
+
+def run(log=print) -> dict:
+    d = atlas_dir()
+    s = frame()
+    X, y, groups = conjuntos(s)
     res = {"icc_2025": icc(), "setores": int(s.height)}
-    for nome, X in (("tipos", tipos), ("genes_sem_tipagem", genes), ("tecido", tecido), ("tecido_mais_covariaveis", full),
-                    ("media_historica", histv)):
-        res[f"r2_{nome}"] = r2_cv(X, y, groups)
+    for nome, M in X.items():
+        res[f"r2_{nome}"] = r2_cv(M, y, groups)
         log(f"R² fora da amostra ({nome}): {res[f'r2_{nome}']:.3f}")
     (d / "variancia_2025.json").write_text(json.dumps(res, ensure_ascii=False, indent=2))
     return res

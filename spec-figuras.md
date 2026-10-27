@@ -2,10 +2,16 @@
 
 > Parte de [spec-overview.md](spec-overview.md). Depende de [spec-atlas.md](spec-atlas.md) (tipagem, nichos, comunicação, atribuição) e de [spec-benchmark.md](spec-benchmark.md) (previsões e testes). O explorador interativo está em [spec-explorer.md](spec-explorer.md).
 
-**Em resumo:** um artigo único (D34) para a Nature Cities (D36), com seis figuras no padrão Nature. A tese é "onde o crime acontece é tecido; quando acontece é difícil" (D35):
-- a arquitetura de tipos de lote, ruas e nichos explica onde o crime de São Paulo se concentra;
-- a dinâmica mês a mês é fraca;
-- métodos emprestados de outras ciências dão um ganho modesto e real.
+**Em resumo:** um artigo único (D34) para a Nature Cities (D36), com seis figuras no padrão Nature.
+
+> **Emenda de 2026-10-19 (D63):** a tese passa a ser a da **narrativa B** ([docs/NARRATIVA.md](docs/NARRATIVA.md)), substituindo a D35: *o crime é um fenótipo do tecido urbano* — a composição do lugar fixa onde, que crime e a que hora acontece; o mês a mês é ruído de Poisson em 96% dos setores, e a dinâmica mensal que existe mora em poucos polos. A tese antiga ("onde é tecido, quando é difícil") vira um caso particular. O roteiro abaixo (§3) já é o da narrativa B.
+
+Os pilares, todos no desenvolvimento (2022–2025, fora do cofre):
+- **onde:** a atribuição por classe de célula (comércio médio 70 roubos por km de frente por ano; validação pontual ρ = 0,93);
+- **que crime:** 15 fenótipos com assinaturas distintas por classe (validação pontual mediana ρ = 0,85);
+- **a que hora:** o relógio do tecido (39% do roubo de celular no residencial popular entre 4 h e 6 h), que não é o relógio da multidão (OD 2017);
+- **estabilidade e memória:** 98% de permanência do tecido; memória do lugar além do tecido de 48% da variância;
+- **limites:** o mês a mês é ruído de Poisson em 96% dos setores; métodos emprestados ganham 4%, já no teto.
 
 As figuras priorizam beleza e clareza. As ressalvas vão para o texto, e nenhuma figura distorce (D47). Tudo que depende de dados é gerado por código e regerado depois do FREEZE (D50).
 
@@ -37,58 +43,56 @@ As figuras priorizam beleza e clareza. As ressalvas vão para o texto, e nenhuma
 | Ligante–receptor | Gerador/atrator no emissor → vulnerabilidade no receptor (teoria criminológica) |
 | Fenótipo | Crime (desfecho; nunca define o tipo, D6/D53) |
 
-## 3. Roteiro das figuras (183 mm de largura, 5–7 painéis cada)
+## 3. Roteiro das figuras (183 mm de largura, 5–7 painéis cada; narrativa B, D63–D70)
 
-O dado de cada painel vem de `data/processed/atlas/` ou de `data/processed/modelo/`. A função que desenha está em `figures/figN.py`.
+O dado de cada painel vem de `data/processed/atlas/` (com `fenotipo/`, `presenca/` e `perturbacao/`) ou de `data/processed/modelo/`. Os layouts estão em `figures/figN.py`; os painéis reaproveitados das versões anteriores ficam em `figures/painel_*.py` e os rótulos em `figures/rotulos.py`.
 
-### Fig. 1 — A cidade como tecido
-- **a.** Esquema tecido ↔ cidade (`figures/assets/fig1a_esquema.svg`, desenhado à mão, D50).
-- **b.** "Corte histológico" de São Paulo: 1,7 milhão de lotes por tipo, rasterizados a ~12 m sobre fundo escuro. Ruas como vasos; rios e trilhos como marcos; barra de escala; sem nomes.
-- **c–d.** ROIs em resolução de lote (centro e periferia), vetoriais, com contornos de setor (spots). As favelas aparecem pela FCU.
-- **e.** Legenda dos tipos, agrupados por família semântica.
+### Fig. 1 — A cidade como tecido (sem mudança)
+- **a.** Esquema tecido ↔ cidade (`figures/assets/fig1a_esquema.svg`, D50).
+- **b.** "Corte histológico": 1,7 milhão de lotes por tipo, rasterizados a ~12 m sobre fundo escuro.
+- **c–d.** ROIs em resolução de lote (centro e periferia), com contornos de setor e favelas FCU.
 
-### Fig. 2 — Tipos e genes marcadores
-- **a.** UMAP da subamostra de lotes, rasterizado.
-- **b.** Dotplot de marcador × tipo: tamanho = fração de lotes que "expressam" o gene; cor = média padronizada.
-- **c.** Composição dos spots: gráficos de pizza por setor num zoom, como na deconvolução.
-- **d.** Abundância de tipos por distrito, em barras empilhadas ordenadas.
-- **e.** Estabilidade da tipagem: ARI entre subamostras e semestres, e Leiden contra k-means/OAC.
+### Fig. 2 — Tipos e arquitetura
+- **a.** UMAP da subamostra de lotes. **b.** Dotplot marcador × tipo. **c.** Composição dos spots (pizzas).
+- **d.** Enriquecimento de vizinhança tipo × tipo (nulo restrito, D59). **e.** Mapa de domínios, com legenda dos nomes.
+- **f.** Estabilidade da tipagem (ARI por resolução) e k-means.
 
-### Fig. 3 — Arquitetura: nichos e comunicação
-- **a.** Enriquecimento de vizinhança tipo × tipo, com nulo restrito por densidade/distrito (D59).
-- **b.** Mapa de domínios.
-- **c.** Covariáveis marcadoras por domínio, num matrixplot.
-- **d.** Círculo emissor→receptor no estilo CellChat, com a abordagem de comunicação escolhida (D39/D40).
-- **e.** Bolhas de pares L–R por par de tipos.
-- **f.** Campo vetorial do sinal no mapa, no estilo COMMOT, com metacélulas por quadra.
+### Fig. 3 — Fenótipo: que crime cada classe expressa (D64)
+- **a.** Taxa atribuída de celular por classe (mesmas linhas de b).
+- **b.** Matriz-assinatura classe × 15 fenótipos (tamanho = participação; cor = log2 do enriquecimento).
+- **c.** Validação pontual por fenótipo (Spearman; fenótipos com < 80% de coordenadas não testados).
+- **d.** Programas de crime (NMF, menor k ≥ 3 estável). **e.** Uso dos programas por setor (rasterizado; cofre em cinza).
+- **f.** Sankey grupo teórico → classe → roubo de celular (D47, D57, D69).
 
-### Fig. 4 — Onde: o tecido prevê o local
-Celular e letal aparecem lado a lado. O letal usa macrotipos (D61).
-- **a.** Taxa atribuída por classe de célula (tipos de lote, classes de rua, estações) com IC de bootstrap por distrito.
-- **b.** Validação pontual: taxa estimada × observada, com os pontos ligados ao segmento de rua e aos lotes lindeiros (D51).
-- **c.** Decomposição da variância (entre × dentro do setor) e R² da taxa média do setor para quatro conjuntos: tipos; genes agregados sem tipagem; tipos + domínios; média histórica (D55).
-- **d.** Sankey grupo → tipo → desfecho (D47/D57).
-- **e.** Melhores preditores (SHAP por grupo teórico).
-- **f.** Estabilidade do tecido: matriz de transição anual do IPTU e mapa de renovação (D42/D56).
+### Fig. 4 — Ritmo: o relógio do tecido (D65)
+- **a.** Perfil horário do roubo de celular por classe (hora exata).
+- **b.** Crime × pessoas a pé na rua (OD 2017, dias úteis) em quatro classes.
+- **c.** Risco por pedestre hora a hora na cidade.
+- **d.** Réplica 2024 × 2025 dos desvios por período e distribuição nula da permutação dentro do distrito.
+- **e.** Razão fim de semana / dia útil por classe.
+- **f.** Taxa por km × risco por pedestre.
 
-### Fig. 5 — Quando: quanto os métodos emprestados acrescentam
-- **a.** Forest plot de ΔCRPS contra o GLM por família de método, com bootstrap por distrito e Holm.
-- **b.** Curvas de captura com acaso, média histórica, modelo, teto de ruído simulado e oráculo, em `n_total` e `n_geo` (D58).
-- **c.** Correlação dentro do setor por modelo.
-- **d.** Calibração de P(≥1).
-- **e.** Renovação do tecido × variação do crime dentro do setor.
-- **f.** Contraste pareado: celular e letal na mesma escala, distrito × trimestre (D61).
+### Fig. 5 — Estabilidade, memória e mudança (D66)
+- **a.** R² fora da amostra (tipos, genes, tecido, + covariáveis, média histórica).
+- **b.** Decomposição da variância entre setores: tecido, memória estável, transitória.
+- **c.** Persistência do resíduo além do tecido (defasagens de 1–3 anos).
+- **d.** Transições anuais entre famílias (IPTU 2012–2025).
+- **e.** Queda 2022→2025 por classe (razão relativa à cidade, IC por distrito).
+- **f.** Variação 2022→2025 por fenótipo.
 
-### Fig. 6 — Fora da amostra e equidade (parametrizada: 2025 em dev, 2026 depois do FREEZE)
-- **a.** Desempenho no teste contra o desenvolvimento, por finalista.
-- **b.** Desempenho mês a mês.
-- **c.** Mapa de acerto/erro no top 5%, rasterizado (D60).
-- **d.** Habilidade por nicho.
-- **e.** Auditoria por quintil de renda e raça (`eval/fairness.py`).
-- **f.** Janela prospectiva (vazia até existir).
+### Fig. 6 — Limites e confirmação (D67, D68)
+- **a.** Curvas de captura com acaso, média histórica, ensemble, teto de ruído e oráculo (D58).
+- **b.** Previsibilidade por escala: R² alcançado × R² máximo sem modelo (variância acima do Poisson).
+- **c.** Concentração do excesso de variância mensal nos setores de maior contagem.
+- **d.** Forest do ΔCRPS contra o NB-GLM. **e.** Celular × letal no órgão (D61). **f.** Equidade por quintil de renda.
+- **g.** Quadro de confirmação: afirmações do atlas (pseudo-cofre no desenvolvimento; cofre depois da A11), H1a/H1b/H2 (2026 lacrado) e janela prospectiva.
 
-### Extended Data (até 10)
-Tabela completa do benchmark; tabela multiverso da comunicação; estabilidade do Leiden por resolução; baselines urbanos (k-means/OAC, colocation quotient, Moran); MISTy; Knox por tipo; OD 2017 contra o modelo gravitacional; Laya (H2) e Laya no destino; ablação da VIIRS; cascata com sinal e intervalos da decomposição do Sankey (D57); gráfico do cofre espacial (D53).
+### Extended Data (10; D70)
+1. Tabela completa do benchmark. 2. Auditoria de equivalências (módulo ômico × análogo urbano × resultado × quem vence).
+3. Comunicação exploratória (círculo, pares L–R, campo) e covariáveis por domínio. 4. Tabela multiverso da comunicação.
+5. Knox, MISTy e Lee's L. 6. Co-ocorrência, colocation quotient e composição dos distritos.
+7. Teoria: SHAP por grupo e cascata com sinal (D57). 8. Fora da amostra em detalhe (finalistas, mês a mês, acerto/erro, domínio, calibração, onde × quando).
+9. Perturbação natural: evento-estudo de aberturas e fechamentos (nulo). 10. Painel de fenótipos: contagens e cobertura, escolha do k, fator multidão, renovação × variabilidade.
 
 ## 4. Sistema visual
 
@@ -227,6 +231,14 @@ Reportar em `n_total` e em `n_geo`. Painéis de apoio: calibração, mapa valor-
 | D60 | Coerência de privacidade | D49 mantida; mapas por setor rasterizados nas figuras; Source Data por distrito; objeto público por lista branca (sem MEI por lote, sem `nm_fcu`, sem crime por lote); scanner de privacidade estendido a zarr, h5ad, json, svg e csv; `.gitignore` com `*.zarr`, `*.h5ad`, `figures/out/`, `explorer/`. Resolvido sob delegação; a opção do red-team de publicar o risco por setor contrariava a escolha do usuário | Polígonos vetoriais e Source Data permitiriam extrair o valor de cada setor; o scanner não via os novos formatos | Red Team | 2026-10-16 |
 | D61 | Contraste celular × letal | O celular também roda em distrito × trimestre como comparador pareado; contraste baseado no desenvolvimento de 2025; letal de 2026 rotulado como exposto; atribuição do letal com 4–5 macrotipos. Resolvido sob delegação | Escala diferente confundiria desfecho com agregação; 96 distritos não identificam 15 tipos | Red Team | 2026-10-16 |
 | D62 | Dependências | Um ambiente só (`cityomics`), com os pacotes novos fixados em `environment.yml` e `requirements-pip.lock` (vitessce, cmcrameri, cairosvg, pypdf); atribuição em numpy/scipy (sem INLA); Knox próprio em tempo contínuo no lugar do Hawkes discreto; Simples e OD baixados agora; Arial se possível, senão Liberation Sans; o lock entra no FREEZE. Resolvido sob delegação | Evita quebrar o ambiente travado; o Hawkes discreto atual mede persistência, não excitação | Red Team | 2026-10-16 |
+| D63 | Narrativa | **Substitui D35.** Narrativa B: "o crime é um fenótipo do tecido urbano" (onde, que crime, a que hora; o mês a mês é ruído fora dos polos); roteiro das seis figuras e dos dez ED refeito | Análise de 2026-10-19 (`docs/NARRATIVA.md`) e pilotos P1–P7 nos distritos de exploração; pedido do autor ("implemente tudo o que for necessário para a narrativa B") | Interview | 2026-10-19 |
+| D64 | Painel de fenótipos | 15 fenótipos da base principal (sem iniciativa policial, sem estupro, lesão dolosa só fora de residências, BOs de celular fora de "outros"); assinaturas por EM do Poisson linear; programas por NMF com o menor k ≥ 3 estável; Fig. 3 | O tecido define que crime, não só quanto (11 classes distintas no topo; validação mediana ρ = 0,85) | Interview | 2026-10-19 |
+| D65 | Relógio e população presente | Relógio por classe (período e hora exata; permutação dentro do distrito); OD 2017 do Metrô (baixada com autorização do autor em 2026-10-19; sha256 no manifesto) como exposição: presença e pessoas a pé na rua; Fig. 4 | O relógio é de vigilância natural, não de multidão (correlação mediana crime × pedestres = 0,03) | Interview | 2026-10-19 |
+| D66 | Estabilidade, memória e mudança | Fig. 5 com a decomposição tecido × memória estável × transitória e a queda 2022→2025 por classe com o tecido fixo; evento-estudo de CNPJ no ED9 como nulo | Memória além do tecido = 48% da variância; a queda poupou os polos; aberturas e fechamentos não movem o crime em 12 meses | Interview | 2026-10-19 |
+| D67 | Limite de previsibilidade | Fig. 6 com R² × R² máximo sem modelo por escala e o teste de dispersão de Poisson por setor | O mês a mês é Poisson em 96% dos setores; 88% do excesso está no 1% de setores com mais crime | Interview | 2026-10-19 |
+| D68 | Família do atlas para B | A-R1, A-R2, A-R6, A-R7, A-R8 com Holm (A-R3/A-R4 exploratórias; A-R5 opcional, falha no desenvolvimento); código em `atlas/confirmacao.py`, bloqueado até a A11 datada; ensaio em pseudo-cofre | O cofre continua sendo a defesa contra o jardim dos caminhos que se bifurcam (D40, D53) | Interview | 2026-10-19 |
+| D69 | Sankey | Mantido no corpo, agora como Fig. 3f (D47, D57) | Decisão anterior do usuário | Interview | 2026-10-19 |
+| D70 | Extended Data | Dez ED na ordem do §3; comunicação, SHAP e detalhes fora da amostra saem do corpo | Corpo dedicado à tese B; o que não acrescenta vai para a auditoria (ED2) | Interview | 2026-10-19 |
 
 ## Dependency Graph & Implementation Order
 
@@ -271,3 +283,11 @@ FREEZE-A (autor, até dez/2026) ─► FREEZE-B (autor) ─► abrir 2026 ─►
 - [x] `viz/*` e `figures/fig1..6`, `ed`, legendas
 - [x] Explorador Vitessce
 - [x] Documentação, A11 (rascunho), `freeze.py` e `privacy.py` estendidos, commits
+
+### Narrativa B (2026-10-19)
+- [x] Pilotos P1–P7 (`atlas/fenotipo.py`, `presenca.py`, `memoria.py`, `previsibilidade.py`, `perturbacao.py`)
+- [x] OD 2017 baixada (autorização do autor) e processada em presença e pessoas na rua por setor × hora
+- [x] Confirmação no cofre pré-especificada (`atlas/confirmacao.py`) e ensaio em pseudo-cofre
+- [x] Figs. 2–6 refeitas, ED1–ED10, legendas geradas pelo `cityomics figures`
+- [ ] Autor: datar a A11 com a família de B e rodar a confirmação no cofre (uma vez)
+- [ ] Autor: FREEZE-A e FREEZE-B

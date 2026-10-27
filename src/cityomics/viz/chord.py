@@ -28,10 +28,22 @@ def circle(ax, names: list[str], sizes: np.ndarray, strength: np.ndarray, colors
                 ax.add_patch(p)
     s = 12 + 90 * sizes / sizes.max()
     ax.scatter(xy[:, 0], xy[:, 1], s=s, c=[colors[k] for k in names], edgecolor="white", linewidth=0.5, zorder=3)
+    ax.set_xlim(-1.55, 1.55)
+    ax.set_ylim(-1.35, 1.35)
+    ax.set_aspect("equal")
+    ax.figure.canvas.draw()
+    rend = ax.figure.canvas.get_renderer()
+    feitos = []
     for k, (x, y), a in zip(names, xy, ang):
         ha = "left" if np.cos(a) > 0.1 else ("right" if np.cos(a) < -0.1 else "center")
         va = "bottom" if np.sin(a) > 0.1 else ("top" if np.sin(a) < -0.1 else "center")
-        ax.text(1.12 * x, 1.12 * y, (labels or {}).get(k, k), ha=ha, va=va, fontsize=fontsize)
+        for r in (1.12, 1.26, 1.40, 1.54):  # afasta o rótulo do círculo até não encostar nos já postos
+            t = ax.text(r * x, r * y, (labels or {}).get(k, k), ha=ha, va=va, fontsize=fontsize)
+            bb = t.get_window_extent(rend)
+            if not any(bb.overlaps(o) for o in feitos) or r == 1.54:
+                break
+            t.remove()
+        feitos.append(bb)
     ax.set_xlim(-1.55, 1.55)
     ax.set_ylim(-1.35, 1.35)
     ax.set_aspect("equal")
