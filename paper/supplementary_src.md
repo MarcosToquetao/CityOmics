@@ -97,4 +97,15 @@ All dates are 2026 unless stated and can be checked against the version history 
 | 27 October | First freeze (commit 25a25cd: benchmark selection, 14 frozen crime models, hash of the fine-tuned decision-model weights, atlas inputs) and second freeze (commit cde1bda: amendments A11–A13 and the confirmatory result); the vault key was issued and the vault remained closed | — |
 | Pending | Opening of 2026 (sealed hold-out, January–September 2026) | — |
 | November 2026–March 2027 | Prospective window: months that did not exist when the plan and criteria were written | — |
+## Supplementary Table 3 | Sensitivity of the per-pedestrian analysis to the smoothing width
+
+Point estimates with the 2023 survey, weekdays, phone robbery or theft in 2024–2025 and 77 exploration districts, recomputed with the width σ of the Gaussian kernel that spreads people over the 100 m grid before summing per tract (σ = 0 keeps people in their 100 m cell). Rank changes are positions in the per-pedestrian ranking relative to the per-km ranking (positive, higher per pedestrian). The 95% interval of ρ from household resamples at σ = 300 m is 0.51–0.69. The night-time excess and the direction of the two rank changes are stable across widths; the strength of the reordering (ρ) is not, and rises as the kernel widens and pedestrian density becomes more uniform across classes. The median correlation between the hourly profiles of robbery and of pedestrians is 0.05 at every width.
+
+| Kernel width σ (m) | ρ, per km vs per pedestrian (walking + cycling) | ρ, per km vs per pedestrian (walking only) | ρ, per km vs per person present | Robbery risk per pedestrian, 00:00–05:59 (× daily mean) | Industrial parcels, rank change | High-rise buildings, rank change |
+|---|---|---|---|---|---|---|
+| 0 | 0.37 | 0.39 | 0.61 | 4.2 | +13 | -10 |
+| 150 | 0.36 | 0.34 | 0.77 | 4.5 | +13 | -12 |
+| 300 (main) | 0.64 | 0.63 | 0.81 | 4.6 | +12 | -8 |
+| 450 | 0.73 | 0.75 | 0.87 | 4.7 | +12 | -8 |
+| 600 | 0.84 | 0.83 | 0.89 | 4.8 | +8 | -6 |
 <!--/S1-->

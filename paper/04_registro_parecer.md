@@ -87,6 +87,11 @@ Estados: **edição** = resolvido por edição; **análise** = resolvido por an�
 2. Rodar o H1 em 2026 depois de aberto o cofre (`congelar.prever`) e preencher o último `[CONFIRMATION]`.
 3. Registrar no OSF (DOI) e anexar o `ACCESS_LOG`.
 
+**Verificações finais (2026-10-27):**
+- **Sensibilidade do ρ por pedestre ao núcleo gaussiano** (`presenca_od2023.sensibilidade_sigma`, `cityomics atlas run sensibilidade_od2023`; Tabela S3 do SI): o ρ vai de 0,34 a 0,84 com σ de 0 a 600 m (0,64 no principal). O excesso de risco entre 00:00 e 05:59 (4,2–4,8×), a correlação mediana dos perfis horários (0,05) e o sentido das mudanças de posição (indústria +8 a +13; prédios altos −6 a −12) não mudam. A **intensidade** do reordenamento depende da largura do núcleo; o texto principal e a Tabela S3 dizem isso.
+- **Referências:** 67 no total, 49 no texto principal. Metadados da Crossref coerentes com autor e ano de cada chave, nenhuma retratação ou preocupação editorial, todos os links institucionais respondem (HTTP 200) e cada citação foi lida contra a frase em que aparece. O texto principal fecha em 3.500 palavras (limite 3.500) e os Methods em 2.987.
+- Uma frase dos Methods dizia que a correção do CRPS era "amendment pending registration"; agora cita a A12, datada.
+
 **Técnicas, fora desta rodada:**
 - Modelo hierárquico da sobredispersão mensal.
 - `figures/legends.py` e o explorador já usam a tipagem nova.

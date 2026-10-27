@@ -87,3 +87,20 @@ def test_multiplicidades_preservam_o_tamanho_de_cada_zona():
     assert M.shape == (20, 6)
     for z in (1, 2, 3):
         assert (M[:, zona == z].sum(axis=1) == (zona == z).sum()).all()
+
+
+def test_somar_sigma_padrao_e_zero():
+    from cityomics.atlas import presenca as P
+    from cityomics.atlas.presenca_od2023 import somar
+
+    nx = ny = 30
+    ids = np.zeros(nx * ny, dtype="int32")
+    ids[:] = 1                                          # um setor cobrindo a grade
+    g = {"n": 1, "nx": nx, "ny": ny, "ids": ids, "riy": np.array([15]), "rix": np.array([15]), "area_cells": np.array([900.0]),
+         "n_cells": np.array([900])}
+    cell = np.array([15 * nx + 15, 10 * nx + 10])
+    W = np.zeros((2, 24))
+    W[:, 3] = [2.0, 3.0]
+    np.testing.assert_allclose(somar(cell, W, g)[0, 3], 5.0)                      # o total é conservado
+    np.testing.assert_allclose(somar(cell, W, g), somar(cell, W, g, sigma_m=P.SIGMA_M))
+    np.testing.assert_allclose(somar(cell, W, g, sigma_m=0.0)[0, 3], 5.0)

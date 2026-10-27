@@ -166,7 +166,7 @@ app.add_typer(atlas_app, name="atlas")
 
 ATLAS_STEPS = ["genes", "ruas", "tipagem", "spots", "nichos", "atribuicao", "variancia", "preditores", "comunicacao", "destino", "letal"]
 ATLAS_PILOTOS = ["fenotipo", "presenca", "memoria", "previsibilidade", "perturbacao", "ensaio", "robustez",  # narrativa B (D63); só quando pedidos
-                 "reconciliacao", "identificacao", "ritmo_queda", "presenca_od2023", "repontua_crps"]  # revisão pelo parecer (2026-10)
+                 "reconciliacao", "identificacao", "ritmo_queda", "presenca_od2023", "sensibilidade_od2023", "repontua_crps"]  # revisão pelo parecer (2026-10)
 
 
 @atlas_app.command("run")
@@ -185,6 +185,7 @@ def atlas_run(steps: list[str] = typer.Argument(None, help=f"Etapas, na ordem: {
            "perturbacao": perturbacao.run, "ensaio": lambda log: confirmacao.ensaiar(log=log),
            "robustez": robustez.run, "reconciliacao": reconciliacao.run, "identificacao": identificacao.run,
            "ritmo_queda": ritmo_queda.run, "presenca_od2023": presenca_od2023.run,
+           "sensibilidade_od2023": lambda log: presenca_od2023.sensibilidade_sigma(log=log),
            "repontua_crps": lambda log: [repontua_crps.run(tag, log=log) for tag in ("dev", "viirs")]}
     for s in steps or ATLAS_STEPS:
         typer.echo(f"== {s}")

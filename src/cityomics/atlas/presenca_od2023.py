@@ -259,14 +259,18 @@ def celulas(seg: pd.DataFrame, g: dict) -> tuple[np.ndarray, np.ndarray, np.ndar
     return iy[ok] * g["nx"] + ix[ok], W, seg["u"].to_numpy()[ok].astype(int)
 
 
-def somar(cell: np.ndarray, W: np.ndarray, g: dict) -> np.ndarray:
-    """Pessoas-hora por setor × hora (n_setores × 24): grade, núcleo gaussiano e soma por setor."""
+def somar(cell: np.ndarray, W: np.ndarray, g: dict, sigma_m: float | None = None) -> np.ndarray:
+    """Pessoas-hora por setor × hora (n_setores × 24): grade, núcleo gaussiano e soma por setor.
+
+    ``sigma_m``: largura do núcleo (padrão ``presenca.SIGMA_M``, 300 m); 0 deixa as pessoas na célula de 100 m."""
     from scipy.ndimage import gaussian_filter
+
+    sigma = (P.SIGMA_M if sigma_m is None else sigma_m) / P.RES
 
     out = np.zeros((g["n"], 24))
     for h in range(24):
         G = np.bincount(cell, weights=W[:, h], minlength=g["nx"] * g["ny"]).reshape(g["ny"], g["nx"])
-        Gs = gaussian_filter(G, P.SIGMA_M / P.RES, mode="constant")
+        Gs = gaussian_filter(G, sigma, mode="constant")
         Gs *= G.sum() / max(Gs.sum(), 1e-12)
         soma = np.bincount(g["ids"], weights=Gs.ravel(), minlength=g["n"] + 1)[1:]
         ponto = Gs[g["riy"], g["rix"]] * g["area_cells"]
@@ -543,6 +547,64 @@ def _hora_cidade(rep: dict, bt: pl.DataFrame, crime: np.ndarray) -> pl.DataFrame
         out |= {f"risco_{var}": rep["2023"][var]["risco_relativo_por_hora"], f"risco_{var}_ic_inf": ic[:, 0],
                 f"risco_{var}_ic_sup": ic[:, 1], f"rua_{var}": rep["2023"][var]["perfil_rua_cidade"]}
     return pl.DataFrame(out)
+
+
+SIGMAS_M = (0.0, 150.0, 300.0, 450.0, 600.0)
+
+
+def sensibilidade_sigma(sigmas=SIGMAS_M, log=print) -> dict:
+    """Sensibilidade do ρ por pedestre (e do relógio) à largura do núcleo que espalha as pessoas pela rua.
+
+    Para cada σ refaz a densidade de pedestres (as duas definições de viagem ativa) e de presentes, e recalcula
+    o ρ de Spearman entre a taxa de roubo por km e por pedestre, o múltiplo do risco entre 0h e 5h59 e a mediana
+    das correlações entre os perfis horários do roubo e dos pedestres. O crime e a OD são os mesmos da ``run``;
+    é estimativa pontual (o intervalo de domicílios da ``run`` vale para σ = 300 m). Grava
+    ``presenca_2023/sensibilidade_sigma.json``."""
+    from cityomics.atlas.fenotipo import setor_exposicao
+    from cityomics.units.setores import load_setores
+
+    setores = load_setores()
+    setor_ids = setores["cd_setor"].astype(str).to_numpy()
+    g = grade(setores)
+    prep, _ = _prepara_2023(g)
+    ids, E, names = setor_exposicao()
+    mp = mapa_setores(setor_ids, ids)
+    cr = crime_cache(ids, E, names)
+    out = {"sigma_base_m": P.SIGMA_M, "res_m": P.RES, "linhas": []}
+    for s in sigmas:
+        Dpres, _ = densidade(somar(*prep["presenca"][:2], g, sigma_m=s), mp)
+        for var, (cell, W, _) in prep["rua"].items():
+            D, Rx = densidade(somar(cell, W, g, sigma_m=s), mp)
+            m = metricas(E, names, D, Rx, cr, Dpres=Dpres)
+            row = {"sigma_m": s, "variante": var, "spearman_km_vs_pedestre": m["pessoa"]["spearman"],
+                   "spearman_km_vs_presente": m["presenca"]["spearman"],
+                   "risco_madrugada_0_5h": m["relogio"]["risco_madrugada"], "hora_pico": m["relogio"]["pico"],
+                   "multiplo_pico": m["relogio"]["multiplo"], "correlacao_mediana": m["relogio"]["cor_mediana"],
+                   **{f"subida_{nm}": float(m["pessoa"]["subida"][names.index(nm)]) for nm in CLASSES_TEXTO if nm in names}}
+            out["linhas"].append(row)
+            log(f"σ = {s:>3.0f} m, {var}: ρ(km × pedestre) = {row['spearman_km_vs_pedestre']:.2f}; "
+                f"ρ(km × presente) = {row['spearman_km_vs_presente']:.2f}; risco 0–6h = {row['risco_madrugada_0_5h']:.2f}×; "
+                f"correlação mediana = {row['correlacao_mediana']:.2f}; "
+                + "; ".join(f"{nm} {row['subida_' + nm]:+.0f}" for nm in CLASSES_TEXTO if 'subida_' + nm in row))
+    r = [x["spearman_km_vs_pedestre"] for x in out["linhas"]]
+    out["intervalo_spearman"] = [float(min(r)), float(max(r))]
+    (out_dir() / "sensibilidade_sigma.json").write_text(json.dumps(out, ensure_ascii=False, indent=2))
+    return out
+
+
+def tabela_sensibilidade_md() -> str:
+    """Tabela do SI com a sensibilidade ao σ, lida de ``sensibilidade_sigma.json`` (nenhum número digitado à mão)."""
+    d = json.loads((out_dir() / "sensibilidade_sigma.json").read_text())
+    por = {(x["sigma_m"], x["variante"]): x for x in d["linhas"]}
+    cab = ["| Kernel width σ (m) | ρ, per km vs per pedestrian (walking + cycling) | ρ, per km vs per pedestrian (walking only) | ρ, per km vs per person present | Robbery risk per pedestrian, 00:00–05:59 (× daily mean) | Industrial parcels, rank change | High-rise buildings, rank change |",
+           "|---|---|---|---|---|---|---|"]
+    lin = []
+    for s in sorted({k[0] for k in por}):
+        a_, b_ = por[(s, "pe_bici")], por[(s, "pe")]
+        lin.append(f"| {s:.0f}{' (main)' if s == d['sigma_base_m'] else ''} | {a_['spearman_km_vs_pedestre']:.2f} | "
+                   f"{b_['spearman_km_vs_pedestre']:.2f} | {a_['spearman_km_vs_presente']:.2f} | {a_['risco_madrugada_0_5h']:.1f} | "
+                   f"{a_['subida_Indústria e galpões']:+.0f} | {a_['subida_Vertical residencial e misto']:+.0f} |")
+    return "\n".join(cab + lin)
 
 
 def run(log=print, n_boot: int = N_BOOT) -> dict:
