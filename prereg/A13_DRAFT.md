@@ -62,3 +62,7 @@ O que foi congelado:
 ## Linha para `AMENDMENTS.md`
 
 | 2026-10-XX | 4.2, 5.1, 5.2, H4 | A13. Modelos congelados: os 14 modelos de crime reajustados em 2023-01..2025-12, pesos do ensemble e φ em 2025-07..2025-12 fora da amostra; Laya-FT = checkpoint por sha256 (ajuste em 2024-H1 com soft cross-entropy, não RLCD em 2022–2024) + isotônica de 2025; comparador do H2 = LightGBM no mesmo estado e treino + isotônica de 2025; Markov de família × domínio (transições anuais do IPTU 2012–2025) como linha de base do destino; H4 [(a) passa a exploratório / (b) mantido]; congelamento em duas etapas (A e B) | Fixar os arquivos e as identidades antes de abrir 2026 e registrar o protocolo do Laya como de fato foi executado |
+
+## Hash dos pesos do Laya-FT (2026-10-27)
+
+sha256 do `model.safetensors` (842.609.220 bytes), idêntico na pasta final e em `checkpoint_latest`: `4c56e1cd05721c152344451c1807d03a3936639b1c2fb8e4e40d19e8b0551fa0`. Os hashes de todos os arquivos da pasta estão em `data/models/frozen/laya_ft/pesos_sha256.json`. O `tokenizer_config.json` difere entre a pasta final e `checkpoint_latest` (o primeiro foi ajustado na inferência por `_fix_tokenizer_config`); vale o da pasta final.
