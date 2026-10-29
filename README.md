@@ -9,7 +9,7 @@ The study reads São Paulo with the tools of spatial transcriptomics. Fiscal par
 - Article: [DOI after publication]
 - Code archive: Zenodo, https://doi.org/10.5281/zenodo.23778357 (all versions; v1.0.0, the version in the article: https://doi.org/10.5281/zenodo.23778358)
 - Aggregated data and frozen models: Zenodo, https://doi.org/10.5281/zenodo.23778485
-- Preregistration and vault access log: OSF [OSF DOI]
+- Preregistration, amendments and freeze manifests: `prereg/`, archived with the code at Zenodo
 
 ## Repository layout
 
@@ -109,7 +109,7 @@ The article was produced on a workstation with 12 CPU cores and 30 GB of RAM, wi
 
 ## Preregistration and the 2026 vault
 
-The analysis plan, its dated amendments and the hashes of frozen inputs and models are in `prereg/`. Records dated 2026 were sealed at ingestion. Reading them needs two keys: the file `prereg/UNSEAL_KEY`, which holds the hash of the commit that froze the models (`FREEZE-CDE1BDA`), and an environment variable with the same value. Every opening is logged, and the log is registered on OSF [OSF DOI].
+The analysis plan, its dated amendments and the hashes of frozen inputs and models are in `prereg/`. Records dated 2026 were sealed at ingestion. Reading them needs two keys: the file `prereg/UNSEAL_KEY`, which holds the hash of the commit that froze the models (`FREEZE-CDE1BDA`), and an environment variable with the same value. Every opening is logged. The vault had not been opened when the article was submitted; the log will be added to this repository once it is (amendment A14 in `prereg/AMENDMENTS.md`).
 
 Because the key is a commit hash, the history of this repository is part of the record. Commit `cde1bda` shows what was frozen and when; the git history has not been rewritten.
 

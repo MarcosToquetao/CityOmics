@@ -30,7 +30,7 @@ Providers update and republish some of these files. The checksums tell whether a
 | Night-time lights (VIIRS Black Marble, VNP46A3) | NASA |
 | Daily weather (ERA5 reanalysis) | Copernicus Climate Change Service, via Open-Meteo |
 
-Exact URLs are in `data_manifest/`. OpenStreetMap data are licensed under the Open Database Licence (ODbL), which requires attribution and asks that derived databases be shared under the same licence. Brazilian public-sector data are published under the Access to Information Law (Law 12.527/2011). [Check the terms of each remaining source before deposit.]
+Exact URLs are in `data_manifest/`. OpenStreetMap data are licensed under the Open Database Licence (ODbL), which requires attribution and asks that derived databases be shared under the same licence. Brazilian public-sector data are published under the Access to Information Law (Law 12.527/2011).
 
 ## What is not redistributed, and why
 
@@ -45,7 +45,7 @@ cityomics ingest snapshot --verify
 
 ## The 2026 vault
 
-Records dated 2026 are split off at ingestion and stored in `data/sealed_2026/`. The code refuses to read them unless both keys match (see the README). The access log of the vault is registered on OSF [OSF DOI].
+Records dated 2026 are split off at ingestion and stored in `data/sealed_2026/`. The code refuses to read them unless both keys match (see the README). Every opening is logged. The vault had not been opened when the article was submitted; the log will be added to the code repository once it is.
 
 ## Deposited outputs (Zenodo, https://doi.org/10.5281/zenodo.23778485)
 
