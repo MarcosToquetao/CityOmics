@@ -1,11 +1,13 @@
 # CityOmics
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23778357.svg)](https://doi.org/10.5281/zenodo.23778357)
+
 Code for the article "Crime as a phenotype of urban tissue" (Toquetão & Nakaya, in review).
 
 The study reads São Paulo with the tools of spatial transcriptomics. Fiscal parcels play the role of cells, census tracts are spots of known composition, and police records of 15 crime types are the phenotype. From areal counts, the pipeline estimates which crimes each class of parcel hosts and at what hour, how much of a tract's crime persists beyond its composition, and how well month-to-month counts can be forecast.
 
 - Article: [DOI after publication]
-- Code archive: Zenodo [DOI]
+- Code archive: Zenodo, https://doi.org/10.5281/zenodo.23778357 (all versions; v1.0.0, the version in the article: https://doi.org/10.5281/zenodo.23778358)
 - Aggregated data and frozen models: Zenodo [DOI]
 - Preregistration and vault access log: OSF [OSF DOI]
 
@@ -91,7 +93,7 @@ Run the stages in order. Each one reads the outputs of the previous one from `da
 
 Steps that need a GPU run in Google Colab through the notebooks in `notebooks/colab/`, whose README lists them. Only aggregated, anonymous tables are uploaded there.
 
-The article was produced on a workstation with 12 CPU cores and 30 GB of RAM, with the GPU steps in Colab. A full run takes [approximate runtime].
+The article was produced on a workstation with 12 CPU cores and 30 GB of RAM, with the GPU steps in Colab.
 
 ### Figures
 
@@ -131,4 +133,4 @@ Code: MIT ([LICENSE](LICENSE)). Text, figures and derived data: CC BY 4.0. The i
 
 ## Contact
 
-Marcos Lemes Toquetão, Innovation Center, University of São Paulo (InovaUSP), [E-MAIL]. Questions about the code can also be opened as GitHub issues.
+Marcos Lemes Toquetão, Innovation Center, University of São Paulo (InovaUSP). Please open a GitHub issue for questions about the code.
