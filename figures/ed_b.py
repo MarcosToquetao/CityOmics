@@ -92,7 +92,9 @@ def ed2(periodo):
         ["Communication", "Ligand–receptor (COMMOT, NicheNet)", "Lee's L, spatial lag",
          f"best pair {sgn(lr)}% out-of-sample; all generators positive in Lee's L", "Urban analogue (simpler)"],
         ["Context", "MISTy views", "Spatial lag", f"intrinsic view {intr:.2f}", "Tie"],
-        ["Interactions", "NCEM / SLX pairs", "Additive SLX", f"pairs change out-of-sample fit by {sgn(ncem)}%", "Urban analogue"],
+        ["Interactions", "NCEM / SLX pairs", "Additive SLX",
+         ("pairs make the out-of-sample fit diverge (deviance more than doubles)" if ncem < -100
+          else f"pairs change out-of-sample fit by {sgn(ncem)}%"), "Urban analogue"],
         ["Fate", "Type transitions", "Transition matrix", f"permanence {fate.get('permanencia_media', 0) * 100:.1f}% per year", "Descriptive"],
         ["Forecast", "GNN, Hawkes, Chronos, BYM2", "Negative binomial GLM, historical mean",
          f"best CRPS difference {sgn(h1a.get('diff', float('nan')))} ({pct:.0f}% lower)", "Small gain over baselines"],
@@ -100,7 +102,7 @@ def ed2(periodo):
     fig = S.figure(S.DOUBLE, 112)
     ax = ax_mm(fig, 2, 3, 179, 106)
     table(ax, ["Module", "Omics method", "Urban analogue", "Result (development)", "Verdict"], rows, [1.5, 3.0, 2.8, 5.2, 2.6], fontsize=5.0)
-    return S.save(fig, "ed6_equivalencias", periodo)
+    return S.save(fig, "ed7_equivalencias", periodo)
 
 
 # --- ED3: comunicação exploratória ---------------------------------------------------------------
@@ -113,7 +115,7 @@ def ed3(periodo):
     mk = pl.read_parquet(atlas_dir() / "dominio_marcadores_2025.parquet")
     best = act.sort("ganho_pct", descending=True).row(0, named=True)
     fig = S.figure(S.DOUBLE, 162)
-    d = ax_mm(fig, 18, 12, 40, 40)
+    d = ax_mm(fig, 30, 12, 40, 40)
     circle(d, tipos, np.array([n.get(t, 2000) for t in tipos], dtype=float), PA.lr_matrix(lt, tipos), cols, labels=en, top=20)
     S.fig_label(fig, "a", 1, 3)
     e = ax_mm(fig, 122, 8, 36, 40)
@@ -133,7 +135,7 @@ def ed3(periodo):
     c2 = fig.colorbar(im, cax=cb2)
     c2.set_label("Cohen's d", fontsize=5.0)
     c2.ax.tick_params(labelsize=5, length=1.5)
-    return S.save(fig, "ed7_comunicacao", periodo)
+    return S.save(fig, "ed8_comunicacao", periodo)
 
 
 # --- ED7: teoria ---------------------------------------------------------------------------------
@@ -161,29 +163,29 @@ def ed7(periodo):
 def ed8(periodo):
     tag = "dev" if periodo == "dev" else periodo
     ev, mu, phi, dist, y, crps = PT._setup(tag)
-    fig = S.figure(S.DOUBLE, 172)
-    a = ax_mm(fig, 12, 6, 44, 40)
+    fig = S.figure(S.DOUBLE, 178)
+    a = ax_mm(fig, 14, 6, 40, 36)
     PT.panel_test(a, ev, mu, phi, y, crps)
     S.fig_label(fig, "a", 1, 3)
-    b = ax_mm(fig, 74, 11, 48, 35)
+    b = ax_mm(fig, 72, 11, 48, 35)
     PT.panel_monthly(b, ev, crps)
-    S.fig_label(fig, "b", 62, 3)
+    S.fig_label(fig, "b", 60, 3)
     c = ax_mm(fig, 134, 4, 46, 66)
     PT.panel_hitmiss(c, ev, mu)
     S.fig_label(fig, "c", 128, 2)
-    d = ax_mm(fig, 46, 72, 24, 46)
+    d = ax_mm(fig, 40, 80, 26, 46)
     PT.panel_niche(d, ev, crps)
-    S.fig_label(fig, "d", 1, 68)
-    e = ax_mm(fig, 86, 74, 36, 36)
+    S.fig_label(fig, "d", 1, 76)
+    e = ax_mm(fig, 84, 82, 36, 36)
     PP.panel_calibration(e, F.calibration(tag))
-    S.fig_label(fig, "e", 76, 68)
-    f = ax_mm(fig, 134, 98, 46, 40)
+    S.fig_label(fig, "e", 74, 76)
+    f = ax_mm(fig, 16, 140, 40, 30)
     PP.panel_where_when(f, F.within_corr(tag))
-    S.fig_label(fig, "f", 124, 94)
-    g = ax_mm(fig, 82, 134, 40, 26)  # antigo Fig. 6e (R16): celular × letal na escala do órgão
+    S.fig_label(fig, "f", 1, 135)
+    g = ax_mm(fig, 128, 140, 46, 24)  # antigo Fig. 6e (R16): celular × letal na escala do órgão
     PP.panel_contrast(g, F.district_contrast())
-    S.fig_label(fig, "g", 70, 127)
-    return S.save(fig, "ed5_fora_da_amostra", periodo)
+    S.fig_label(fig, "g", 114, 135)
+    return S.save(fig, "ed6_fora_da_amostra", periodo)
 
 
 # --- ED9: perturbação natural --------------------------------------------------------------------
@@ -219,7 +221,7 @@ def ed9(periodo):
                 ax.set_xlabel("Months since event", fontsize=5.5)
     S.fig_label(fig, "a", 1, 2)
     S.fig_label(fig, "b", 1, 46)
-    return S.save(fig, "ed3_perturbacao", periodo)
+    return S.save(fig, "ed4_perturbacao", periodo)
 
 
 # --- ED10: painel de fenótipos ---------------------------------------------------------------------
@@ -275,7 +277,7 @@ def ed10(periodo):
     c.scatter([fp.get(k, np.nan) for k in cls], yy, s=10, facecolor="white", edgecolor="#264653", label="People present", zorder=3)
     c.axvline(1, color=S.INK, lw=0.5)
     c.set_yticks(yy)
-    c.set_yticklabels([longo.get(k, k) for k in cls], fontsize=5)
+    c.set_yticklabels([curto.get(k, k) for k in cls], fontsize=5)
     c.invert_yaxis()
     c.set_xlabel("Crowd factor (density of people on the\nclass relative to the city mean)")
     c.legend(loc="lower right", fontsize=5)
@@ -284,7 +286,7 @@ def ed10(periodo):
     d = ax_mm(fig, 110, 72, 44, 34)
     PP.panel_turnover(d)
     S.fig_label(fig, "d", 96, 66)
-    return S.save(fig, "ed2_painel", periodo)
+    return S.save(fig, "ed3_painel", periodo)
 
 
 # --- ED10 (nova): robustez (parecer R3, R4, R8, R12; Agentes A, B e C) ----------------------------
@@ -577,4 +579,4 @@ def ed10_robustez(periodo):
     else:
         _pendente(f, "ritmo_queda.json pending")
     S.fig_label(fig, "f", 112, 142)
-    return S.save(fig, "ed10_robustez", periodo)
+    return S.save(fig, "ed2_robustez", periodo)

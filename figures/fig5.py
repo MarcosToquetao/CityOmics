@@ -43,6 +43,8 @@ def panel_memoria(ax, mem: dict):
     ax.invert_yaxis()
     ax.set_xlim(0, 1.25)
     ax.set_xticks([0, 0.25, 0.5, 0.75, 1.0])
+    # as três partes somam mais que 100% quando o termo cruzado é negativo
+    ax.axvline(1.0, color=S.INK, lw=0.5, ls=(0, (2, 2)), zorder=0)
     ax.set_xlabel("Share of between-tract variance (log rate)")
     ax.tick_params(axis="y", length=0)
     ax.spines["left"].set_visible(False)
@@ -68,7 +70,8 @@ def panel_persistencia(ax, mem: dict):
 
 
 def panel_queda_classe(ax, q: pl.DataFrame, longo: dict, cols: dict):
-    d = q.filter(pl.col("part_2022") >= 0.004).sort("razao_rel")
+    # classes não identificadas (taxa colapsada a ~0 num dos anos, razão < 0,05) ficam de fora
+    d = q.filter((pl.col("part_2022") >= 0.004) & pl.col("razao_rel").is_finite() & (pl.col("razao_rel") >= 0.05)).sort("razao_rel")
     y = np.arange(d.height)
     for i, r in enumerate(d.iter_rows(named=True)):
         c = cols.get(r["classe"], "#888")
@@ -80,15 +83,15 @@ def panel_queda_classe(ax, q: pl.DataFrame, longo: dict, cols: dict):
     ax.set_xscale("log")
     from matplotlib.ticker import FixedLocator, NullLocator
 
-    ax.xaxis.set_major_locator(FixedLocator([0.25, 0.5, 1, 2]))
-    ax.set_xticklabels(["0.25", "0.5", "1", "2"])
+    ax.xaxis.set_major_locator(FixedLocator([0.1, 0.25, 0.5, 1, 2]))
+    ax.set_xticklabels(["0.1", "0.25", "0.5", "1", "2"])
     ax.xaxis.set_minor_locator(NullLocator())
     ax.set_yticks(y)
     ax.set_yticklabels([longo.get(c, c) for c in d["classe"]], fontsize=5)
     ax.tick_params(axis="y", length=0)
     ax.spines["left"].set_visible(False)
     ax.set_xlabel("2025/2022 rate ratio,\nrelative to the city")
-    ax.set_xlim(0.1, 4)
+    ax.set_xlim(0.05, 4)
 
 
 def panel_queda_fen(ax, qj: dict):
@@ -101,7 +104,7 @@ def panel_queda_fen(ax, qj: dict):
     ax.set_yticklabels([R.FEN_EN[k] for k, _ in f], fontsize=5)
     ax.tick_params(axis="y", length=0)
     ax.spines["left"].set_visible(False)
-    ax.set_xlabel("Change 2022→2025 (%)")
+    ax.set_xlabel("Change\n2022→2025 (%)")
 
 
 def make(periodo: str = "dev"):
@@ -133,10 +136,10 @@ def make(periodo: str = "dev"):
         cbar.set_ticklabels(["0.01%", "1%", "100%"])
         cbar.ax.tick_params(labelsize=4.8, length=1.5)
         cbar.set_label("Annual transition rate", fontsize=5)
-    e = ax_mm(fig, 100, 70, 30, 68)
-    panel_queda_classe(e, q, longo, cols)
-    S.fig_label(fig, "e", 62, 68)
-    f = ax_mm(fig, 158, 70, 24, 60)
+    e = ax_mm(fig, 108, 70, 26, 68)
+    panel_queda_classe(e, q, curto, cols)
+    S.fig_label(fig, "e", 70, 68)
+    f = ax_mm(fig, 160, 70, 20, 60)
     panel_queda_fen(f, qj)
-    S.fig_label(fig, "f", 134, 68)
+    S.fig_label(fig, "f", 138, 68)
     return S.save(fig, "fig5", periodo)

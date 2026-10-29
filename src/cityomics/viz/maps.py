@@ -133,14 +133,23 @@ def setor_raster(values: dict[str, float], res: float = 30.0, fill: float = np.n
     return lut[idx], bounds
 
 
-def scalebar(ax, length_m: float, color: str = "#FFFFFF", loc=(0.06, 0.06), label: str | None = None, lw: float = 1.2) -> None:
+def scalebar(ax, length_m: float, color: str = "#FFFFFF", loc=(0.06, 0.06), label: str | None = None, lw: float = 1.2,
+             backing: str | None = None) -> None:
+    """Barra de escala; ``backing`` põe um retângulo opaco atrás (mapas de lotes, onde a barra some no desenho)."""
     x0, x1 = ax.get_xlim()
     y0, y1 = ax.get_ylim()
     xs = x0 + loc[0] * (x1 - x0)
     ys = y0 + loc[1] * (y1 - y0)
-    ax.plot([xs, xs + length_m], [ys, ys], color=color, lw=lw, solid_capstyle="butt")
+    if backing:
+        import matplotlib.patches as mpatches
+
+        px, py = 0.025 * (x1 - x0), 0.025 * (y1 - y0)
+        ax.add_patch(mpatches.FancyBboxPatch((xs - px, ys - py), length_m + 2 * px, 0.075 * (y1 - y0) + py,
+                                             boxstyle="round,pad=0,rounding_size=0", facecolor=backing, edgecolor="none",
+                                             alpha=0.85, zorder=9))
+    ax.plot([xs, xs + length_m], [ys, ys], color=color, lw=lw, solid_capstyle="butt", zorder=10)
     txt = label or (f"{length_m / 1000:g} km" if length_m >= 1000 else f"{length_m:g} m")
-    ax.text(xs + length_m / 2, ys + 0.012 * (y1 - y0), txt, color=color, ha="center", va="bottom", fontsize=5.5)
+    ax.text(xs + length_m / 2, ys + 0.012 * (y1 - y0), txt, color=color, ha="center", va="bottom", fontsize=5.5, zorder=10)
 
 
 def roads(ax, bbox=None, color: str = "#2B3440", lw: float = 0.15, classes=("arterial", "coletora")) -> None:

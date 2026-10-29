@@ -27,7 +27,8 @@ A_BOX = (0, 1, 183, 30)  # x, y_top, w, h em mm
 def type_table():
     perfil = pl.read_parquet(atlas_dir() / "tipos_perfil_2025.parquet")
     tipos = perfil["nome"].to_list() + ["Favela (FCU)", "Sem cadastro"]
-    en = perfil["name_en"].to_list() + [N.FIXED_LONG["Favela (FCU)"], N.FIXED_LONG["Sem cadastro"]]
+    # nomes curtos, os mesmos das Figs. 2–6 e do texto
+    en = [N.short_name(x) for x in perfil["name_en"].to_list()] + [N.FIXED_LONG["Favela (FCU)"], N.FIXED_LONG["Sem cadastro"]]
     fam = perfil["familia"].to_list() + ["favela", "sem_cadastro"]
     key = (perfil["padrao_alto"] * 2 + perfil["pavimentos"] / 10).to_list() + [0.0, 0.0]
     return tipos, en, fam, key
@@ -127,7 +128,7 @@ def make(periodo: str = "dev"):
         S.dark(ax)
         bbox = (rx - half, ry - half, rx + half, ry + half)
         M.roi(ax, bbox, tipo_by_sql, dark_cols, dark_cols["Favela (FCU)"], edge="#0B0B0E")
-        M.scalebar(ax, 500, color="white", loc=(0.06, 0.05))
+        M.scalebar(ax, 500, color="white", loc=(0.06, 0.05), backing=S.DARK_BG)
         S.fig_label(fig, lab, xr - 5, ytop - 2)
     # e — legenda
     xl = xr + side + 5
@@ -151,6 +152,9 @@ def make(periodo: str = "dev"):
         e.text(0.11, y, en[tipos.index(t)], fontsize=5.2, transform=e.transAxes, va="center")
         y -= step
     pdf = S.out_dir(periodo) / "fig1.pdf"
+    from cityomics.viz import layout_audit
+
+    layout_audit.report(fig, "fig1", S.out_dir(periodo))
     fig.savefig(S.out_dir(periodo) / "fig1.png", dpi=450, facecolor="white")
     a.images[0].remove()
     fig.savefig(pdf, facecolor="white")

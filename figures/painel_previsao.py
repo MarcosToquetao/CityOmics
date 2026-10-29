@@ -72,15 +72,16 @@ def panel_where_when(ax, w: pl.DataFrame) -> None:
     for r in w.iter_rows(named=True):
         fam = P.MODELO_FAMILIA[r["modelo"]]
         ax.scatter(r["r_total"], r["r_dentro"], s=14, color=P.FAMILIAS_MODELO[fam], edgecolor="white", linewidth=0.4, zorder=3)
-    lab = {"gnn": (-0.012, 0.0, "right"), "ensemble": (0.0, -0.028, "center"), "media_historica": (-0.012, 0.0, "right"),
-           "glm": (-0.012, 0.004, "right"), "lgbm_completo": (-0.012, -0.004, "right"), "kde": (0.012, 0.0, "left"),
-           "chronos": (-0.012, 0.0, "right"), "lgbm_sem_crime": (-0.012, 0.0, "right"), "hawkes": (-0.012, 0.0, "right"),
-           "maxent": (0.012, 0.0, "left")}
-    for r in w.iter_rows(named=True):
-        if r["modelo"] in lab:
-            dx, dy, ha = lab[r["modelo"]]
-            ax.text(r["r_total"] + dx, r["r_dentro"] + dy, N.MODEL_EN.get(r["modelo"], r["modelo"]), fontsize=5.0, color=S.INK,
-                    ha=ha, va="center")
+    ax.set_xlim(0.42, 0.9)
+    ax.set_ylim(-0.2, 0.28)
+    from common import place_labels
+
+    # pontos numerados (o aglomerado de modelos bons não comporta nomes) e chave ao lado do eixo
+    w = w.sort("r_total", descending=True)
+    nums = [str(i + 1) for i in range(w.height)]
+    place_labels(ax, w["r_total"].to_numpy(), w["r_dentro"].to_numpy(), nums, fontsize=5, pad_pt=1.8)
+    key = "\n".join(f"{n}  {N.MODEL_EN.get(m, m)}" for n, m in zip(nums, w["modelo"]))
+    ax.text(1.04, 1.0, key, transform=ax.transAxes, fontsize=5, va="top", ha="left", linespacing=1.15)
     ax.axhline(0, color="#BDBDBD", lw=0.5, zorder=0)
     ax.set_xlabel("Correlation across all tract-months (where)")
     ax.set_ylabel("Correlation within tracts (when)")

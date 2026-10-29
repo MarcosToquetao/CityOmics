@@ -59,7 +59,7 @@ def panel_concentracao(ax, d: pl.DataFrame, rep: dict):
     exc = np.cumsum(d["excesso"].to_numpy()) / max(d["excesso"].sum(), 1e-12) * 100
     ax.plot(xs, exc, color="#D1495B", lw=1.1, label="Extra-Poisson monthly variance")
     ax.plot(xs, crime, color="#264653", lw=1.1, label="Phone crime")
-    ax.plot(xs, xs, color="#D9D9D9", lw=0.6)
+    ax.plot(xs, xs, color="#D9D9D9", lw=0.6, label="Equal shares (no concentration)")
     ax.set_xscale("log")
     ax.set_xlim(0.05, 100)
     ax.set_ylim(0, 102)

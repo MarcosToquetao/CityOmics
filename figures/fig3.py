@@ -41,14 +41,19 @@ def fen_ordem(prog: dict) -> list[str]:
 
 def panel_rates_rows(ax, lam: pl.DataFrame, rows: list[str], cols: dict):
     d = {r["classe"]: r for r in lam.iter_rows(named=True)}
+    xmin = 1e-4  # abaixo disto a classe não é identificada: o intervalo vai até a borda e o ponto fica vazado
     for i, c in enumerate(rows):
         r = d.get(c)
         if r is None or r["lambda"] <= 0:
             continue
-        lo, hi = max(r["lambda_ic_lo"], r["lambda"] / 10, 3e-3), r["lambda_ic_hi"]
+        lo, hi = max(r["lambda_ic_lo"], xmin), r["lambda_ic_hi"]
         mk = "D" if c.startswith("n_") else "o"
-        ax.plot([lo, hi], [i, i], color=cols.get(c, "#888888"), lw=1.0)
-        ax.scatter(r["lambda"], i, s=10, marker=mk, color=cols.get(c, "#888888"), zorder=3, edgecolor="white", linewidth=0.3)
+        cor = cols.get(c, "#888888")
+        ax.plot([lo, hi], [i, i], color=cor, lw=1.0, clip_on=False)
+        sub = r["lambda"] < xmin
+        ax.scatter(max(r["lambda"], xmin), i, s=10, marker=mk, color="white" if sub else cor, zorder=3,
+                   edgecolor=cor if sub else "white", linewidth=0.6 if sub else 0.3, clip_on=False)
+    ax.set_xlim(xmin, 300)
     ax.set_xscale("log")
     ax.set_ylim(len(rows) - 0.5, -0.5)
     ax.set_yticks([])
@@ -127,7 +132,11 @@ def panel_programs(ax, prog: dict, fen: list[str], curto: dict):
         cm = cm.reversed()
     im = ax.imshow(H, cmap=cm, vmin=0, vmax=max(0.5, float(H.max())), aspect="auto")
     ax.set_yticks(range(len(ps)))
-    ax.set_yticklabels([prog_nome(p, curto) for p in ps], fontsize=5)
+    # nome em três linhas ("Program k", classe 1, + classe 2): numa linha só invadia o painel c
+    def wrap(p):
+        num, rest = prog_nome(p, curto).split(" · ", 1)
+        return num + "\n" + rest.replace(" + ", "\n+ ")
+    ax.set_yticklabels([wrap(p) for p in ps], fontsize=5, linespacing=1.0)
     ax.set_xticks(range(len(fen)))
     ax.set_xticklabels([R.FEN_EN[f] for f in fen], rotation=55, ha="right", rotation_mode="anchor", fontsize=4.8)
     ax.tick_params(length=0)
@@ -173,7 +182,7 @@ def make(periodo: str = "dev"):
     cols = R.cores()
     fen = fen_ordem(prog)
 
-    fig = S.figure(S.DOUBLE, 216)
+    fig = S.figure(S.DOUBLE, 222)
     lab = ax_mm(fig, 2, 6, 40, 68)
     panel_row_labels(lab, rows, curto, cols)  # nomes curtos: os longos com qualificador não cabem
     a = ax_mm(fig, 44, 6, 26, 68)
@@ -197,14 +206,18 @@ def make(periodo: str = "dev"):
     c = ax_mm(fig, 32, 116, 38, 50)
     panel_validation_fen(c, a_rep["validacao_pontual"], fen)
     S.fig_label(fig, "c", 1, 112)
-    d = ax_mm(fig, 124, 116, 58, 16)
-    panel_programs(d, prog, fen, curto)
-    S.fig_label(fig, "d", 74, 112)
+    d = ax_mm(fig, 124, 116, 58, 30)
+    imd = panel_programs(d, prog, fen, curto)
+    S.fig_label(fig, "d", 78, 112)
+    cbd = ax_mm(fig, 84, 160, 18, 1.8)
+    c2 = fig.colorbar(imd, cax=cbd, orientation="horizontal")
+    c2.set_label("Program loading (d)", fontsize=5.0)
+    c2.ax.tick_params(labelsize=5, length=1.5)
 
     for i, p in enumerate(prog["programas"]):
-        ax = ax_mm(fig, 4 + i * 45, 172, 43, 40)
+        ax = ax_mm(fig, 4 + i * 45, 178, 43, 40)
         panel_program_map(ax, uso, p["programa"], PROG_CORES[i % 4], N.program_title(p["programa"]))
         if i == 0:
             M.scalebar(ax, 10_000, color="white", loc=(0.55, 0.05))
-    S.fig_label(fig, "e", 1, 168)
+    S.fig_label(fig, "e", 1, 174)
     return S.save(fig, "fig3", periodo)

@@ -38,25 +38,21 @@ def _setup(tag):
 
 
 def panel_test(ax, ev, mu, phi, y, crps):
+    """CRPS dos finalistas em 2025 (pontos; o eixo não começa em zero, por isso não são barras). 2026 segue selado."""
     br = {m: float(np.mean((scores.prob_ge1(mu[m], phi[m]) - (y >= 0.5)) ** 2)) for m in FINAL}
     x = np.arange(len(FINAL))
-    ax.bar(x - 0.18, [float(np.mean(crps[m])) for m in FINAL], 0.34, color=[COR[m] for m in FINAL], label="2025 (development)")
-    lo_, hi_ = min(float(np.mean(crps[m])) for m in FINAL) * 0.95, max(float(np.mean(crps[m])) for m in FINAL) * 1.02
-    for i in x:
-        ax.add_patch(__import__("matplotlib").patches.Rectangle((i + 0.01, lo_), 0.34, (hi_ - lo_) * 0.25, fill=False,
-                                                               edgecolor="#BDBDBD", hatch="//////", lw=0.4))
-    from matplotlib.patches import Patch
-
-    h1 = Patch(facecolor="#9E9E9E", label="2025 (development)")
-    h2 = Patch(facecolor="white", edgecolor="#BDBDBD", hatch="//////", lw=0.4, label="2026 (sealed; no values yet)")
+    v = [float(np.mean(crps[m])) for m in FINAL]
+    ax.scatter(x, v, s=22, color=[COR[m] for m in FINAL], zorder=3, edgecolor="white", linewidth=0.4)
     ax.set_xticks(x)
     ax.set_xticklabels([N.MODEL_EN.get(m, m) for m in FINAL], rotation=35, ha="right", rotation_mode="anchor", fontsize=5)
-    lo = min(float(np.mean(crps[m])) for m in FINAL)
-    ax.set_ylim(lo * 0.95, max(float(np.mean(crps[m])) for m in FINAL) * 1.02)
-    ax.set_ylabel("CRPS (lower is better)")
-    ax.legend(handles=[h1, h2], loc="upper right", handlelength=1.2, fontsize=5)
+    span = max(v) - min(v)
+    ax.set_ylim(min(v) - 0.25 * span, max(v) + 0.35 * span)
+    ax.set_xlim(-0.6, len(FINAL) - 0.4)
+    ax.set_ylabel("CRPS, 2025 (lower is better)")
     for i, m in enumerate(FINAL):
-        ax.text(i - 0.18, float(np.mean(crps[m])) * 1.002, f"{br[m]:.3f}", ha="center", va="bottom", fontsize=4.4, rotation=90, color=S.MUTED)
+        ax.text(i, v[i] + 0.08 * span, f"Brier\n{br[m]:.3f}", ha="center", va="bottom", fontsize=5, color=S.MUTED, linespacing=1.0)
+    ax.grid(True, axis="y", color="#F0F0F0", lw=0.4)
+    ax.set_axisbelow(True)
 
 
 def panel_monthly(ax, ev, crps):
@@ -121,7 +117,7 @@ def panel_niche(ax, ev, crps):
     ax.barh(y, [r[1] * 100 for r in rows], color=[DOM_COLORS[r[0] % len(DOM_COLORS)] for r in rows], height=0.65)
     ax.set_yticks(y)
     dl = N.domain_labels(short=True)
-    ax.set_yticklabels([dl[r[0]] for r in rows], fontsize=4.8)
+    ax.set_yticklabels([dl[r[0]].replace(" + ", "\n+ ") for r in rows], fontsize=5, linespacing=1.0)
     ax.axvline(0, color=S.INK, lw=0.5)
     ax.set_xlabel("Ensemble CRPS skill vs\nnegative binomial GLM (%)")
     ax.tick_params(axis="y", length=0)

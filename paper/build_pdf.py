@@ -53,7 +53,14 @@ def figura(png: Path, legenda_md: str) -> str:
 
 
 def main() -> None:
-    md = (HERE / "manuscript.md").read_text()
+    import argparse
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--md", default="manuscript.md")
+    ap.add_argument("--si", default="supplementary.md")
+    ap.add_argument("--out", default="manuscript_figuras.pdf")
+    a = ap.parse_args()
+    md = (HERE / a.md).read_text()
     leg_main = legendas(md, "## Figure legends")
     leg_ed = legendas(md, "## Extended Data figure legends")
     tabelas = md.split("## Tables", 1)[1].split("## References", 1)[0] if "## Tables" in md else ""
@@ -87,7 +94,7 @@ def main() -> None:
         png = sorted(FIGS.glob(f"ed{n}_*.png"))[0]
         ed.append(figura(png, leg_ed[f"Extended Data Fig. {n}"]))
     corpo += "".join(ed)
-    sup = HERE / "supplementary.md"
+    sup = HERE / a.si
     if sup.exists():  # Informações Suplementares no fim, depois do Extended Data
         corpo += "\n\n# Supplementary Information\n\n" + sup.read_text().split("---", 2)[-1]
 
@@ -102,7 +109,7 @@ def main() -> None:
                     "-o", str(tmp_html)], check=True)
     h = tmp_html.read_text().replace("</head>", f"<style>{CSS}</style></head>")
     tmp_html.write_text(h)
-    out = HERE / "manuscript_figuras.pdf"
+    out = HERE / a.out
     subprocess.run([CHROME, "--headless=new", "--disable-gpu", "--no-pdf-header-footer", "--allow-file-access-from-files",
                     f"--print-to-pdf={out}", f"file://{tmp_html}"], check=True, capture_output=True)
     tmp_md.unlink()

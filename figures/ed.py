@@ -77,7 +77,7 @@ def ed1(periodo):
     table(ax, ["Model", "Field of origin", "CRPS", "Log score", "Brier score", "Calibration error (ECE)", "PAI, 1% of area",
                "Captured, 1% of area (%)", "PAI, 5% of area", "Captured, 5% of area (%)"], rows,
           [2.9, 1.6, 0.75, 0.8, 0.85, 1.5, 1.1, 1.6, 1.1, 1.6], fontsize=5.0)
-    return S.save(fig, "ed4_benchmark", periodo)
+    return S.save(fig, "ed5_benchmark", periodo)
 
 
 def ed4(periodo):
@@ -108,11 +108,13 @@ def ed4(periodo):
         for k, v in words.items():
             s = s.replace(k, v)
         return s
-    rows = [[en(r["abordagem"]), en(r["escala"]), en(r["estatistica"]), fmt(r["ganho_fora_amostra_pct"]), fmt(r["estabilidade"]),
+    def gain(v):  # ganho < −100%: o modelo com interações diverge fora da amostra (deviance mais que dobra)
+        return "< −100 (fit diverged)" if isinstance(v, float) and np.isfinite(v) and v < -100 else fmt(v)
+    rows = [[en(r["abordagem"]), en(r["escala"]), en(r["estatistica"]), gain(r["ganho_fora_amostra_pct"]), fmt(r["estabilidade"]),
              fmt(r["pares_tipo_significativos"]), en(r["status"])] for r in m.iter_rows(named=True)]
     table(ax, ["Approach", "Scale", "Statistic", "Out-of-sample\ngain (%)", "Stability (ρ)", "Significant\npairs", "Status"], rows,
           [2.9, 1.7, 3.4, 1.25, 0.9, 0.95, 3.7], fontsize=5.0)
-    return S.save(fig, "ed8_multiverso", periodo)
+    return S.save(fig, "ed9_multiverso", periodo)
 
 
 def ed5(periodo):
@@ -149,9 +151,9 @@ def ed5(periodo):
     b.invert_yaxis()
     b.set_xlabel("MISTy view contribution")
     r2 = float(ms.filter(pl.col("visao") == "combinada")["r2_sozinha"][0])
-    b.set_title(f"Combined out-of-sample R² = {r2:.2f}", fontsize=5.5, loc="left", color=S.MUTED)
+    b.set_title(f"Combined R² = {r2:.2f}", fontsize=5.5, loc="left", color=S.MUTED)
     S.fig_label(fig, "b", 94, 3)
-    c2 = ax_mm(fig, 166, 8, 15, 36)
+    c2 = ax_mm(fig, 168, 8, 13, 36)
     lr_en = N.LR_EN
     c2.barh(range(le.height), le["L_xy"].to_numpy(), color="#E8743B", height=0.6)
     c2.set_yticks(range(le.height))
@@ -159,8 +161,8 @@ def ed5(periodo):
     c2.invert_yaxis()
     c2.axvline(0, color=S.INK, lw=0.5)
     c2.set_xlabel("Lee's L with\nphone crime rate")
-    S.fig_label(fig, "c", 150, 3)
-    return S.save(fig, "ed9_knox_misty_lee", periodo)
+    S.fig_label(fig, "c", 152, 3)
+    return S.save(fig, "ed10_knox_misty_lee", periodo)
 
 
 def ed6(periodo):
@@ -173,7 +175,7 @@ def ed6(periodo):
     key = (perfil["padrao_alto"] * 2 + perfil["pavimentos"] / 10).to_list() + [0.0]
     cols = P.type_colors(tipos, fam, key)
     ordem = P.ordered_types(tipos, fam, key)
-    fig = S.figure(S.DOUBLE, 108)
+    fig = S.figure(S.DOUBLE, 128)
     a = ax_mm(fig, 14, 6, 60, 50)
     ref = co.filter(pl.col("a") == pl.col("b"))
     ends = []
@@ -212,9 +214,9 @@ def ed6(periodo):
     perfil, tipos2, fam2, key2, _ = types_meta()
     cols2 = P.type_colors(tipos2, fam2, key2)
     order2 = P.ordered_types(tipos2, fam2, key2)
-    c3 = ax_mm(fig, 14, 78, 166, 24)
+    c3 = ax_mm(fig, 14, 98, 166, 24)
     panel_districts(c3, {**cols2, "Favela (FCU)": P.FAMILIAS["favela"][0]}, order2 + ["Favela (FCU)"])
-    S.fig_label(fig, "c", 1, 74)
+    S.fig_label(fig, "c", 1, 94)
     return S.save(fig, "ed1_coocorrencia_composicao", periodo)
 
 
@@ -241,11 +243,12 @@ def make(periodo: str = "dev"):
     from ed_b import ed2, ed3, ed8, ed9, ed10, ed10_robustez
 
     # ordem de primeira citação no manuscrito (paper/manuscript_src.md); a figura de teoria (ed7) saiu.
-    # função → saída: ed6 → ed1_coocorrencia_composicao, ed10 → ed2_painel, ed9 → ed3_perturbacao,
-    # ed1 → ed4_benchmark, ed8 → ed5_fora_da_amostra, ed2 → ed6_equivalencias, ed3 → ed7_comunicacao,
-    # ed4 → ed8_multiverso, ed5 → ed9_knox_misty_lee, ed10_robustez → ed10_robustez (parecer R3, R4, R8, R12)
+    # função → saída (revisão final, 2026-10-27: renumerado pela ordem de citação; a robustez passou a ED2):
+    # ed6 → ed1_coocorrencia_composicao, ed10_robustez → ed2_robustez, ed10 → ed3_painel, ed9 → ed4_perturbacao,
+    # ed1 → ed5_benchmark, ed8 → ed6_fora_da_amostra, ed2 → ed7_equivalencias, ed3 → ed8_comunicacao,
+    # ed4 → ed9_multiverso, ed5 → ed10_knox_misty_lee
     out = None
-    for fn in (ed6, ed10, ed9, ed1, ed8, ed2, ed3, ed4, ed5, ed10_robustez):
+    for fn in (ed6, ed10_robustez, ed10, ed9, ed1, ed8, ed2, ed3, ed4, ed5):
         try:
             out = fn(periodo)
         except FileNotFoundError as e:

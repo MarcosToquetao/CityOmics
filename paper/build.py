@@ -7,7 +7,10 @@
 - Conta palavras do resumo, do texto principal, dos Methods e das legendas, e falha se passar dos
   limites da Nature Cities (Article) ou se houver chave sem referência.
 
-Uso: python paper/build.py
+Uso: python paper/build.py [--src manuscript_src.reescrito.md] [--out manuscript.md] [--anon]
+
+``--anon`` gera a versão para revisão duplo-anônima: tira autores, afiliações, correspondência, contribuições
+e agradecimentos, e troca as frases que identificam os autores (a autoria vai na carta de apresentação).
 """
 
 from __future__ import annotations
@@ -237,8 +240,54 @@ def palavras(texto: str) -> int:
     return len(re.findall(r"[\w’'−–.,%-]+", texto))
 
 
+PANDOC = "/home/MarcosToquetao/miniforge3/envs/regressao_log/bin/pandoc"
+
+
+def limpa_docx(path: Path) -> None:
+    """Propriedades do documento sem autor nem programa (revisão duplo-anônima e higiene de metadados)."""
+    import zipfile
+
+    tmp = path.with_suffix(".tmp")
+    with zipfile.ZipFile(path) as zin, zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as zout:
+        for item in zin.infolist():
+            data = zin.read(item.filename)
+            if item.filename == "docProps/core.xml":
+                data = re.sub(rb"<dc:creator>.*?</dc:creator>", b"<dc:creator></dc:creator>", data)
+                data = re.sub(rb"<cp:lastModifiedBy>.*?</cp:lastModifiedBy>", b"", data)
+            zout.writestr(item, data)
+    tmp.replace(path)
+
+
+# frases que identificam os autores na versão anônima (Nature Cities, revisão duplo-anônima)
+ANON = [
+    ("had been seen on the first author's public crime website", "had been seen on a public crime-statistics website"),
+    ("first author's public crime website", "a public crime-statistics website"),
+]
+
+
+def anonimiza(src: str) -> str:
+    cab, resto = src.split("<!--ABSTRACT-->", 1)
+    titulo = re.search(r"^---\n.*?\n---\n", cab, re.S).group(0)
+    src = titulo + "\n<!--ABSTRACT-->" + resto
+    for a, b in ANON:
+        src = src.replace(a, b)
+    for sec in ("Acknowledgements", "Author contributions"):
+        src = re.sub(rf"## {sec}\n\n.*?\n\n(?=## )", "", src, flags=re.S)
+    return src
+
+
 def main() -> int:
-    src = SRC.read_text()
+    import argparse
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--src", type=Path, default=SRC)
+    ap.add_argument("--out", type=Path, default=OUT)
+    ap.add_argument("--anon", action="store_true")
+    a = ap.parse_args()
+    src = a.src.read_text() if a.src.is_absolute() else (Path.cwd() / a.src if (Path.cwd() / a.src).exists() else HERE / a.src).read_text()
+    if a.anon:
+        src = anonimiza(src)
+    OUT_ = a.out if a.out.is_absolute() else HERE / a.out.name
     cache = json.loads(CACHE.read_text()) if CACHE.exists() else {}
     ordem: list[str] = []
     for grupo in re.findall(r"\{([a-z0-9_,]+)\}", src):
@@ -255,7 +304,22 @@ def main() -> int:
     CACHE.write_text(json.dumps(cache, ensure_ascii=False))
     corpo = corpo.replace("<!--/END-->", "<!--/END-->\n\n## References\n\n" + refs + "\n")
     corpo = re.sub(r"<!--/?[A-Z]+-->\n?", "", corpo)
-    OUT.write_text(corpo)
+    OUT_.write_text(corpo)
+    sufixo = "_anon" if a.anon else ""
+    si = (HERE / "supplementary_src.md").read_text()
+    si = re.sub(r"<!--/?[A-Z0-9]+-->\n?", "", si)
+    if a.anon:
+        for x, y in ANON:
+            si = si.replace(x, y)
+    si_md = HERE / f"supplementary{sufixo}.md"
+    si_md.write_text(si)
+    if Path(PANDOC).exists():  # Word para o envio (a Nature Cities aceita Word ou PDF na primeira submissão)
+        import subprocess
+
+        for md in (OUT_, si_md):
+            subprocess.run([PANDOC, str(md), "-f", "markdown+superscript+subscript", "-o", str(md.with_suffix(".docx"))],
+                           check=True)
+            limpa_docx(md.with_suffix(".docx"))
 
     n = {"resumo": palavras(bloco(src, "ABSTRACT").replace("## Abstract", "")), "texto principal": palavras(bloco(src, "MAIN")),
          "Methods": palavras(bloco(src, "METHODS")), "legendas": palavras(bloco(src, "LEGENDS"))}

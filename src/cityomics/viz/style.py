@@ -126,9 +126,12 @@ def enforce_min_font(fig, minimum: float = FONT_MIN) -> int:
 
 
 def save(fig, name: str, periodo: str = "dev", png: bool = True) -> Path:
+    from cityomics.viz import layout_audit
+
     plain_log_ticks(fig)
     enforce_min_font(fig)
     d = out_dir(periodo)
+    layout_audit.report(fig, name, d)
     pdf = d / f"{name}.pdf"
     fig.savefig(pdf, facecolor=fig.get_facecolor())
     if png:

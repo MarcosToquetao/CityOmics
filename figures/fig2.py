@@ -31,7 +31,7 @@ def types_meta():
     tipos = perfil["nome"].to_list()
     fam = perfil["familia"].to_list()
     key = (perfil["padrao_alto"] * 2 + perfil["pavimentos"] / 10).to_list()
-    en = N.class_labels(perfil)[0]
+    en = N.class_labels(perfil)[1]  # nomes curtos, os mesmos do texto e das Figs. 1 e 3–6
     return perfil, tipos, fam, key, en
 
 
@@ -180,57 +180,59 @@ def make(periodo: str = "dev"):
     top = (mk.filter(pl.col("logfc") > 0).sort("score", descending=True).group_by("cluster").head(3)["gene"].unique().to_list())
     pref = list(N.ATTR_EN)
     genes = [g for g in pref if g in top] + [g for g in top if g not in pref]
-    fig = S.figure(S.DOUBLE, 206)
-    a = ax_mm(fig, 4, 6, 52, 52)
+    # três fileiras: (a, b) tipos; (c, e + legenda dos domínios) tecido; (f, d) estabilidade e vizinhança
+    fig = S.figure(S.DOUBLE, 240)
+    a = ax_mm(fig, 6, 6, 44, 44)
     panel_umap(a, cols_by_cluster)
     S.fig_label(fig, "a", 1, 3)
-    b = ax_mm(fig, 100, 6, 80, 62)
+    b = ax_mm(fig, 100, 6, 81, 60)
     sc = panel_dotplot(b, dp, order, en, cols, genes)
-    S.fig_label(fig, "b", 62, 3)
-    cb = ax_mm(fig, 66, 80, 24, 2.2)
+    S.fig_label(fig, "b", 55, 3)
+    cb = ax_mm(fig, 8, 62, 26, 2.2)
     cbar = fig.colorbar(sc, cax=cb, orientation="horizontal")
-    cbar.set_label("Mean standardized value", fontsize=5.2)
+    cbar.set_label("Mean standardized value (b)", fontsize=5.2)
     cbar.ax.tick_params(labelsize=5, length=1.5)
-    lg = ax_mm(fig, 62, 94, 36, 7)
+    lg = ax_mm(fig, 8, 76, 40, 6)
     lg.axis("off")
     for i, f in enumerate((0.1, 0.5, 1.0)):
-        lg.scatter([0.1 + i * 0.3], [0.5], s=0.5 + 18 * f, color="#BBBBBB", edgecolor="#555555", linewidth=0.2, transform=lg.transAxes, clip_on=False)
-        lg.text(0.1 + i * 0.3 + 0.07, 0.5, f"{int(f * 100)}%", fontsize=5, va="center", transform=lg.transAxes)
-    lg.text(0.1, 1.1, "Parcels with the attribute", fontsize=5.2, transform=lg.transAxes)
-    c = ax_mm(fig, 4, 76, 54, 54)
+        lg.scatter([0.05 + i * 0.3], [0.4], s=0.5 + 18 * f, color="#BBBBBB", edgecolor="#555555", linewidth=0.2, transform=lg.transAxes, clip_on=False)
+        lg.text(0.05 + i * 0.3 + 0.07, 0.4, f"{int(f * 100)}%", fontsize=5, va="center", transform=lg.transAxes)
+    lg.text(0.0, 1.05, "Parcels with the attribute (b)", fontsize=5.2, transform=lg.transAxes)
+    y2 = 100
+    c = ax_mm(fig, 6, y2, 52, 52)
     panel_pies(c, cols_dark, tipos + ["Favela (FCU)"])
-    S.fig_label(fig, "c", 1, 73)
+    S.fig_label(fig, "c", 1, y2 - 3)
     import painel_arquitetura as PA
 
     tipos_a, fam_a, key_a, en_a, _ = PA.meta()
     order_a = P.ordered_types(tipos_a, fam_a, key_a)
     ne = pl.read_parquet(atlas_dir() / "nhood_enrichment_2025.parquet")
-    d = ax_mm(fig, 88, 120, 40, 40)
+    d = ax_mm(fig, 104, y2, 44, 44)
     im = PA.panel_nhood(d, ne, order_a, en_a)
-    S.fig_label(fig, "d", 62, 112)
-    cbd = ax_mm(fig, 130, 124, 2.0, 22)
+    S.fig_label(fig, "d", 64, y2 - 3)
+    cbd = ax_mm(fig, 152, y2 + 4, 2.0, 24)
     c1 = fig.colorbar(im, cax=cbd)
     c1.set_label("Enrichment (z)", fontsize=5.0)
-    c1.ax.tick_params(labelsize=4.8, length=1.5)
+    c1.ax.tick_params(labelsize=5, length=1.5)
+    y3 = 176
     dom = pl.read_parquet(atlas_dir() / "setor_dominio_2025.parquet")
-    e = ax_mm(fig, 140, 114, 42, 60)
+    e = ax_mm(fig, 6, y3, 40, 56)
     PA.panel_domains(e, dom)
-    S.fig_label(fig, "e", 136, 112)
-    f_ = ax_mm(fig, 16, 146, 34, 24)
-    panel_stability(f_)
-    S.fig_label(fig, "f", 1, 141)
+    S.fig_label(fig, "e", 1, y3 - 3)
     dl = N.domain_labels(short=True)
-    lgd = ax_mm(fig, 66, 180, 116, 22)
+    lgd = ax_mm(fig, 50, y3 + 6, 76, 40)
     lgd.axis("off")
-    lgd.text(0.0, 1.02, f"Tissue domains (e), D1–D{len(dl)}, named by their most enriched cell classes", fontsize=5.2,
-             transform=lgd.transAxes)
-    nrow = -(-len(dl) // 2)
-    step = min(0.25, 0.95 / max(nrow, 1))
+    lgd.text(0.0, 1.0, "Tissue domains (e), named by their most enriched cell classes", fontsize=5.2,
+             transform=lgd.transAxes, va="bottom")
+    step = 0.92 / max(len(dl), 1)
     for i, k in enumerate(sorted(dl)):
-        x, y = (i // nrow) * 0.5, 0.80 - (i % nrow) * step
-        lgd.add_patch(mpatches.Rectangle((x, y - 0.07), 0.025, 0.14, color=PA.DOM_COLORS[k % len(PA.DOM_COLORS)],
+        y = 0.90 - i * step
+        lgd.add_patch(mpatches.Rectangle((0.0, y - 0.035), 0.03, 0.07, color=PA.DOM_COLORS[k % len(PA.DOM_COLORS)],
                                          transform=lgd.transAxes, clip_on=False))
-        lgd.text(x + 0.035, y, dl[k], fontsize=5.0, va="center", transform=lgd.transAxes)
+        lgd.text(0.045, y, dl[k], fontsize=5.0, va="center", transform=lgd.transAxes)
+    f_ = ax_mm(fig, 144, y3 + 4, 36, 30)
+    panel_stability(f_)
+    S.fig_label(fig, "f", 130, y3 - 3)
     return S.save(fig, "fig2", periodo)
 
 

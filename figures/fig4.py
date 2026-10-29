@@ -187,7 +187,8 @@ def panel_crowd(fig, x, y, w, h, rv: pl.DataFrame, classes: list[str], curto: di
             cr = np.array([r[f"crime_h{j:02d}"][0] for j in range(24)]) * 100
             ru = np.array([r[f"rua_h{j:02d}"][0] for j in range(24)]) * 100
             ax.fill_between(range(24), ru, color="#D9D9D9", lw=0, step="mid")
-            ax.plot(range(24), cr, color=cols.get(c, S.INK), lw=1.0, drawstyle="steps-mid")
+            # tom escurecido da cor da classe: os azuis claros somem sobre o cinza dos pedestres
+            ax.plot(range(24), cr, color=P._shade(cols.get(c, S.INK), -0.35), lw=1.0, drawstyle="steps-mid")
         ax.set_title(curto.get(c, c), fontsize=5.5, loc="left", pad=1.5)
         ax.set_xticks([0, 6, 12, 18])
         ax.set_xlim(-0.5, 23.5)
@@ -197,9 +198,9 @@ def panel_crowd(fig, x, y, w, h, rv: pl.DataFrame, classes: list[str], curto: di
         if i // 2 == 1:
             ax.set_xlabel("Hour (weekdays)", fontsize=5.5)
         axes.append(ax)
-    if axes:
-        axes[0].text(0.98, 0.95, "robbery (model)", color=S.INK, fontsize=5, ha="right", va="top", transform=axes[0].transAxes)
-        axes[0].text(0.98, 0.80, "pedestrians", color="#8C8C8C", fontsize=5, ha="right", va="top", transform=axes[0].transAxes)
+    if axes:  # chave acima dos quatro painéis, fora dos dados
+        fig.text((x + 0.0) / (fig.get_size_inches()[0] / S.MM), 1 - (y - 3.2) / (fig.get_size_inches()[1] / S.MM),
+                 "Line: phone robbery (model); grey: pedestrians on the street", fontsize=5, color=S.INK, va="bottom")
     return axes
 
 
@@ -226,7 +227,7 @@ def panel_risk_hour(ax, rh: pl.DataFrame, var: str = VARIANTE):
     ax.set_xlim(-0.5, 23.5)
     ax.set_xlabel("Hour of day (weekdays)")
     ax.set_ylabel("Robbery risk per pedestrian\n(relative to daily mean)")
-    ax.text(0.98, 0.97, "grey: pedestrians on the street", transform=ax.transAxes, fontsize=5, color="#8C8C8C", ha="right", va="top")
+    ax.set_title("Grey: pedestrians on the street", fontsize=5, color="#6B6B6B", loc="left", pad=2)
 
 
 def panel_weekend(ax, fds: dict, rows: list[str], curto: dict):
@@ -258,7 +259,8 @@ def panel_weekend(ax, fds: dict, rows: list[str], curto: dict):
     ax.set_xticklabels([curto.get(r, r) for r in rows], rotation=50, ha="right", rotation_mode="anchor", fontsize=5)
     ax.set_xlim(-0.6, len(rows) - 0.4)
     ax.set_ylabel("Weekend / weekday\n(rate per day)")
-    ax.legend(loc="upper left", fontsize=5, ncol=2, handletextpad=0.1, columnspacing=0.8, borderaxespad=0.1)
+    ax.legend(loc="lower left", bbox_to_anchor=(0.0, 1.0), fontsize=5, ncol=2, handletextpad=0.1, columnspacing=0.8,
+              borderaxespad=0.1)
     ax.grid(True, axis="y", color="#F0F0F0", lw=0.4)
     ax.set_axisbelow(True)
 
@@ -342,7 +344,7 @@ def make(periodo: str = "dev"):
     c1.set_label("% of the class's robberies", fontsize=5)
     c1.ax.tick_params(labelsize=5, length=1.5)
     # c — roubo × pedestres
-    panel_crowd(fig, 120, 72, 62, 58, rv, dest, curto, cols)
+    panel_crowd(fig, 120, 74, 62, 56, rv, dest, curto, cols)
     S.fig_label(fig, "c", 110, 66)
     # d, e, f
     d_ = ax_mm(fig, 15, 146, 38, 30)
