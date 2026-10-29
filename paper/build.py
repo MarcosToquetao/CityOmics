@@ -16,6 +16,8 @@ e agradecimentos, e troca as frases que identificam os autores (a autoria vai na
 from __future__ import annotations
 
 import json
+import os
+import shutil
 import re
 import sys
 import urllib.request
@@ -240,7 +242,7 @@ def palavras(texto: str) -> int:
     return len(re.findall(r"[\w’'−–.,%-]+", texto))
 
 
-PANDOC = "/home/MarcosToquetao/miniforge3/envs/regressao_log/bin/pandoc"
+PANDOC = os.environ.get("PANDOC") or shutil.which("pandoc") or "pandoc"
 
 
 def limpa_docx(path: Path) -> None:
@@ -313,7 +315,7 @@ def main() -> int:
             si = si.replace(x, y)
     si_md = HERE / f"supplementary{sufixo}.md"
     si_md.write_text(si)
-    if Path(PANDOC).exists():  # Word para o envio (a Nature Cities aceita Word ou PDF na primeira submissão)
+    if shutil.which(PANDOC):  # Word para o envio (a Nature Cities aceita Word ou PDF na primeira submissão)
         import subprocess
 
         for md in (OUT_, si_md):

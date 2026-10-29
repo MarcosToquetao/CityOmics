@@ -1,0 +1,75 @@
+{
+  "files": {
+    "SPDadosCriminais_2022.xlsx": {
+      "url": "https://www.ssp.sp.gov.br/assets/estatistica/transparencia/spDados/SPDadosCriminais_2022.xlsx",
+      "remote_last_modified": "Tue, 30 Jun 2026 13:29:04 GMT",
+      "size": 199282273,
+      "sha256": "608399e58e40da0d8dbb30d73db62add1408b4f354191c12f629b108b8f7e810",
+      "recorded_at": "2026-10-14T22:02:56+00:00"
+    },
+    "SPDadosCriminais_2023.xlsx": {
+      "url": "https://www.ssp.sp.gov.br/assets/estatistica/transparencia/spDados/SPDadosCriminais_2023.xlsx",
+      "remote_last_modified": "Tue, 30 Jun 2026 12:48:58 GMT",
+      "size": 218413769,
+      "sha256": "84c595a451251b3c532f4483a672134813e5ec3e224ca27db58ec4854ee801df",
+      "recorded_at": "2026-10-14T22:02:56+00:00"
+    },
+    "SPDadosCriminais_2024.xlsx": {
+      "url": "https://www.ssp.sp.gov.br/assets/estatistica/transparencia/spDados/SPDadosCriminais_2024.xlsx",
+      "remote_last_modified": "Tue, 30 Jun 2026 12:51:30 GMT",
+      "size": 197574881,
+      "sha256": "b58715efaf1128c971fc5113b5a856cbb29e3e09ece8706e2eec1827fbf10d26",
+      "recorded_at": "2026-10-14T22:02:56+00:00"
+    },
+    "SPDadosCriminais_2025.xlsx": {
+      "url": "https://www.ssp.sp.gov.br/assets/estatistica/transparencia/spDados/SPDadosCriminais_2025.xlsx",
+      "remote_last_modified": "Tue, 30 Jun 2026 12:53:42 GMT",
+      "size": 195899014,
+      "sha256": "4ab5b40229d245a0f50b65e74ea9e9b7750bbdb3bff7b02d961d78b9c4143d8c",
+      "recorded_at": "2026-10-14T22:02:56+00:00"
+    },
+    "SPDadosCriminais_2026.xlsx": {
+      "url": "https://www.ssp.sp.gov.br/assets/estatistica/transparencia/spDados/SPDadosCriminais_2026.xlsx",
+      "remote_last_modified": "Thu, 08 Oct 2026 14:27:12 GMT",
+      "size": 126209129,
+      "sha256": "a2f003954f8c1c9912d242081fabb5736439af5fb2f7792298f9dc13305eff29",
+      "recorded_at": "2026-10-14T22:02:58+00:00"
+    },
+    "CelularesSubtraidos_2022.xlsx": {
+      "url": "https://www.ssp.sp.gov.br/assets/estatistica/transparencia/baseDados/celularesSub/CelularesSubtraidos_2022.xlsx",
+      "remote_last_modified": "Fri, 26 Jun 2026 19:18:30 GMT",
+      "size": 116744230,
+      "sha256": "3abe632572cd90183c40495cb524553201c210f07e33465e566605bfec939161",
+      "recorded_at": "2026-10-14T22:02:58+00:00"
+    },
+    "CelularesSubtraidos_2023.xlsx": {
+      "url": "https://www.ssp.sp.gov.br/assets/estatistica/transparencia/baseDados/celularesSub/CelularesSubtraidos_2023.xlsx",
+      "remote_last_modified": "Fri, 26 Jun 2026 19:25:01 GMT",
+      "size": 137602455,
+      "sha256": "ff84477ca21570c0dcdfd0b6f286313c50d73e9ff5e7aace3d48c025e230ed9c",
+      "recorded_at": "2026-10-14T22:02:58+00:00"
+    },
+    "CelularesSubtraidos_2024.xlsx": {
+      "url": "https://www.ssp.sp.gov.br/assets/estatistica/transparencia/baseDados/celularesSub/CelularesSubtraidos_2024.xlsx",
+      "remote_last_modified": "Fri, 26 Jun 2026 19:28:39 GMT",
+      "size": 118609543,
+      "sha256": "2cd2615921681731e11fb0fa2d26887f6bdf4e44773db0f8d09ca26780bcc459",
+      "recorded_at": "2026-10-14T22:02:59+00:00"
+    },
+    "CelularesSubtraidos_2025.xlsx": {
+      "url": "https://www.ssp.sp.gov.br/assets/estatistica/transparencia/baseDados/celularesSub/CelularesSubtraidos_2025.xlsx",
+      "remote_last_modified": "Fri, 26 Jun 2026 19:31:41 GMT",
+      "size": 108119158,
+      "sha256": "b86cc5576688bff2aa0b65a244c9a396d5e49e9c4eaf05b4e4dd665f1c2956c9",
+      "recorded_at": "2026-10-14T22:02:59+00:00"
+    },
+    "CelularesSubtraidos_2026.xlsx": {
+      "url": "https://www.ssp.sp.gov.br/assets/estatistica/transparencia/baseDados/celularesSub/CelularesSubtraidos_2026.xlsx",
+      "remote_last_modified": "Mon, 28 Sep 2026 12:18:18 GMT",
+      "size": 64660924,
+      "sha256": "519a4acc7d90ef2f8c8ffa9dba0874772df992dccc9cd86bb757d91072247c3c",
+      "recorded_at": "2026-10-14T22:02:59+00:00"
+    }
+  },
+  "frozen_at": "2026-10-14T22:02:59+00:00"
+}

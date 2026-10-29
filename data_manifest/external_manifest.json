@@ -1,0 +1,1834 @@
+{
+  "ibge/SP_setores_CD2022.gpkg": {
+    "url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios/malha_com_atributos/setores/gpkg/UF/SP/SP_setores_CD2022.gpkg",
+    "remote_last_modified": "Wed, 13 Nov 2024 18:23:53 GMT",
+    "size": 182128640,
+    "sha256": "07affc966f82292d6f9a359adccc49e69ed55d2075936ef6d1e9c346b29a04bc",
+    "recorded_at": "2026-10-14T22:41:41+00:00"
+  },
+  "geosampa/estacao_metro.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:estacao_metro",
+    "size": 44818,
+    "sha256": "248b5bb9863f21f75a562961b7f19ec551c9c18fdaca23dd2c224aa3e49de1a1",
+    "recorded_at": "2026-10-14T22:47:12+00:00"
+  },
+  "geosampa/estacao_trem.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:estacao_trem",
+    "size": 51848,
+    "sha256": "157eea55686c2959a8bee39f561711ef341fa2d95dad36b2bf07accf2d63a199",
+    "recorded_at": "2026-10-14T22:47:13+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_06_BARRA_FUNDA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_06_BARRA_FUNDA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.5145873+00:00",
+    "size": 1188012,
+    "sha256": "63385f70cfdfbe4197c6e5c2897a1b2adc3087435a85383c00a201b2ff2bb79c",
+    "recorded_at": "2026-10-14T22:54:36+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_01_AGUA_RASA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_01_AGUA_RASA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.3333981+00:00",
+    "size": 7332008,
+    "sha256": "49fca4f07a40e73e93ff4f2b40d883927ada85f7497da06da63a03f4058a12ff",
+    "recorded_at": "2026-10-14T22:54:45+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_02_ALTO_DE_PINHEIROS.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_02_ALTO_DE_PINHEIROS.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.366992+00:00",
+    "size": 3498168,
+    "sha256": "31b0d4874027bb261d2d3e3c099010ac2bec6249ce344cdcd2650f772ad1c51b",
+    "recorded_at": "2026-10-14T22:54:45+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_03_ANHANGUERA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_03_ANHANGUERA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.4132285+00:00",
+    "size": 3399850,
+    "sha256": "0c5cb9051720075c34fc971742b8d8dc28e4c896c00d5e88f682a5a0f9e44f73",
+    "recorded_at": "2026-10-14T22:54:45+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_04_ARICANDUVA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_04_ARICANDUVA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.4563437+00:00",
+    "size": 5447850,
+    "sha256": "9d1dbca9aec0f56ab0276ac3a6e29bef74524761ba9647dd4220be5d0424f358",
+    "recorded_at": "2026-10-14T22:54:46+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_05_ARTUR_ALVIM.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_05_ARTUR_ALVIM.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.4907294+00:00",
+    "size": 3768492,
+    "sha256": "f5412352b28b7c90472cc344fbd55c02aa9ccc40f525b7ddbd966de3ff974bd6",
+    "recorded_at": "2026-10-14T22:54:46+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_07_BELA_VISTA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_07_BELA_VISTA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.5356935+00:00",
+    "size": 1425578,
+    "sha256": "3f52b2003cfc08285120cad06f549c9697b7cf7513fbac4f8e8ea50f248b5ec5",
+    "recorded_at": "2026-10-14T22:54:46+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_08_BELEM.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_08_BELEM.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.5683227+00:00",
+    "size": 3625120,
+    "sha256": "d820ae7fcbf09687a5dbd53114f79c65a545a3dca03344929f8d678ee764133e",
+    "recorded_at": "2026-10-14T22:54:47+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_09_BOM_RETIRO.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_09_BOM_RETIRO.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.5954154+00:00",
+    "size": 2265258,
+    "sha256": "215c765a80f9e0b1225b891ea7da21cbe7d8ff2f8e4811b49eb0fd1453e102ee",
+    "recorded_at": "2026-10-14T22:54:47+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_10_BRAS.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_10_BRAS.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.6276334+00:00",
+    "size": 2232478,
+    "sha256": "0ced6371603b5cfe8b40f055afe3cc6acbe0b4add389d03e108a30742c776d8b",
+    "recorded_at": "2026-10-14T22:54:47+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_11_BRASILANDIA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_11_BRASILANDIA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.6870728+00:00",
+    "size": 11624620,
+    "sha256": "7b7e33016b36c093a70a678023228622a47c852119d1066912d8d951632b00e2",
+    "recorded_at": "2026-10-14T22:54:48+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_12_BUTANTA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_12_BUTANTA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.7247772+00:00",
+    "size": 5197988,
+    "sha256": "7078a88cc1634b4efbe2c9397aa67e08c738077047121a5656392578a9f07871",
+    "recorded_at": "2026-10-14T22:54:48+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_13_CACHOEIRINHA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_13_CACHOEIRINHA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.7688603+00:00",
+    "size": 7024814,
+    "sha256": "29b35cc06f7357116c479b0cf4296e9bbac77841ec1bdb5db71cc96b4b919b4a",
+    "recorded_at": "2026-10-14T22:54:49+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_14_CAMBUCI.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_14_CAMBUCI.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.7932281+00:00",
+    "size": 2535588,
+    "sha256": "00ab34c9607eede48af60bf3fceb087ed6c7016065d745cf7c86194fab2a8182",
+    "recorded_at": "2026-10-14T22:54:49+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_15_CAMPO_BELO.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_15_CAMPO_BELO.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.832845+00:00",
+    "size": 4985002,
+    "sha256": "133a1047b6e845db900c6493f106125f295e91b273bcec0c7dab243960b6d433",
+    "recorded_at": "2026-10-14T22:54:50+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_16_CAMPO_GRANDE.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_16_CAMPO_GRANDE.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.8712583+00:00",
+    "size": 4960430,
+    "sha256": "8189a25eaf9f923ff41b4c052b706a9fc32e72163e7a5d491bbc0708d7dd3731",
+    "recorded_at": "2026-10-14T22:54:50+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_17_CAMPO_LIMPO.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_17_CAMPO_LIMPO.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.9167214+00:00",
+    "size": 8544428,
+    "sha256": "7627bc63458639929fcf0927f0b83266b3355d819fa840ff45b664cfde016cdc",
+    "recorded_at": "2026-10-14T22:54:51+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_18_CANGAIBA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_18_CANGAIBA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:53.9519146+00:00",
+    "size": 6172838,
+    "sha256": "7b5c9aea066b7ebad9c673934086df9a40d3ca5c953deb8ce1dd133687723c3e",
+    "recorded_at": "2026-10-14T22:54:51+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_19_CAPAO_REDONDO.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_19_CAPAO_REDONDO.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.0027245+00:00",
+    "size": 8978608,
+    "sha256": "0ff34290644a087aa8bc9549316ea89b7adc7d365bfe3c0f0bc0e5492caede0c",
+    "recorded_at": "2026-10-14T22:54:52+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_20_CARRAO.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_20_CARRAO.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.0424131+00:00",
+    "size": 6443170,
+    "sha256": "717f4ce6d9469b3db46097f72a67ad21f99c98b931706913c49d50015979a9df",
+    "recorded_at": "2026-10-14T22:54:52+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_21_CASA_VERDE.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_21_CASA_VERDE.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.0837544+00:00",
+    "size": 7319722,
+    "sha256": "4d76920959ec2a65e70101a40fc4c722a1bd6aa50647196ebd021644bb63e43a",
+    "recorded_at": "2026-10-14T22:54:53+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_22_CIDADE_ADEMAR.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_22_CIDADE_ADEMAR.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.136392+00:00",
+    "size": 9531568,
+    "sha256": "8d495ffaf09ea65fe933e1156218b450d486319184627c801195dcfeeb5d93c6",
+    "recorded_at": "2026-10-14T22:54:53+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_23_CIDADE_DUTRA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_23_CIDADE_DUTRA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.1858838+00:00",
+    "size": 9023662,
+    "sha256": "642dd59ca9fa0ddaef4fbbea1bc137e55a5000f73215abf98655bf46f13e1fcc",
+    "recorded_at": "2026-10-14T22:54:54+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_24_CIDADE_LIDER.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_24_CIDADE_LIDER.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.2277534+00:00",
+    "size": 6500526,
+    "sha256": "68a8a50f54a32946b8debc35ff260f270e3f8972ce53b3290deef212d207ebed",
+    "recorded_at": "2026-10-14T22:54:54+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_25_CIDADE_TIRADENTES.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_25_CIDADE_TIRADENTES.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.2616939+00:00",
+    "size": 5017784,
+    "sha256": "80b4defc406668281c85ab0be801cc0ff4e643e828314024cf66971f528d4b15",
+    "recorded_at": "2026-10-14T22:54:54+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_26_CONSOLACAO.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_26_CONSOLACAO.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.283504+00:00",
+    "size": 1441962,
+    "sha256": "dd544d0f819a1e57723ecb7a0d749fbf97c0a921bbcaee3b0d4b86b543783b66",
+    "recorded_at": "2026-10-14T22:54:55+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_27_CURSINO.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_27_CURSINO.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.3257203+00:00",
+    "size": 6901924,
+    "sha256": "ef59663c0f54ea5a26387fbc438baae637bf281790b542bb32026d173a7c6d88",
+    "recorded_at": "2026-10-14T22:54:55+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_28_ERMELINO_MATARAZZO.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_28_ERMELINO_MATARAZZO.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.3577734+00:00",
+    "size": 4571322,
+    "sha256": "af715c81ab6ee4d34d65a04fc53a671e0b3f01ed724f491c0f7f75069dfe333c",
+    "recorded_at": "2026-10-14T22:54:55+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_29_FREGUESIA_DO_O.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_29_FREGUESIA_DO_O.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.4235042+00:00",
+    "size": 11497650,
+    "sha256": "7413e69c2a107572e5b031a26dda4dc6e28b0182dc2614f416c5f9a9694dfd15",
+    "recorded_at": "2026-10-14T22:54:56+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_30_GRAJAU.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_30_GRAJAU.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.4745282+00:00",
+    "size": 9613474,
+    "sha256": "69e05c7c1f2feece84c187f9a39fb66c3b76c980016b2097aa14fdde30758342",
+    "recorded_at": "2026-10-14T22:54:56+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_31_GUAIANASES.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_31_GUAIANASES.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.5051574+00:00",
+    "size": 4178090,
+    "sha256": "6e9f97ef7798027f001efa4e77cd4773e585749ff2cbafe7fa1b8aa37b7380e0",
+    "recorded_at": "2026-10-14T22:54:57+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_32_MOEMA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_32_MOEMA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.5354191+00:00",
+    "size": 3498144,
+    "sha256": "e5223f3a3f34856613700d4d57ef8ae9fa005ad79a1a37b6648a1513e6f918e0",
+    "recorded_at": "2026-10-14T22:54:57+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_33_IGUATEMI.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_33_IGUATEMI.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.5678341+00:00",
+    "size": 5177510,
+    "sha256": "be02a4f2841d84c63d3aa4818641d3cbdb1b922df290caf8512151ef51a6a643",
+    "recorded_at": "2026-10-14T22:54:58+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_34_IPIRANGA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_34_IPIRANGA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.6045462+00:00",
+    "size": 6615206,
+    "sha256": "e6dd94fe281448fb4b3fd4c2a9af9973b79098f6b73330c58cacec38da0b10a4",
+    "recorded_at": "2026-10-14T22:54:58+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_35_ITAIM_BIBI.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_35_ITAIM_BIBI.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.6414959+00:00",
+    "size": 5431466,
+    "sha256": "f2e45d516252eb3469c490cc946a785011aa5651e55ea360e4a0b558911e26a5",
+    "recorded_at": "2026-10-14T22:54:59+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_36_ITAIM_PAULISTA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_36_ITAIM_PAULISTA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.6942932+00:00",
+    "size": 11022514,
+    "sha256": "ff576f636a1e2acefd8da2accac58aaa3b8c7623d2de6526951180137f6bfc38",
+    "recorded_at": "2026-10-14T22:54:59+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_37_ITAQUERA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_37_ITAQUERA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.7397446+00:00",
+    "size": 8323238,
+    "sha256": "f0177f07216c9f34236a91c6452cfe79587e20d74c45ebe316832e12e59261bb",
+    "recorded_at": "2026-10-14T22:55:00+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_38_JABAQUARA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_38_JABAQUARA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.7908979+00:00",
+    "size": 9990312,
+    "sha256": "9dac0262b862c741c0d96eea66ffa5eb68b0b54cd93437ef5db2f5ee39f1b93e",
+    "recorded_at": "2026-10-14T22:55:00+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_39_JACANA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_39_JACANA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.8274236+00:00",
+    "size": 5783714,
+    "sha256": "8edcd096fc33c62f1309c816bef88aeb4a3cd4db71ca455dc338aacb3b36525f",
+    "recorded_at": "2026-10-14T22:55:01+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_40_JAGUARA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_40_JAGUARA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.8565166+00:00",
+    "size": 2998436,
+    "sha256": "553ccddef201f7f74ed42a4f50e4cbf9ec4ce2c2267231f2b34e821b5ed86b10",
+    "recorded_at": "2026-10-14T22:55:01+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_41_JAGUARE.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_41_JAGUARE.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.8813567+00:00",
+    "size": 2375844,
+    "sha256": "af505c68fc30ced9f48458393b3550880f7145b2e90626322a54ddb22fba4c05",
+    "recorded_at": "2026-10-14T22:55:01+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_42_JARAGUA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_42_JARAGUA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.9268994+00:00",
+    "size": 8331428,
+    "sha256": "6ed38d5ead43e991f79d98cba06c7646336504ed32071d67d40d84710cae6a60",
+    "recorded_at": "2026-10-14T22:55:02+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_43_JARDIM_ANGELA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_43_JARDIM_ANGELA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:54.9764556+00:00",
+    "size": 8679600,
+    "sha256": "ede54878feb1eae1ad0f7199717092758b158745abc4b84c1b3684d39325ea54",
+    "recorded_at": "2026-10-14T22:55:02+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_44_JARDIM_HELENA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_44_JARDIM_HELENA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.0110898+00:00",
+    "size": 5116080,
+    "sha256": "3a5c4e7c317b2d86b7513cee9bc5b788eb725c154a126ef0ecb614e8deb730f2",
+    "recorded_at": "2026-10-14T22:55:03+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_45_JARDIM_PAULISTA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_45_JARDIM_PAULISTA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.0407216+00:00",
+    "size": 2941108,
+    "sha256": "57ab123ac76294d3d6bab03b0f035b6d2dcdff92233ea9dfe745aa9bcb4769b0",
+    "recorded_at": "2026-10-14T22:55:03+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_46_JARDIM_SAO_LUIS.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_46_JARDIM_SAO_LUIS.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.0893975+00:00",
+    "size": 8892596,
+    "sha256": "44062faf1096196bc506f6451b98dbd91d51f971f8548ff3bb620ea562d9e0e7",
+    "recorded_at": "2026-10-14T22:55:04+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_47_JOSE_BONIFACIO.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_47_JOSE_BONIFACIO.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.1151827+00:00",
+    "size": 2887858,
+    "sha256": "adc2793244d92c8460d6be02afc3fd7ae56cbacafb4ba982af8a0912438dae52",
+    "recorded_at": "2026-10-14T22:55:04+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_48_LAPA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_48_LAPA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.1533157+00:00",
+    "size": 6344862,
+    "sha256": "1f13da4f9bf88e1b7eb3f93b746abdaf6c29ebb0f46734b06ab68f07ba64745e",
+    "recorded_at": "2026-10-14T22:55:04+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_49_LIBERDADE.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_49_LIBERDADE.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.1811863+00:00",
+    "size": 2511016,
+    "sha256": "ad8704daabf861fe77b6f82335108e076a2af14fe31c4896bf322aa6c9161285",
+    "recorded_at": "2026-10-14T22:55:05+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_50_LIMAO.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_50_LIMAO.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.2182798+00:00",
+    "size": 6127776,
+    "sha256": "0e9f764e41e598dd5301f002159fac4a843815a941496416c6f76278e9e343f1",
+    "recorded_at": "2026-10-14T22:55:05+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_51_MANDAQUI.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_51_MANDAQUI.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.2602675+00:00",
+    "size": 6336678,
+    "sha256": "ce527cabc93c7ea2824aa14ed07a6c23afdf027ff0250abb533b08feff8f3278",
+    "recorded_at": "2026-10-14T22:55:06+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_52_MARSILAC.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_52_MARSILAC.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.2769535+00:00",
+    "size": 422054,
+    "sha256": "6e06e083f007e1f0b53585b956fd50ea1ebd4f6a91218f9d5d6a4a530c9ca83a",
+    "recorded_at": "2026-10-14T22:55:06+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_53_MOOCA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_53_MOOCA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.3055443+00:00",
+    "size": 5017760,
+    "sha256": "4725119cf3cce41d94ef4a7dd4a018306e38d30e7adef4796e2ad323509b61d2",
+    "recorded_at": "2026-10-14T22:55:06+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_54_MORUMBI.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_54_MORUMBI.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.3327693+00:00",
+    "size": 3313828,
+    "sha256": "010faae044ed1bb4cd659098e9dade5f81dfb68f05f43754313a7dab90c24555",
+    "recorded_at": "2026-10-14T22:55:06+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_55_PARELHEIROS.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_55_PARELHEIROS.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.3624474+00:00",
+    "size": 4690092,
+    "sha256": "0a9f374c1779310050ffc2e4b7c49b859b0bf931588234d5648b1228fa388e3a",
+    "recorded_at": "2026-10-14T22:55:07+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_56_PARI.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_56_PARI.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.3832954+00:00",
+    "size": 1695902,
+    "sha256": "554ddef0504dbd247b5655b488a6d58a85abe3880e358c97942e489236a911b1",
+    "recorded_at": "2026-10-14T22:55:07+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_57_PARQUE_DO_CARMO.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_57_PARQUE_DO_CARMO.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.4113023+00:00",
+    "size": 3276980,
+    "sha256": "c361b35b51aac47e5dd9b5d7a1aef2a6b6efb093acce962109fe6c55eaf25668",
+    "recorded_at": "2026-10-14T22:55:08+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_58_PEDREIRA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_58_PEDREIRA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.443353+00:00",
+    "size": 4862118,
+    "sha256": "4ad675f1dbe355836e1ae6a257d021bd626fe6ad4424973cd6372bed7f3df834",
+    "recorded_at": "2026-10-14T22:55:08+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_59_PENHA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_59_PENHA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.4880902+00:00",
+    "size": 8089760,
+    "sha256": "ecf30c339e5601e9545f212cc039813b132d63a2bd71ed0f996b00fb97c320a3",
+    "recorded_at": "2026-10-14T22:55:09+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_60_PERDIZES.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_60_PERDIZES.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.5195596+00:00",
+    "size": 5079206,
+    "sha256": "4c04ebc4410eb4188419b92319b4d3c770afbba718d303cd7944f6aff731bb86",
+    "recorded_at": "2026-10-14T22:55:09+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_61_PERUS.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_61_PERUS.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.5457484+00:00",
+    "size": 4141216,
+    "sha256": "f3b572fc42b9ecb0db361a83b10e779451151c444a8117480029415f1e612112",
+    "recorded_at": "2026-10-14T22:55:09+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_62_PINHEIROS.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_62_PINHEIROS.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.5739075+00:00",
+    "size": 4620456,
+    "sha256": "5e55c20a6a8471ed90e3e5ad396c47b4393ecb9a026e84241bc1b7c1c6b115b0",
+    "recorded_at": "2026-10-14T22:55:10+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_63_PIRITUBA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_63_PIRITUBA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.6289908+00:00",
+    "size": 12497062,
+    "sha256": "63485769063476113f50f3fd9273abc5c80a5a6e8591b9b87f86d62eebae49f7",
+    "recorded_at": "2026-10-14T22:55:11+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_64_PONTE_RASA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_64_PONTE_RASA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.6613235+00:00",
+    "size": 5304490,
+    "sha256": "2f7deea38b3a19ea6e40a63675e75c53d5f04736a6401f3144a4b69dbdf71c04",
+    "recorded_at": "2026-10-14T22:55:11+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_65_RAPOSO_TAVARES.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_65_RAPOSO_TAVARES.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.6943229+00:00",
+    "size": 4591794,
+    "sha256": "7b6939f4713d475ca8352ca9355b81712c7fc6c536a1182c9c375fbef6cc7411",
+    "recorded_at": "2026-10-14T22:55:11+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_66_REPUBLICA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_66_REPUBLICA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.7161842+00:00",
+    "size": 1114280,
+    "sha256": "52dd4c56b1f7be65fbf8dc1b60e859d7b953f5afb5cb22621d6b1c43f369a08c",
+    "recorded_at": "2026-10-14T22:55:11+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_67_RIO_PEQUENO.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_67_RIO_PEQUENO.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.7570172+00:00",
+    "size": 6815916,
+    "sha256": "c0d562d23021a826a874a7ead276486756098b861bc3e13c35453832791b32de",
+    "recorded_at": "2026-10-14T22:55:12+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_68_SACOMA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_68_SACOMA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.8072084+00:00",
+    "size": 10203298,
+    "sha256": "8764cc29832e420127e2b926fcf9848de83dd837c56fe98ba5c21598e9656ea3",
+    "recorded_at": "2026-10-14T22:55:13+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_69_SANTA_CECILIA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_69_SANTA_CECILIA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.8329661+00:00",
+    "size": 1974448,
+    "sha256": "f4509981598e2e00cec8b20a44899993cfb9b0e7f3529562c307152bbfce80e8",
+    "recorded_at": "2026-10-14T22:55:13+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_70_SANTANA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_70_SANTANA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.8748661+00:00",
+    "size": 8343716,
+    "sha256": "43326eeb515a26ec659d996fc0f07385bbdf3cd61f007f7d29c31fc8a78a722a",
+    "recorded_at": "2026-10-14T22:55:14+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_71_SANTO_AMARO.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_71_SANTO_AMARO.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.9136948+00:00",
+    "size": 6975660,
+    "sha256": "025fa069248bf990d0eec57927fa2d4da5a00093912b864036cb3741be9b3f1d",
+    "recorded_at": "2026-10-14T22:55:14+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_72_SAO_LUCAS.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_72_SAO_LUCAS.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.9535952+00:00",
+    "size": 7671976,
+    "sha256": "9c74e394ff07087a393e89d7df86133180d6db90f126b5395776b4200f91893c",
+    "recorded_at": "2026-10-14T22:55:15+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_73_SAO_MATEUS.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_73_SAO_MATEUS.zip)",
+    "remote_last_modified": "2026-10-11T13:22:55.9965773+00:00",
+    "size": 7565482,
+    "sha256": "7538c250bcfa19c9d91632495928a523b0d329f15e8c906e763ce3131eb0b60f",
+    "recorded_at": "2026-10-14T22:55:15+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_74_SAO_MIGUEL.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_74_SAO_MIGUEL.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.0282785+00:00",
+    "size": 4923562,
+    "sha256": "411f19e21e27c4a0167bd486f0de53b31ddc9dfbbc3dc8427b63678622f93220",
+    "recorded_at": "2026-10-14T22:55:16+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_75_SAO_RAFAEL.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_75_SAO_RAFAEL.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.0610808+00:00",
+    "size": 4624554,
+    "sha256": "d2eb9b010fba3047416ba49edf8c9ab1ee806190e5f56cf946ad775598e1ca69",
+    "recorded_at": "2026-10-14T22:55:16+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_76_SAPOPEMBA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_76_SAPOPEMBA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.1124142+00:00",
+    "size": 11280552,
+    "sha256": "72da2337d8e236db8b3ef52bb35d2f1f63f44f56204e94369b2e542ed3185e32",
+    "recorded_at": "2026-10-14T22:55:17+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_77_SAUDE.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_77_SAUDE.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.1568603+00:00",
+    "size": 7909536,
+    "sha256": "0f6cbd9d3f528447b704118375f14bafed3adb68aa1606d1a5eb583bcbc9d376",
+    "recorded_at": "2026-10-14T22:55:18+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_78_SE.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_78_SE.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.1750339+00:00",
+    "size": 958618,
+    "sha256": "adcea0d657dd09a7a40c3d316b8029240b8d0062ce263b64246dbcb52f3aea12",
+    "recorded_at": "2026-10-14T22:55:18+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_79_SOCORRO.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_79_SOCORRO.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.1998729+00:00",
+    "size": 2961572,
+    "sha256": "789919527531b54d8a6c1773c292e8c2f90965431ae1abe971d0d1019377679c",
+    "recorded_at": "2026-10-14T22:55:19+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_80_TATUAPE.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_80_TATUAPE.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.2368408+00:00",
+    "size": 6090916,
+    "sha256": "cc6c4c300977f139af71efcb872d41d6291e9a6357352a2d7ca8d4e9a4ad8c8e",
+    "recorded_at": "2026-10-14T22:55:19+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_81_TREMEMBE.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_81_TREMEMBE.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.292289+00:00",
+    "size": 10899622,
+    "sha256": "5eba5943d37604ee18287f64d4dd55870d5644eebf923c99be900bbf31507ad7",
+    "recorded_at": "2026-10-14T22:55:20+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_82_TUCURUVI.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_82_TUCURUVI.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.3393383+00:00",
+    "size": 8769702,
+    "sha256": "d03bbe3a891d2d5bc1bed9afd5b145463f0ccaf9385d54e7c2a23dba3f35f016",
+    "recorded_at": "2026-10-14T22:55:20+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_83_VILA_ANDRADE.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_83_VILA_ANDRADE.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.3660992+00:00",
+    "size": 2429102,
+    "sha256": "ea84cd7633ddaea90914dd423f5abbe33b769db094ba12cb2f06bbeaaefe9db1",
+    "recorded_at": "2026-10-14T22:55:21+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_84_VILA_CURUCA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_84_VILA_CURUCA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.4079596+00:00",
+    "size": 7159980,
+    "sha256": "c11c80a24556836bdcfd5ab74a7d552148aadc743644695b0d4c3c7786028fa9",
+    "recorded_at": "2026-10-14T22:55:21+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_85_VILA_FORMOSA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_85_VILA_FORMOSA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.4459612+00:00",
+    "size": 6619310,
+    "sha256": "36c61f92546b1f584c34035ba80c2cb0cf82ba64a3a3ab81ad71b1e051819327",
+    "recorded_at": "2026-10-14T22:55:22+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_86_VILA_GUILHERME.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_86_VILA_GUILHERME.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.4777614+00:00",
+    "size": 5169330,
+    "sha256": "208f9bbc438c7e7b59a24783623441b7676534ff7536a06800162b401799f6b5",
+    "recorded_at": "2026-10-14T22:55:22+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_87_VILA_JACUI.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_87_VILA_JACUI.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.5120244+00:00",
+    "size": 4702378,
+    "sha256": "129eb8a8114e796b8dbe9af54b4df9ac02be1a0b446c88968eae5cedd768b7ce",
+    "recorded_at": "2026-10-14T22:55:23+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_88_VILA_LEOPOLDINA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_88_VILA_LEOPOLDINA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.5409691+00:00",
+    "size": 2261172,
+    "sha256": "7f42f86757ef28d4b5b697d8b4e296050ad96bcdac4e18b55a13d827e9ce53d9",
+    "recorded_at": "2026-10-14T22:55:23+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_89_VILA_MARIA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_89_VILA_MARIA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.5808326+00:00",
+    "size": 7233706,
+    "sha256": "b59ff99183c27cceab3c878d313ba96f54c390f0365177d01fcd8a056ea6c418",
+    "recorded_at": "2026-10-14T22:55:23+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_90_VILA_MARIANA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_90_VILA_MARIANA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.6168962+00:00",
+    "size": 5664942,
+    "sha256": "8b64fd12b843bf1a8a92efaf63b276f22e9b5cbc1fd12a57a7602a5079aa8a56",
+    "recorded_at": "2026-10-14T22:55:24+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_91_VILA_MATILDE.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_91_VILA_MATILDE.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.6601373+00:00",
+    "size": 7749806,
+    "sha256": "457b9d34ed5be686a6e6d52a6a24c3696e272804dc4d35b8ae675ebc1fceaedc",
+    "recorded_at": "2026-10-14T22:55:24+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_92_VILA_MEDEIROS.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_92_VILA_MEDEIROS.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.7042538+00:00",
+    "size": 8814768,
+    "sha256": "26536025830e3e89c3cf80aa2693ded76ffe13426f7049fcfd608722f4d39549",
+    "recorded_at": "2026-10-14T22:55:25+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_93_VILA_PRUDENTE.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_93_VILA_PRUDENTE.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.7444156+00:00",
+    "size": 6504624,
+    "sha256": "2d8beec82fd7ed5d0ebfe36b083b8c958b09d268233c43375513834e13136547",
+    "recorded_at": "2026-10-14T22:55:26+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_94_VILA_SONIA.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_94_VILA_SONIA.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.7837287+00:00",
+    "size": 6316202,
+    "sha256": "96249d065c5e89fa38d8992ab839f3e9345c39a803f1329f3e505216cec87621",
+    "recorded_at": "2026-10-14T22:55:27+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_95_SAO_DOMINGOS.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_95_SAO_DOMINGOS.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.8237777+00:00",
+    "size": 7438510,
+    "sha256": "9e8f35b054278cb061d6400de3e2ad4c6ab8d2fad78812b8f1fa2b9cc1b4ce02",
+    "recorded_at": "2026-10-14T22:55:27+00:00"
+  },
+  "geosampa/lotes/SIRGAS_GPKG_LOTES_96_LAJEADO.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/Download (layer 352, GPKG_ZIP/SIRGAS_GPKG_LOTES_96_LAJEADO.zip)",
+    "remote_last_modified": "2026-10-11T13:22:56.8624491+00:00",
+    "size": 6148260,
+    "sha256": "86104d5bd4f727e9ec0d4a6dc629cbc98f682cf4348891e4ddddb4948e0eb084",
+    "recorded_at": "2026-10-14T22:55:28+00:00"
+  },
+  "geosampa/iptu/IPTU_1995.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_1995.zip)",
+    "remote_last_modified": "2022-12-14T21:13:50+00:00",
+    "size": 47765549,
+    "sha256": "e2c4d1bd49978c5ec22251af30b29dae5e8f9b63c6350eebd3664f30b2d1ec75",
+    "recorded_at": "2026-10-14T22:55:30+00:00"
+  },
+  "geosampa/iptu/IPTU_1996.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_1996.zip)",
+    "remote_last_modified": "2022-12-14T21:13:23+00:00",
+    "size": 48739228,
+    "sha256": "0d06f9d8bd9b2887f10512c32388bd3db673d31e0941adc9f69234a7e4a32641",
+    "recorded_at": "2026-10-14T22:55:32+00:00"
+  },
+  "geosampa/iptu/IPTU_1997.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_1997.zip)",
+    "remote_last_modified": "2022-12-14T21:12:56+00:00",
+    "size": 49940913,
+    "sha256": "ba5a84e14011f544316056ef918748729be7cc43c816bccc0041c7fa3075b4ad",
+    "recorded_at": "2026-10-14T22:55:34+00:00"
+  },
+  "geosampa/iptu/IPTU_1998.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_1998.zip)",
+    "remote_last_modified": "2022-12-14T21:12:35+00:00",
+    "size": 50609854,
+    "sha256": "b7cf92c416401833aa8e9780a86d40ed61094f58853a79813f2c5f10c6c88d3b",
+    "recorded_at": "2026-10-14T22:55:36+00:00"
+  },
+  "geosampa/iptu/IPTU_1999.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_1999.zip)",
+    "remote_last_modified": "2022-12-14T21:12:14+00:00",
+    "size": 51406141,
+    "sha256": "e8f0e2b0f4f1ca00a1a812a8e53d3e29914f4761d636bd9f3ef9d04787fcabc4",
+    "recorded_at": "2026-10-14T22:55:39+00:00"
+  },
+  "geosampa/iptu/IPTU_2000.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2000.zip)",
+    "remote_last_modified": "2022-12-14T21:11:53+00:00",
+    "size": 52260368,
+    "sha256": "b44ba40a9d124ccaf89291def933ca53d4544ff0d40f26ed24e241a88f514d0e",
+    "recorded_at": "2026-10-14T22:55:41+00:00"
+  },
+  "geosampa/iptu/IPTU_2001.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2001.zip)",
+    "remote_last_modified": "2022-12-14T21:07:19+00:00",
+    "size": 53046526,
+    "sha256": "6dce7b466407d0098fdbf430fccff74c71dc526236fec1674970be7a09369b8c",
+    "recorded_at": "2026-10-14T22:55:44+00:00"
+  },
+  "geosampa/iptu/IPTU_2002.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2002.zip)",
+    "remote_last_modified": "2022-12-14T21:06:51+00:00",
+    "size": 53421090,
+    "sha256": "ed842cc5794ce325d5af6e5839774b04cad0246eec741b03811c07e7136df472",
+    "recorded_at": "2026-10-14T22:55:46+00:00"
+  },
+  "geosampa/iptu/IPTU_2003.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2003.zip)",
+    "remote_last_modified": "2022-12-14T22:40:25+00:00",
+    "size": 54145588,
+    "sha256": "1bb0582308d0ab1d10765a69058de676cc47eb68494f7f1dd0b026fa6db83aff",
+    "recorded_at": "2026-10-14T22:55:49+00:00"
+  },
+  "geosampa/iptu/IPTU_2004.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2004.zip)",
+    "remote_last_modified": "2022-12-14T22:40:53+00:00",
+    "size": 54778342,
+    "sha256": "b06e26ca6313b5bb286598cbd34f421577e1d4cf750c2127b15a9831777b9932",
+    "recorded_at": "2026-10-14T22:55:52+00:00"
+  },
+  "geosampa/iptu/IPTU_2005.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2005.zip)",
+    "remote_last_modified": "2022-12-14T22:41:24+00:00",
+    "size": 55360144,
+    "sha256": "c4cbb6d6be910b7500d63c99200f8345b61ab888283bc2e17e6318ff8eef8d63",
+    "recorded_at": "2026-10-14T22:55:55+00:00"
+  },
+  "geosampa/iptu/IPTU_2006.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2006.zip)",
+    "remote_last_modified": "2022-12-14T22:46:22+00:00",
+    "size": 56025097,
+    "sha256": "cbd6d57296c6eae778f6fd9c3397c68a01ee05c6ed8658a447ee85d551c83399",
+    "recorded_at": "2026-10-14T22:55:57+00:00"
+  },
+  "geosampa/iptu/IPTU_2007.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2007.zip)",
+    "remote_last_modified": "2022-12-14T22:42:14+00:00",
+    "size": 57367127,
+    "sha256": "a2a5d17588e1e7d451fb1a6137fd91921110742408144c68c761267c6054e32a",
+    "recorded_at": "2026-10-14T22:56:00+00:00"
+  },
+  "geosampa/iptu/IPTU_2008.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2008.zip)",
+    "remote_last_modified": "2022-12-14T22:55:41+00:00",
+    "size": 57772831,
+    "sha256": "02bf3c0536495d82b10b174de4678a2bae426998175c91c7605215be7750185d",
+    "recorded_at": "2026-10-14T22:56:02+00:00"
+  },
+  "geosampa/iptu/IPTU_2009.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2009.zip)",
+    "remote_last_modified": "2022-12-15T01:52:23+00:00",
+    "size": 58321584,
+    "sha256": "e6361c9c211b64870fa9bdb233e34d812a38b22cc6d089b26a4954e15c3d7336",
+    "recorded_at": "2026-10-14T22:56:04+00:00"
+  },
+  "geosampa/iptu/IPTU_2010.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2010.zip)",
+    "remote_last_modified": "2022-12-15T01:53:46+00:00",
+    "size": 59546617,
+    "sha256": "b6cfbc91ad195917b2394d0e6fc1370f64ff188d863e730fe60a1ca87b5b9767",
+    "recorded_at": "2026-10-14T22:56:07+00:00"
+  },
+  "geosampa/iptu/IPTU_2011.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2011.zip)",
+    "remote_last_modified": "2022-12-15T01:59:07+00:00",
+    "size": 60349121,
+    "sha256": "c3bbb6f501d09aff33c8da5081dde5e52e1d204d5bfe77b8925a3841289cdace",
+    "recorded_at": "2026-10-14T22:56:09+00:00"
+  },
+  "geosampa/iptu/IPTU_2012.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2012.zip)",
+    "remote_last_modified": "2022-12-15T01:54:22+00:00",
+    "size": 61011448,
+    "sha256": "3f05ebdce27ea55a465b3c631385131bfd9e40f48719b27ec907c651677f364d",
+    "recorded_at": "2026-10-14T22:56:12+00:00"
+  },
+  "geosampa/iptu/IPTU_2013.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2013.zip)",
+    "remote_last_modified": "2022-12-15T02:08:45+00:00",
+    "size": 61577668,
+    "sha256": "986597eb17a32b274ae0714c59f4633c1c824a090dd4a542cbb08a41efdf610d",
+    "recorded_at": "2026-10-14T22:56:15+00:00"
+  },
+  "geosampa/iptu/IPTU_2014.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2014.zip)",
+    "remote_last_modified": "2022-12-15T01:54:58+00:00",
+    "size": 62201761,
+    "sha256": "d38345ac99bee2888383603bc509db2e55e507c0595b089483334be2373bfeb8",
+    "recorded_at": "2026-10-14T22:56:18+00:00"
+  },
+  "geosampa/iptu/IPTU_2015.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2015.zip)",
+    "remote_last_modified": "2022-12-15T02:31:22+00:00",
+    "size": 62804346,
+    "sha256": "95092b01281dbc3ad1dec10f89150f341fb79f607eec9742186242b76e0de12c",
+    "recorded_at": "2026-10-14T22:56:20+00:00"
+  },
+  "geosampa/iptu/IPTU_2016.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2016.zip)",
+    "remote_last_modified": "2022-12-15T15:39:10+00:00",
+    "size": 64256575,
+    "sha256": "f2091820b69337416a7f18f4e04028ee29b654ed6e5ceb5177b322f41bfea0fa",
+    "recorded_at": "2026-10-14T22:56:23+00:00"
+  },
+  "geosampa/iptu/IPTU_2017.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2017.zip)",
+    "remote_last_modified": "2022-12-15T15:39:38+00:00",
+    "size": 65082593,
+    "sha256": "9936d861528a9858c0014765c25ad4ea241bae2ebed7b26320ed9b264dc8b7b2",
+    "recorded_at": "2026-10-14T22:56:25+00:00"
+  },
+  "geosampa/iptu/IPTU_2018.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2018.zip)",
+    "remote_last_modified": "2022-12-15T15:40:12+00:00",
+    "size": 65390548,
+    "sha256": "86f06cde0eb6345b053ab983f14c32c55f9d3aca7d66bd99fc0dc28d300b5586",
+    "recorded_at": "2026-10-14T22:56:29+00:00"
+  },
+  "geosampa/iptu/IPTU_2019.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2019.zip)",
+    "remote_last_modified": "2022-12-15T15:40:32+00:00",
+    "size": 65792979,
+    "sha256": "218d7dea33e74c73a7e8faa55ae90d1e24bf38027c1416b8f4ab099711981c9e",
+    "recorded_at": "2026-10-14T22:56:34+00:00"
+  },
+  "geosampa/iptu/IPTU_2020.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2020.zip)",
+    "remote_last_modified": "2022-12-15T15:40:39+00:00",
+    "size": 66469960,
+    "sha256": "6f87883a5b19e371728afee27027dea6ccddae9ad035be1417dc251fb703a96b",
+    "recorded_at": "2026-10-14T22:56:38+00:00"
+  },
+  "geosampa/iptu/IPTU_2021.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2021.zip)",
+    "remote_last_modified": "2022-12-15T15:40:51+00:00",
+    "size": 66001844,
+    "sha256": "227e19bb4f7a1bf0646c2b0f7d8ab1d233820a15d6bcd13d644dbf9c869e858c",
+    "recorded_at": "2026-10-14T22:56:43+00:00"
+  },
+  "geosampa/iptu/IPTU_2022.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2022.zip)",
+    "remote_last_modified": "2023-06-16T17:48:03+00:00",
+    "size": 70701327,
+    "sha256": "12adc7288239b2d5be9f7502b0d77597b0726f7566d1453af05102d36b1f368d",
+    "recorded_at": "2026-10-14T22:56:48+00:00"
+  },
+  "geosampa/iptu/IPTU_2023.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2023.zip)",
+    "remote_last_modified": "2023-06-16T17:47:42+00:00",
+    "size": 71367084,
+    "sha256": "9f0bec3767b9e756feb5968f89ea39e0972b2f74a349c3afaff993d03ce78e3b",
+    "recorded_at": "2026-10-14T22:56:53+00:00"
+  },
+  "geosampa/iptu/IPTU_2024.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2024.zip)",
+    "remote_last_modified": "2024-04-29T17:35:51+00:00",
+    "size": 72178860,
+    "sha256": "2c15ef58cb99be2d024cbbbfb2df7dc3dbc5d7e9e0ebf825d29be8b9a5bfa5dd",
+    "recorded_at": "2026-10-14T22:56:57+00:00"
+  },
+  "geosampa/iptu/IPTU_2025.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2025.zip)",
+    "remote_last_modified": "2025-02-17T20:24:04.2260588+00:00",
+    "size": 74615879,
+    "sha256": "afe376779a029526e498bbc17ee9dfce85a27f18f1f80b7dae4710e613f092c5",
+    "recorded_at": "2026-10-14T22:57:02+00:00"
+  },
+  "geosampa/iptu/IPTU_2026.zip": {
+    "url": "https://novogeosampa.prefeitura.sp.gov.br/Download/DownloadGeneric (layer 352, XLS_CSV/IPTU_2026.zip)",
+    "remote_last_modified": "2026-02-11T15:21:53.545675+00:00",
+    "size": 69743424,
+    "sha256": "7ba7b9d912646c70d951641e79d9f926ac1d946016f5bac01e268b4822520b17",
+    "recorded_at": "2026-10-14T22:57:06+00:00"
+  },
+  "geosampa/habita2geosampa_habi_favela2geosampa.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:habita2geosampa_habi_favela2geosampa",
+    "size": 2308085,
+    "sha256": "097e0ecd8a7b4f8be3ec8aa791c5cc1cdbae00545b3640fa3b493c6770c77049",
+    "recorded_at": "2026-10-14T22:57:40+00:00"
+  },
+  "ibge/censo2022/dicionarios/dicionario_de_dados_agregados_por_setores_censitarios_20260520.xlsx": {
+    "url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios/dicionario_de_dados_agregados_por_setores_censitarios_20260520.xlsx",
+    "remote_last_modified": "Tue, 12 May 2026 21:29:48 GMT",
+    "size": 118369,
+    "sha256": "0b8aedece57f6125d785b6aa2234cfd587e92dfb6ce5ca6ace8c67f140831344",
+    "recorded_at": "2026-10-14T23:33:40+00:00"
+  },
+  "ibge/censo2022/dicionarios/dicionario_de_dados_renda_responsavel_20260508.xlsx": {
+    "url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios_Rendimento_do_Responsavel/dicionario_de_dados_renda_responsavel_20260508.xlsx",
+    "remote_last_modified": "Fri, 08 May 2026 20:31:03 GMT",
+    "size": 10197,
+    "sha256": "fea6e2b2439eeb167c6fa9c136ed7cb13ebcb06f4c875d634e3e2578c668a48d",
+    "recorded_at": "2026-10-14T23:33:40+00:00"
+  },
+  "ibge/censo2022/dicionarios/dicionarios_de_dados_entorno.zip": {
+    "url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios_Caracteristicas_urbanisticas_do_entorno_dos_domicilios/dicionarios_de_dados_entorno.zip",
+    "remote_last_modified": "Wed, 07 May 2025 20:06:34 GMT",
+    "size": 27093,
+    "sha256": "eda4e2c9968e753fa2c158380ae537c284ccbddde5b74a6d5fec0b3c2250d1b4",
+    "recorded_at": "2026-10-14T23:33:41+00:00"
+  },
+  "ibge/censo2022/basico.zip": {
+    "url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios/Agregados_por_Setor_csv/Agregados_por_setores_basico_BR_20260520.zip",
+    "remote_last_modified": "Wed, 20 May 2026 13:37:23 GMT",
+    "size": 15418417,
+    "sha256": "ec04624286233d699ebe69c7b9625744a1cfdfc8352126f30245bdef5e9bdc63",
+    "recorded_at": "2026-10-14T23:34:26+00:00"
+  },
+  "ibge/censo2022/demografia.zip": {
+    "url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios/Agregados_por_Setor_csv/Agregados_por_setores_demografia_BR.zip",
+    "remote_last_modified": "Tue, 12 Nov 2024 18:50:40 GMT",
+    "size": 22554090,
+    "sha256": "f8486233ce2f6559de76299390577c58d05f35cad07c46098e6e565949c8b269",
+    "recorded_at": "2026-10-14T23:34:27+00:00"
+  },
+  "ibge/censo2022/cor_raca.zip": {
+    "url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios/Agregados_por_Setor_csv/Agregados_por_setores_cor_ou_raca_BR.zip",
+    "remote_last_modified": "Tue, 12 Nov 2024 18:50:39 GMT",
+    "size": 43838759,
+    "sha256": "cd4d628878f619b69c9e0d06e613011a05b67643edbb3cfc25735ae6b6941b1a",
+    "recorded_at": "2026-10-14T23:34:28+00:00"
+  },
+  "ibge/censo2022/alfabetizacao.zip": {
+    "url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios/Agregados_por_Setor_csv/Agregados_por_setores_alfabetizacao_BR.zip",
+    "remote_last_modified": "Tue, 12 Nov 2024 18:50:37 GMT",
+    "size": 142133036,
+    "sha256": "3b2de94e0099d9b6aa32bf967b1e96321a0f6ee7df674bbac984c3b751c8a17b",
+    "recorded_at": "2026-10-14T23:34:32+00:00"
+  },
+  "ibge/censo2022/domicilio1.zip": {
+    "url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios/Agregados_por_Setor_csv/Agregados_por_setores_caracteristicas_domicilio1_BR.zip",
+    "remote_last_modified": "Tue, 12 Nov 2024 18:50:33 GMT",
+    "size": 24196895,
+    "sha256": "8e0a27fc90912acba17586077ab83c0fd58b92975d90f19a600c0110d0cf72ca",
+    "recorded_at": "2026-10-14T23:34:38+00:00"
+  },
+  "ibge/censo2022/domicilio2.zip": {
+    "url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios/Agregados_por_Setor_csv/Agregados_por_setores_caracteristicas_domicilio2_BR_20250417.zip",
+    "remote_last_modified": "Thu, 17 Apr 2025 12:52:59 GMT",
+    "size": 83971374,
+    "sha256": "513f8a0d9c84b1325487f651f6d5d90bbc6f5ad7af60460b53598555ac008759",
+    "recorded_at": "2026-10-14T23:34:41+00:00"
+  },
+  "ibge/censo2022/domicilio3.zip": {
+    "url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios/Agregados_por_Setor_csv/Agregados_por_setores_caracteristicas_domicilio3_BR_20250417.zip",
+    "remote_last_modified": "Thu, 17 Apr 2025 12:52:59 GMT",
+    "size": 52708037,
+    "sha256": "f38010582b8329f4b3d63708f3e8aae3b8df1c1b471398b2c67f5ef3ad1ba5c7",
+    "recorded_at": "2026-10-14T23:35:11+00:00"
+  },
+  "ibge/censo2022/renda.zip": {
+    "url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios_Rendimento_do_Responsavel/Agregados_por_setores_renda_responsavel_BR_20260508_csv.zip",
+    "remote_last_modified": "Fri, 08 May 2026 20:30:50 GMT",
+    "size": 9370011,
+    "sha256": "141c83e7635674e7e2c941e55f98811e538fcbf2e1e1125b0aa7892c260f4a23",
+    "recorded_at": "2026-10-14T23:35:14+00:00"
+  },
+  "ibge/censo2022/entorno_domicilios.zip": {
+    "url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios_Caracteristicas_urbanisticas_do_entorno_dos_domicilios/Agregados_por_Setor_csv/Agregados_por_setores_entorno_domic%c3%adlios_BR.zip",
+    "remote_last_modified": "Thu, 17 Apr 2025 13:02:39 GMT",
+    "size": 11890606,
+    "sha256": "945ad03f2cca535c51b8956188ed9a7e3e017caa5ae2a79449e2202d359ffa60",
+    "recorded_at": "2026-10-14T23:35:15+00:00"
+  },
+  "ibge/censo2022/entorno_moradores.zip": {
+    "url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios_Caracteristicas_urbanisticas_do_entorno_dos_domicilios/Agregados_por_Setor_csv/Agregados_por_setores_entorno_moradores_BR.zip",
+    "remote_last_modified": "Thu, 17 Apr 2025 13:02:39 GMT",
+    "size": 13000482,
+    "sha256": "76979c0b020f4913d46336a53591cfaa219372b0076f4282e768da7d8abb774a",
+    "recorded_at": "2026-10-14T23:35:16+00:00"
+  },
+  "ibge/censo2022/entorno_faces.zip": {
+    "url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios_Caracteristicas_urbanisticas_do_entorno_dos_domicilios/Agregados_por_Setor_csv/Agregados_por_setores_entorno_faces_BR.zip",
+    "remote_last_modified": "Thu, 17 Apr 2025 13:02:39 GMT",
+    "size": 10319175,
+    "sha256": "ad654f2cc4680c6fbfbb0d9bf1b58fea3e690f3b0e873fcc9e2815c1f4212a4b",
+    "recorded_at": "2026-10-14T23:35:17+00:00"
+  },
+  "fazenda/itbi/ITBI_2025.xlsx": {
+    "url": "https://prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/GUIAS%20DE%20ITBI%20PAGAS%20%2828012026%29%20XLS.xlsx",
+    "remote_last_modified": "Wed, 28 Jan 2026 12:12:22 GMT",
+    "size": 46666755,
+    "sha256": "2735033e018d44c4280b22d24a69f774221fd0e441534dd4d77810f80b7a31b5",
+    "recorded_at": "2026-10-14T23:38:18+00:00"
+  },
+  "fazenda/itbi/ITBI_2006.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/guias_de_itbi_pagas_2006.xlsx",
+    "remote_last_modified": "Mon, 30 Oct 2023 17:51:52 GMT",
+    "size": 21872540,
+    "sha256": "0f61a1cf2dbfc455c00eb1ed61146d1739ff15c038992ed275e3a918142610de",
+    "recorded_at": "2026-10-14T23:39:02+00:00"
+  },
+  "fazenda/itbi/ITBI_2007.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/guias_de_itbi_pagas_2007.xlsx",
+    "remote_last_modified": "Mon, 30 Oct 2023 17:51:53 GMT",
+    "size": 23103380,
+    "sha256": "05360f2793a01cae33f80d36b245f2c609733777ec88bb633bb9af045414b24f",
+    "recorded_at": "2026-10-14T23:39:03+00:00"
+  },
+  "fazenda/itbi/ITBI_2008.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/guias_de_itbi_pagas_2008.xlsx",
+    "remote_last_modified": "Mon, 30 Oct 2023 17:51:52 GMT",
+    "size": 26114817,
+    "sha256": "919368a290676d3ad80fe9f1f5de7f499ed60ff63e599c91329616a65b2e1bde",
+    "recorded_at": "2026-10-14T23:39:05+00:00"
+  },
+  "fazenda/itbi/ITBI_2009.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/guias_de_itbi_pagas_2009.xlsx",
+    "remote_last_modified": "Mon, 30 Oct 2023 17:52:01 GMT",
+    "size": 23969035,
+    "sha256": "15f199efafef7192344ab155461a35a9cb065d879ef3f627692ac4c69eda26c7",
+    "recorded_at": "2026-10-14T23:39:06+00:00"
+  },
+  "fazenda/itbi/ITBI_2010.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/guias_de_itbi_pagas_2010.xlsx",
+    "remote_last_modified": "Mon, 30 Oct 2023 17:51:58 GMT",
+    "size": 24606760,
+    "sha256": "c900a90379a2e4f5437098a0c2acc9be49a1b08d4ff47b169fb44488ae467795",
+    "recorded_at": "2026-10-14T23:39:07+00:00"
+  },
+  "fazenda/itbi/ITBI_2011.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/guias_de_itbi_pagas_2011.xlsx",
+    "remote_last_modified": "Mon, 30 Oct 2023 17:51:58 GMT",
+    "size": 23608110,
+    "sha256": "8eaa4665159de9322336cccb30c7f70b57d9abb4ef35185fb0684f6ecd262171",
+    "recorded_at": "2026-10-14T23:39:09+00:00"
+  },
+  "fazenda/itbi/ITBI_2012.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/guias_de_itbi_pagas_2012.xlsx",
+    "remote_last_modified": "Mon, 30 Oct 2023 17:51:57 GMT",
+    "size": 22766254,
+    "sha256": "6c8d579a5816f030c7e48731d5dd1f56c4e21cf1abc81608cd8ceb06df0eea2b",
+    "recorded_at": "2026-10-14T23:39:10+00:00"
+  },
+  "fazenda/itbi/ITBI_2013.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/guias_de_itbi_pagas_2013.xlsx",
+    "remote_last_modified": "Mon, 30 Oct 2023 17:51:56 GMT",
+    "size": 23230864,
+    "sha256": "13937612df0035806f41b0dcdc9e533286996bafc9b8810e1124200a3255d207",
+    "recorded_at": "2026-10-14T23:39:11+00:00"
+  },
+  "fazenda/itbi/ITBI_2014.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/guias_de_itbi_pagas_2014.xlsx",
+    "remote_last_modified": "Mon, 30 Oct 2023 17:51:53 GMT",
+    "size": 19844905,
+    "sha256": "d4f709b22876ac7b71f10a4274a420dad95419c53f4d99c7f0d348a224bbeb6f",
+    "recorded_at": "2026-10-14T23:39:12+00:00"
+  },
+  "fazenda/itbi/ITBI_2015.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/guias_de_itbi_pagas_2015.xlsx",
+    "remote_last_modified": "Mon, 30 Oct 2023 17:51:55 GMT",
+    "size": 16952228,
+    "sha256": "162e73860c5e45afa2656f0d94ed45a0989dd93444f35d86517e972df9eced17",
+    "recorded_at": "2026-10-14T23:39:13+00:00"
+  },
+  "fazenda/itbi/ITBI_2016.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/guias_de_itbi_pagas_2016.xlsx",
+    "remote_last_modified": "Mon, 30 Oct 2023 17:51:55 GMT",
+    "size": 15090479,
+    "sha256": "e22649796942341a3cc9cc15934d8318c1071d5e1d2d817bc60085c96f57be14",
+    "recorded_at": "2026-10-14T23:39:14+00:00"
+  },
+  "fazenda/itbi/ITBI_2017.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/guias_de_itbi_pagas_2017.xlsx",
+    "remote_last_modified": "Mon, 30 Oct 2023 17:52:00 GMT",
+    "size": 16645881,
+    "sha256": "22ab72f6ef0d1bcbac9d60601e5f7a1605c4d4e00525afc2bec34115dd496b72",
+    "recorded_at": "2026-10-14T23:39:14+00:00"
+  },
+  "fazenda/itbi/ITBI_2018.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/guias_de_itbi_pagas_2018.xlsx",
+    "remote_last_modified": "Mon, 30 Oct 2023 17:51:59 GMT",
+    "size": 17736135,
+    "sha256": "b75d7cf45e63ac32f1cf8904d105fbe491c58256b3c21cd4a956a7c8b377ded7",
+    "recorded_at": "2026-10-14T23:39:15+00:00"
+  },
+  "fazenda/itbi/ITBI_2019.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/ITBI_Setembro_2022/GUIAS_DE_ITBI_PAGAS_(2019).xlsx",
+    "remote_last_modified": "Tue, 13 Sep 2022 18:36:23 GMT",
+    "size": 20591454,
+    "sha256": "451853de77df3b34127dec14ae643e950a63310f487a099546bd1e9679cff82e",
+    "recorded_at": "2026-10-14T23:39:16+00:00"
+  },
+  "fazenda/itbi/ITBI_2020.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/ITBI_Setembro_2022/GUIAS_DE_ITBI_PAGAS_(2020).xlsx",
+    "remote_last_modified": "Tue, 13 Sep 2022 18:36:25 GMT",
+    "size": 22212518,
+    "sha256": "99603574704c564ff937e555e6bde7fac947265334e7f1760187bac135ef8066",
+    "recorded_at": "2026-10-14T23:39:18+00:00"
+  },
+  "fazenda/itbi/ITBI_2021.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/ITBI_Setembro_2022/GUIAS_DE_ITBI_PAGAS_(2021).xlsx",
+    "remote_last_modified": "Tue, 13 Sep 2022 18:36:28 GMT",
+    "size": 34093242,
+    "sha256": "7dadc710ece9494c07322715ddcd070a2506cf42257898a98c1c4c3c9c17ba7b",
+    "recorded_at": "2026-10-14T23:39:20+00:00"
+  },
+  "fazenda/itbi/ITBI_2022.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/XLSX/GUIAS_DE_ITBI_PAGAS_12-2022.xlsx",
+    "remote_last_modified": "Wed, 18 Jan 2023 14:03:13 GMT",
+    "size": 32681481,
+    "sha256": "c0dc48e85466259216ccaf4bd8a9f74c3b29b64d0c2d7bf6459bae8a376a378b",
+    "recorded_at": "2026-10-14T23:39:21+00:00"
+  },
+  "fazenda/itbi/ITBI_2023.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/XLSX/GUIAS-DE-ITBI-PAGAS-2023.xlsx",
+    "remote_last_modified": "Fri, 19 Jan 2024 14:33:45 GMT",
+    "size": 35347867,
+    "sha256": "81f020218060169d7fa1afaf925de5eef727f80891c95ae84b3d64fc15797cc0",
+    "recorded_at": "2026-10-14T23:39:23+00:00"
+  },
+  "fazenda/itbi/ITBI_2024.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/GUIAS-DE-ITBI-PAGAS-2024.xlsx",
+    "remote_last_modified": "Wed, 10 Sep 2025 16:31:54 GMT",
+    "size": 32919810,
+    "sha256": "7c584b3e0e47d9c66121b395ea60d3d17830fa25a08e9e2162316cb23c7e3784",
+    "recorded_at": "2026-10-14T23:39:25+00:00"
+  },
+  "fazenda/itbi/ITBI_2026.xlsx": {
+    "url": "https://www.prefeitura.sp.gov.br/cidade/secretarias/upload/fazenda/arquivos/itbi/GUIAS%20DE%20ITBI%20PAGAS%20%2830092026%29.xlsx",
+    "remote_last_modified": "Wed, 30 Sep 2026 13:52:43 GMT",
+    "size": 31899787,
+    "sha256": "da87dec6acfa4eabb23de0e640a5c2ff8213469e64af6f88cbc53b874c6b354a",
+    "recorded_at": "2026-10-14T23:39:26+00:00"
+  },
+  "geosampa/iluminacao_publica.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:iluminacao_publica",
+    "size": 292092113,
+    "sha256": "9750c0e3052ebb2152a2673225b365febb9410427ef14e4e5990b5936198b85b",
+    "recorded_at": "2026-10-14T23:46:38+00:00"
+  },
+  "geosampa/terminal_onibus.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:terminal_onibus",
+    "size": 24522,
+    "sha256": "d91e891dc3ef0b9a213872c0f9628547e4c5b2ee6c6de0137793bdd5dc7fe793",
+    "recorded_at": "2026-10-14T23:47:20+00:00"
+  },
+  "geosampa/corredor_onibus.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:corredor_onibus",
+    "size": 120395,
+    "sha256": "238634e747c154cf3fd9f2d5d8b13cf07f02a30a8e8f40a835e8997963b714de",
+    "recorded_at": "2026-10-14T23:47:20+00:00"
+  },
+  "geosampa/delegacia_policia_civil.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:delegacia_policia_civil",
+    "size": 1884218,
+    "sha256": "fc3fcc734326780f3a49c955fb58e3d14a3d269375982c38a2f5deb42de699cf",
+    "recorded_at": "2026-10-14T23:47:20+00:00"
+  },
+  "geosampa/equipamento_policia_militar.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:equipamento_policia_militar",
+    "size": 181399,
+    "sha256": "cff10c672bfd363c4947b2d9ff2250530a5cb8e71c7d5be3efe7c2a09f8fcf54",
+    "recorded_at": "2026-10-14T23:47:22+00:00"
+  },
+  "geosampa/equipamento_guarda_civil_metropolitana.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:equipamento_guarda_civil_metropolitana",
+    "size": 57890,
+    "sha256": "c6d248c48b62061387cb3c5f7fd9829777ae9cbcf982c543de7cd8b3727c0bc4",
+    "recorded_at": "2026-10-14T23:47:23+00:00"
+  },
+  "geosampa/habita2geosampa_habi_cortico2geosampa.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:habita2geosampa_habi_cortico2geosampa",
+    "size": 900787,
+    "sha256": "b1b372642c2291a30f52f74b9e5ad29178c80f1196d29651e5397c3e7d9ae82b",
+    "recorded_at": "2026-10-14T23:47:23+00:00"
+  },
+  "geosampa/pde_parque_municipal.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:pde_parque_municipal",
+    "size": 2079840,
+    "sha256": "a07578be60588790be9da3c66f91cf6b103ea46571735fe82a8a0f6ef3a0b4dc",
+    "recorded_at": "2026-10-14T23:47:24+00:00"
+  },
+  "geosampa/GEOSAMPA_v_praca_largo.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:GEOSAMPA_v_praca_largo",
+    "size": 7701836,
+    "sha256": "fb3fc8a7faaa8cfaad8d90d14b2478b7914549571eff53cd2afe15ebc0db526a",
+    "recorded_at": "2026-10-14T23:47:26+00:00"
+  },
+  "geosampa/equipamento_saude_ubs_posto_centro.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:equipamento_saude_ubs_posto_centro",
+    "size": 741684,
+    "sha256": "79b0b7c238c1b04f0c0aa5528bf483e0a8341d3b3441dc9ce0d8adb779756bed",
+    "recorded_at": "2026-10-14T23:47:26+00:00"
+  },
+  "geosampa/equipamento_feira_livre.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:equipamento_feira_livre",
+    "size": 1335275,
+    "sha256": "8747814d2ca0c6e7cfe4fc247129cef24c7d5a11a37d0d31373aa064ffa3f4c2",
+    "recorded_at": "2026-10-14T23:47:27+00:00"
+  },
+  "geosampa/equipamento_policia_civil.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:equipamento_policia_civil",
+    "size": 104590,
+    "sha256": "77f51fd44fcac6d6b7f50180bd73b36155fbe2e99d683de51e99edf26ab228ea",
+    "recorded_at": "2026-10-14T23:47:43+00:00"
+  },
+  "geosampa/ponto_onibus.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:ponto_onibus",
+    "size": 10147528,
+    "sha256": "a5b8d7befae13e5df78d3ce91e2b321408979d88f6c8aa7b942f9ed8eb1a6904",
+    "recorded_at": "2026-10-14T23:47:46+00:00"
+  },
+  "osm/sp_drive.graphml": {
+    "url": "OpenStreetMap via Overpass/OSMnx (network_type=drive, simplify=True)",
+    "size": 157273977,
+    "sha256": "402afdd34c171c4209e5df5ed9218d09f50935dd974683bda2f987705963a2d4",
+    "recorded_at": "2026-10-15T00:44:12+00:00"
+  },
+  "osm/sudeste-latest.osm.pbf": {
+    "url": "https://download.geofabrik.de/south-america/brazil/sudeste-latest.osm.pbf",
+    "remote_last_modified": "Thu, 15 Oct 2026 00:43:05 GMT",
+    "size": 861461572,
+    "sha256": "d0cba5d5b4a73f0e93064b2735a4470990320f1302160f2b7223b3ef583271dd",
+    "recorded_at": "2026-10-15T01:47:12+00:00"
+  },
+  "osm/sp_pois.gpkg": {
+    "url": "OpenStreetMap via Overpass/OSMnx (Geofabrik sudeste-latest.osm.pbf via DuckDB ST_ReadOSM)",
+    "size": 4673536,
+    "sha256": "b806d945e20924671f4461c30b003856ad1dbc8908319b18e5ed13d3cebfcebc",
+    "recorded_at": "2026-10-15T01:47:21+00:00"
+  },
+  "sp156/sp156_2015_TRI1.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/88c10950-4fc9-4ed7-a86c-53d3e4430619/download/arquivofinal1tride2015.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 14:15:37 GMT",
+    "size": 55192722,
+    "sha256": "3d265cac3666cc93c5a75844516ba2342589e4ec701bc2c759d2f4964fd6b59b",
+    "recorded_at": "2026-10-15T11:20:36+00:00"
+  },
+  "sp156/sp156_2015_TRI2.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/4b21bb94-ee5d-48d8-806b-87dd7acbb678/download/arquivofinal2tride2015.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 14:18:59 GMT",
+    "size": 42668527,
+    "sha256": "3452813cd5a96acbf496cf0613f2c27330f4d4085c42e2e9b43cf01a1634fb67",
+    "recorded_at": "2026-10-15T11:20:37+00:00"
+  },
+  "sp156/sp156_2015_TRI3.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/0d89e996-89f4-4154-b6a6-e6e991e0971f/download/arquivofinal3tride2015.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 14:21:53 GMT",
+    "size": 37365699,
+    "sha256": "f971b615199d18948b24d34bb30569a264b7d22d7c8fa515352bc8a4f33c7535",
+    "recorded_at": "2026-10-15T11:20:39+00:00"
+  },
+  "sp156/sp156_2015_TRI4.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/de5ce706-b1ce-48c3-97fc-12cafa823445/download/arquivofinal4tride2015.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 14:24:24 GMT",
+    "size": 45386636,
+    "sha256": "7956275833676cd18964643a6a819e8b20f15286e8f01a60365d908dfd34f2d9",
+    "recorded_at": "2026-10-15T11:20:40+00:00"
+  },
+  "sp156/sp156_2016_TRI1.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/a9297647-db9d-448b-8110-02a0fbbd7848/download/arquivofinal1tride2016.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 14:37:43 GMT",
+    "size": 64849438,
+    "sha256": "84d9a09fef8846e3f82bc38bcd63dd2b435c15e02bfa21891436f7dee361c065",
+    "recorded_at": "2026-10-15T11:20:43+00:00"
+  },
+  "sp156/sp156_2016_TRI2.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/a48ce8ec-5639-4a2b-9598-f10186119dfd/download/arquivofinal2tride2016.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 14:40:18 GMT",
+    "size": 44936568,
+    "sha256": "ef322e805322f40bb2f0987251a32aa545ed29f213902b91635321a1f6d9f9ad",
+    "recorded_at": "2026-10-15T11:20:44+00:00"
+  },
+  "sp156/sp156_2016_TRI3.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/9188083e-57f3-4c2d-afe5-17f3c5382dd8/download/arquivofinal3tride2016.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 14:44:15 GMT",
+    "size": 39449932,
+    "sha256": "ff1ae6be26b77e768946b4deb3bf5fa8df57c1bd7b58bc4bfd6dcd46645db084",
+    "recorded_at": "2026-10-15T11:20:46+00:00"
+  },
+  "sp156/sp156_2016_TRI4.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/7ffee3db-a1a8-4e70-af5c-b3002d035aa8/download/arquivofinal4tride2016.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 14:47:12 GMT",
+    "size": 39118079,
+    "sha256": "d39b5c0cfc93a7e71372a0753f4343d774312b67b7c569bd87dcf74913fed044",
+    "recorded_at": "2026-10-15T11:20:47+00:00"
+  },
+  "sp156/sp156_2017_TRI1.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/193bd5a3-66c0-4dde-8efb-c0c78031bf7c/download/arquivofinal1tride2017.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 15:05:40 GMT",
+    "size": 51472116,
+    "sha256": "e279221edfd378e2eb94e1f4291088d80fe40189f5d6879a7adfd47e51f318d4",
+    "recorded_at": "2026-10-15T11:20:49+00:00"
+  },
+  "sp156/sp156_2017_TRI2.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/ad6a5b74-fa05-49ca-984d-73d8af395880/download/arquivofinal2tride2017.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 15:08:22 GMT",
+    "size": 41292541,
+    "sha256": "7b1a78cee8289a80815a2ecfba0fa1827f21a1c0a30835b0cf266b8e25146a02",
+    "recorded_at": "2026-10-15T11:20:51+00:00"
+  },
+  "sp156/sp156_2017_TRI3.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/cae8b355-f70f-4ecd-8659-04c6efc9fcf2/download/arquivofinal3tride2017.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 15:11:22 GMT",
+    "size": 54001526,
+    "sha256": "cb478d08da6601e03811648b113a1287dde56e6b40472d9521e6caa3b0c730d6",
+    "recorded_at": "2026-10-15T11:20:54+00:00"
+  },
+  "sp156/sp156_2017_TRI4.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/78b35ad3-bdb9-4a67-a9b6-c93ad9031b48/download/arquivofinal4tride2017.csv",
+    "remote_last_modified": "Fri, 25 Oct 2024 15:16:53 GMT",
+    "size": 41523863,
+    "sha256": "36a7b226ed0770c20550abcaf2b807cbecfa539a48b2f0583a3d62bca237386e",
+    "recorded_at": "2026-10-15T11:20:56+00:00"
+  },
+  "sp156/sp156_2018_TRI1.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/f6b6583f-1ea5-4be6-8ff1-a7c9ef38701a/download/arquivofinal1tride2018.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 16:03:11 GMT",
+    "size": 49545907,
+    "sha256": "40e12b24d814d730f86b0bad3f91a2b24f898a19bb790e23d5a5a23f9de833ab",
+    "recorded_at": "2026-10-15T11:20:58+00:00"
+  },
+  "sp156/sp156_2018_TRI2.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/48e72ece-0fca-4220-bf85-052f0e172cfc/download/arquivofinal2tride2018.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 16:05:24 GMT",
+    "size": 41701825,
+    "sha256": "d8d8ab41752ac982378f8e490015fbd86107540471437fa8098f92730e897d7d",
+    "recorded_at": "2026-10-15T11:21:00+00:00"
+  },
+  "sp156/sp156_2018_TRI3.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/bdcd19e1-d5a0-4972-ae6f-53b9b76994cf/download/arquivofinal3tride2018.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 16:08:09 GMT",
+    "size": 57837036,
+    "sha256": "0791d21980f9ca01dea7ce25d1ba2f9ecfa570a58eb27608a80495122ec3576f",
+    "recorded_at": "2026-10-15T11:21:02+00:00"
+  },
+  "sp156/sp156_2018_TRI4.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/9fbfeae7-cbdc-4abd-9a06-115943ff86c7/download/arquivofinal4tride2018.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 16:13:04 GMT",
+    "size": 51401789,
+    "sha256": "dfb8280c27069072f6f2bcc1953dbfd878119728cca9126f967b717fe562be83",
+    "recorded_at": "2026-10-15T11:21:04+00:00"
+  },
+  "sp156/sp156_2019_TRI1.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/c9d2c14d-e31a-4c92-90fb-43ecb91fba17/download/arquivofinal1tride2019.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 13:52:24 GMT",
+    "size": 76558263,
+    "sha256": "5bb3061b1c702d37636400ddc8729234c0fae888854df1b4b10e6470aeb9311a",
+    "recorded_at": "2026-10-15T11:21:07+00:00"
+  },
+  "sp156/sp156_2019_TRI2.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/ca0c51f6-3a48-478e-817e-b5a396474923/download/arquivofinal2tride2019.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 16:26:58 GMT",
+    "size": 68656893,
+    "sha256": "540469bf439ef8263671842954efac95a41a67f115d39d8dd01c19130d069b28",
+    "recorded_at": "2026-10-15T11:21:10+00:00"
+  },
+  "sp156/sp156_2019_TRI3.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/d5632822-913a-4fac-bf53-fe7c123b70c4/download/arquivofinal3tride2019.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 16:30:24 GMT",
+    "size": 63989108,
+    "sha256": "b27caf1fbb1b1e6e00f149cb9e0b6e6d3954d6866128049edc15dc1bd4c46ce6",
+    "recorded_at": "2026-10-15T11:21:12+00:00"
+  },
+  "sp156/sp156_2019_TRI4.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/0444ac8b-c47d-4799-9b29-69a8906419db/download/arquivofinal4tride2019.csv",
+    "remote_last_modified": "Thu, 21 Nov 2024 16:36:35 GMT",
+    "size": 65573698,
+    "sha256": "5a728032b663d47fe323bc86e34a581890067f2cf038cf54a112c2a8699b2108",
+    "recorded_at": "2026-10-15T11:21:15+00:00"
+  },
+  "sp156/sp156_2020_TRI1.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/91745827-93ac-4ef6-9055-21cc88b0d231/download/1-trimestre-2020.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 16:26:07 GMT",
+    "size": 82987545,
+    "sha256": "337aaba19dbdd7eb7225f64c2a74d2c5bed4cd04b7ce1e43a2d31820caef75e3",
+    "recorded_at": "2026-10-15T11:21:18+00:00"
+  },
+  "sp156/sp156_2020_TRI2.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/75356e9d-585d-4aa6-ac6c-b6245624623b/download/2-trimestre-2020.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 16:27:15 GMT",
+    "size": 78488541,
+    "sha256": "9591b5017e75af1d2e4f6cfdafacdf53f4aaad8d920cc44daf5cb54c0ab8e423",
+    "recorded_at": "2026-10-15T11:21:21+00:00"
+  },
+  "sp156/sp156_2020_TRI3.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/b9c5aabf-bfe8-4933-95df-c880ff927dc0/download/3-trimestre-2020.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 16:27:56 GMT",
+    "size": 79384773,
+    "sha256": "abd07d128edaa1f359dbc2c65baa4ea8695cff7c00438ba889ada4082351f82a",
+    "recorded_at": "2026-10-15T11:21:24+00:00"
+  },
+  "sp156/sp156_2020_TRI4.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/a96a91e1-9328-4cf2-b77b-96865c978033/download/4-trimestre-2020.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 16:29:47 GMT",
+    "size": 225793718,
+    "sha256": "5011f402b28d9472fc5d3c33306d0124d932985bf457d4e8ca3c7ebbab5f9516",
+    "recorded_at": "2026-10-15T11:21:32+00:00"
+  },
+  "sp156/sp156_2021_TRI1.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/3014d1de-8c16-4aa1-b03a-b8434905eab1/download/arquivo-final-1-trim.-2021.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 16:31:58 GMT",
+    "size": 191260260,
+    "sha256": "73b0f28cf7c2e9bf7304bfd585526f3d9c0825a743766677429f827a901689af",
+    "recorded_at": "2026-10-15T11:21:39+00:00"
+  },
+  "sp156/sp156_2021_TRI2.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/9aac32a3-67fb-4ce4-847a-29967f909ef6/download/arquivo-final-2-trim.-2021.xlsx",
+    "remote_last_modified": "Mon, 10 Aug 2026 17:29:40 GMT",
+    "size": 52311536,
+    "sha256": "f6507d79149c23151e52e087e8be60e3a9a4ffbd1005f890d23eec7524382330",
+    "recorded_at": "2026-10-15T11:21:44+00:00"
+  },
+  "sp156/sp156_2021_TRI3.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/9b42cbd8-3d2e-4c9f-993e-6c49e62f1818/download/arquivo-final-3-trim.-2021.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 16:35:46 GMT",
+    "size": 102582839,
+    "sha256": "0fc8e5684c2508ff77c20776734766a8471130b64968a7eb38b2d76345260507",
+    "recorded_at": "2026-10-15T11:21:48+00:00"
+  },
+  "sp156/sp156_2021_TRI4.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/a08159cf-5263-430f-a16b-8d0683c5cb4c/download/arquivo-final-4-trim.-2021.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 16:36:45 GMT",
+    "size": 92584883,
+    "sha256": "30ca5847cd88e90e08153c6c57ee98bce968aae2b63f9cffd57a0f25eba995ee",
+    "recorded_at": "2026-10-15T11:21:52+00:00"
+  },
+  "sp156/sp156_2022_TRI1.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/6e6b299c-1952-433c-be06-797a2bc14fda/download/arquivo-final-1-trim.-2022.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 16:39:10 GMT",
+    "size": 109113263,
+    "sha256": "94ebd7c0512e12f0d8cffdc92934d70fe7f62cc8c82313b3db04e0169e6dfe30",
+    "recorded_at": "2026-10-15T11:21:57+00:00"
+  },
+  "sp156/sp156_2022_TRI2.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/6de63b14-e804-44cb-9be1-e8b2971504ce/download/arquivo-final-2-trim.-2022.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 16:40:10 GMT",
+    "size": 92210161,
+    "sha256": "9a053a365bd35c41dbe99bc8fc5634e5dd23b0690624bfe47a380852dbdc14f3",
+    "recorded_at": "2026-10-15T11:22:00+00:00"
+  },
+  "sp156/sp156_2022_TRI3.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/69b1460a-a245-47fa-bbb0-51f5e57c2f28/download/arquivo-final-3-trim.-2022.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 16:41:51 GMT",
+    "size": 85134759,
+    "sha256": "396566dd8817b4a8e421133c0347594d9ef45ab2249e7d708e20fa3755e80202",
+    "recorded_at": "2026-10-15T11:22:04+00:00"
+  },
+  "sp156/sp156_2022_TRI4.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/68408b82-9123-4be0-87cf-bff9096947c6/download/arquivo-final-4-trim.-2022.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 16:44:14 GMT",
+    "size": 93182747,
+    "sha256": "50ac0869c3ba66b3f58eafddd31945b6d8478ec3f36635a5d06734a08d4623cc",
+    "recorded_at": "2026-10-15T11:22:09+00:00"
+  },
+  "sp156/sp156_2023_TRI1.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/d3043e41-4270-47b5-9922-9e35edd10950/download/arquivo-final-1-trim.-2023.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 16:46:05 GMT",
+    "size": 126488588,
+    "sha256": "f84bc6ed6fd6a437c8fd5c546928b63973f59b9d6c91a97655ba397b05ae1124",
+    "recorded_at": "2026-10-15T11:22:14+00:00"
+  },
+  "sp156/sp156_2023_TRI2.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/7978d3ba-d379-44db-993b-61b9ff406435/download/arquivo-final-2-trim.-2023.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 16:47:45 GMT",
+    "size": 108396630,
+    "sha256": "fb25a683ba1e0fd4b4e08361ac543e73ddd8d73b658b4cc5940d5605e49b4ff3",
+    "recorded_at": "2026-10-15T11:22:18+00:00"
+  },
+  "sp156/sp156_2023_TRI3.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/b01a9038-969e-4630-bd3a-4abe188b7259/download/arquivo-final-3-trim.-2023.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 16:49:52 GMT",
+    "size": 105002580,
+    "sha256": "916fa944ecde7cff49021057bf718ef1c6d300a0a0db0378476559a4b85fe1a6",
+    "recorded_at": "2026-10-15T11:22:22+00:00"
+  },
+  "sp156/sp156_2023_TRI4.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/33d41278-02de-417a-a99a-5e01d3d87952/download/arquivo-final-4-trim.-2023.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 16:53:32 GMT",
+    "size": 106171018,
+    "sha256": "c3e06543d08de799a398313cb2d41a8b95bdab12effe36a8555492cd07a496e4",
+    "recorded_at": "2026-10-15T11:22:26+00:00"
+  },
+  "clima/era5_openmeteo_sp.json": {
+    "url": "https://archive-api.open-meteo.com/v1/archive?latitude=-23.55&longitude=-46.63&start_date=2015-01-01&end_date=2026-09-30&daily=temperature_2m_max,temperature_2m_min,temperature_2m_mean,precipitation_sum,wind_speed_10m_max,shortwave_radiation_sum",
+    "size": 214271,
+    "sha256": "45175ab0ec0aa610111de1e2eac49f2e298ad2a9358df0a5043c51264605545b",
+    "recorded_at": "2026-10-15T11:22:32+00:00"
+  },
+  "sp156/sp156_2024_TRI1.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/787c054d-3e77-46c8-8713-e4e26eb2dd55/download/arquivo-final-1-trim.-2024.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 16:55:02 GMT",
+    "size": 138045883,
+    "sha256": "99897db16ebf5637c318cc16e953fb29a675971a25495b6201cdf7b192686315",
+    "recorded_at": "2026-10-15T11:22:32+00:00"
+  },
+  "sp156/sp156_2024_TRI2.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/2d020379-fa40-4dc0-8d17-add74b119550/download/arquivo-final-2-trim.-2024.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 16:56:41 GMT",
+    "size": 85054933,
+    "sha256": "6cab5eb54498afc8bb390985ef9410cb083ec23e6838e30620ee092bf12e3f9b",
+    "recorded_at": "2026-10-15T11:22:36+00:00"
+  },
+  "sp156/sp156_2024_TRI3.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/3c12fe0a-ec4f-4a20-a987-dd177330f4ce/download/arquivo-final-3-trim.-2024.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 17:00:52 GMT",
+    "size": 102087465,
+    "sha256": "3468c381219deee5a7e4cb350bac8ddb66e37b957126117670cbecc71d4883ed",
+    "recorded_at": "2026-10-15T11:22:40+00:00"
+  },
+  "sp156/sp156_2024_TRI4.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/ed357147-f15c-4bf0-ad15-edc963a9f130/download/arquivo-final-4-trim.-2024.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 17:11:39 GMT",
+    "size": 122429036,
+    "sha256": "7262b61c0fa0478f465acc4b652829982d42b628e6d8a27140cced1b9b155be8",
+    "recorded_at": "2026-10-15T11:22:44+00:00"
+  },
+  "sp156/sp156_2025_TRI1.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/7c5aeb58-2cad-40ba-9e9e-af1c17cc5070/download/arquivo-final-1-trim-25.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 17:13:14 GMT",
+    "size": 155468643,
+    "sha256": "f9d02a8bf358f019a5851e0d3d05daa236f803f5b22f254b66fd7b69f63e5170",
+    "recorded_at": "2026-10-15T11:22:49+00:00"
+  },
+  "sp156/sp156_2025_TRI2.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/f5df7f4a-d614-4f85-b4a0-263ec9370cd9/download/arquivo-final-2-trim-25.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 17:14:35 GMT",
+    "size": 121002470,
+    "sha256": "66fc96cf4c4bed437b9f560f23aeb8d93c33d2ff7212fd0bc240742681bedc1e",
+    "recorded_at": "2026-10-15T11:22:54+00:00"
+  },
+  "sp156/sp156_2025_TRI3.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/3b1d2648-d586-40c8-819c-24fbb8005343/download/arquivo-final-3-trim-25.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 17:16:07 GMT",
+    "size": 104884853,
+    "sha256": "6b5c382dbc409074db3a3dbdb577c4c2abc76c8009757a457a2a418956e22c2d",
+    "recorded_at": "2026-10-15T11:22:58+00:00"
+  },
+  "sp156/sp156_2025_TRI4.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/d3a98097-8128-45d4-b8fe-21874b81c971/download/arquivo-final-4-trim-25.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 17:17:34 GMT",
+    "size": 104219942,
+    "sha256": "0a19e3451e30f33f1a8c2581608e1cc92d036915d0594737f0a2ceb0e05929cc",
+    "recorded_at": "2026-10-15T11:23:03+00:00"
+  },
+  "sp156/sp156_2026_TRI1.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/75105148-4efd-48f3-8ae0-fc6c2adf7060/download/arquivo-final-1-trim-26.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 17:19:17 GMT",
+    "size": 124494126,
+    "sha256": "5305b2b13630b05bdd396a5c3e1185cd7d952eec681e07eed957868783e7aa21",
+    "recorded_at": "2026-10-15T11:23:07+00:00"
+  },
+  "seade/ipvs_msp.csv": {
+    "url": "https://repositorio.seade.gov.br/dataset/59895fe4-4cc3-495a-9ac3-4ff7fc9470de/resource/04f37cbf-880f-43dc-814a-3f18fb0098e0/download/ipvs_msp.csv",
+    "remote_last_modified": "Mon, 22 Dec 2025 19:25:47 GMT",
+    "size": 27625,
+    "sha256": "e27278df712ed7e3071406752fcdc5308ddc904774e8a88e57f1b37eb25ec679",
+    "recorded_at": "2026-10-15T11:23:08+00:00"
+  },
+  "seade/dicvar_ipvs_msp.csv": {
+    "url": "https://repositorio.seade.gov.br/dataset/59895fe4-4cc3-495a-9ac3-4ff7fc9470de/resource/a8446c7b-03ca-42bc-bae3-96ad52ac7917/download/dicvar_ipvs_msp.csv",
+    "remote_last_modified": "Mon, 22 Dec 2025 19:26:05 GMT",
+    "size": 425,
+    "sha256": "49d8181f9a15ef10c53b3e65bd6289c2b75e1272c27ef841b077368dfb646c9e",
+    "recorded_at": "2026-10-15T11:23:08+00:00"
+  },
+  "sp156/sp156_2026_TRI2.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/368eb32d-ef25-4441-be8f-fce0146575a1/download/arquivo-final-2-trim-26.csv",
+    "remote_last_modified": "Mon, 10 Aug 2026 17:20:15 GMT",
+    "size": 101003291,
+    "sha256": "bfbf5648a32e97642058645f91b6106253abad00ec96c72a86c67edafee6c9d8",
+    "recorded_at": "2026-10-15T11:23:11+00:00"
+  },
+  "sp156/sp156_2026_TRI3.csv": {
+    "url": "https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/f67fcc12-8da4-485f-92a3-d2af40cc771e/download/arquivo-final-3-trim-26.csv",
+    "remote_last_modified": "Tue, 13 Oct 2026 14:05:10 GMT",
+    "size": 105625875,
+    "sha256": "4e7eb68356c64178dc326feef3f65aeadb34f5507d484f13f3ea4b6bba341634",
+    "recorded_at": "2026-10-15T11:23:15+00:00"
+  },
+  "seade/ipvs_2022_carto.zip": {
+    "url": "https://repositorio.seade.gov.br/dataset/5454f609-5f96-4d86-ac46-a4c58159f395/resource/aa0725d7-eb55-4926-97bf-d4ead6d05c67/download/ipvs_2022.zip",
+    "remote_last_modified": "Mon, 15 Dec 2025 18:23:13 GMT",
+    "size": 87594815,
+    "sha256": "0ec1284ad5666f6b6511458d517e7ca126e68a0299c72e28346cb71820defa8f",
+    "recorded_at": "2026-10-15T11:23:33+00:00"
+  },
+  "ibge/cnefe2022_3550308.zip": {
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3550308_SAO_PAULO.zip",
+    "remote_last_modified": "Mon, 20 May 2024 22:54:08 GMT",
+    "size": 185731999,
+    "sha256": "6071947b633a096e093c7a04399ba6b24f8bcfef41b8d034c462cd70dc6fecc3",
+    "recorded_at": "2026-10-15T11:30:41+00:00"
+  },
+  "bcb/agencias_sp.json": {
+    "url": "https://olinda.bcb.gov.br/olinda/servico/Informes_Agencias/versao/v1/odata/Agencias?$filter=MunicipioIbge eq '3550308'",
+    "size": 635785,
+    "sha256": "aefa93f32863d956ec53f345cb507f9496b60e87e72e001514e8b29a8536f1ab",
+    "recorded_at": "2026-10-15T11:32:40+00:00"
+  },
+  "cnpj/2026-09_Estabelecimentos0.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2026-09/Estabelecimentos0.zip",
+    "remote_last_modified": "Mon, 14 Sep 2026 15:02:59 GMT",
+    "size": 2243389254,
+    "sha256": "7a9cbce08740f54768dcde6c89a2041db828ff7ac7463c952db419891abadf98",
+    "recorded_at": "2026-10-15T11:41:38+00:00"
+  },
+  "ibge/censo2010_agregados_sp_capital.zip": {
+    "url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2010/Resultados_do_Universo/Agregados_por_Setores_Censitarios/SP_Capital_20260615.zip",
+    "remote_last_modified": "Mon, 15 Jun 2026 11:41:14 GMT",
+    "size": 175587279,
+    "sha256": "655a5988878661c7bb4c86103c919a7b163380a707b24458622ad5becc6f7609",
+    "recorded_at": "2026-10-15T11:41:39+00:00"
+  },
+  "ibge/censo2010_documentacao.zip": {
+    "url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2010/Resultados_do_Universo/Agregados_por_Setores_Censitarios/Documentacao_Agregado_dos_Setores_2010_20231030.zip",
+    "remote_last_modified": "Mon, 30 Oct 2023 20:16:16 GMT",
+    "size": 34133643,
+    "sha256": "eccb3896d19c4e29c733fd8b63869a01fb6ac47281cb409c6f7daf81cc49bb5b",
+    "recorded_at": "2026-10-15T11:42:30+00:00"
+  },
+  "ibge/censo2010_malha_setores_sp.zip": {
+    "url": "https://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_de_setores_censitarios__divisoes_intramunicipais/censo_2010/setores_censitarios_shp/sp/sp_setores_censitarios.zip",
+    "remote_last_modified": "Wed, 04 Nov 2020 15:22:14 GMT",
+    "size": 45523805,
+    "sha256": "6566ce615b9f2ff28ce3cb67d1c6d60eb3e606260aef0ff738c757a63e14f4ac",
+    "recorded_at": "2026-10-15T11:42:30+00:00"
+  },
+  "cnpj/2026-09_Estabelecimentos1.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2026-09/Estabelecimentos1.zip",
+    "remote_last_modified": "Mon, 14 Sep 2026 15:03:26 GMT",
+    "size": 341841240,
+    "sha256": "8954bb9b76d399d9921ad99009bf0ce2434e19d2c04c180ca1ba4c78308c6165",
+    "recorded_at": "2026-10-15T11:43:38+00:00"
+  },
+  "cnpj/2026-09_Estabelecimentos2.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2026-09/Estabelecimentos2.zip",
+    "remote_last_modified": "Mon, 14 Sep 2026 15:03:50 GMT",
+    "size": 336278618,
+    "sha256": "a30c3090c3b93ace16b0080d7e14dfc37e41c8a81d1d4a12194c5712cbf6d8ed",
+    "recorded_at": "2026-10-15T11:44:34+00:00"
+  },
+  "cnpj/2026-09_Estabelecimentos3.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2026-09/Estabelecimentos3.zip",
+    "remote_last_modified": "Mon, 14 Sep 2026 15:04:15 GMT",
+    "size": 368000820,
+    "sha256": "d457960b349b542ac235505a4df32c59fd14c822ef1ef4fa0f6e3b0e4e3dc37e",
+    "recorded_at": "2026-10-15T11:45:30+00:00"
+  },
+  "cnpj/2026-09_Estabelecimentos4.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2026-09/Estabelecimentos4.zip",
+    "remote_last_modified": "Mon, 14 Sep 2026 15:04:39 GMT",
+    "size": 340870490,
+    "sha256": "c144b469c93ed53d905d9a7ea563051e1171d33cfea22ccae7ef18c2ffb0c6c0",
+    "recorded_at": "2026-10-15T11:46:29+00:00"
+  },
+  "cnpj/2026-09_Estabelecimentos5.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2026-09/Estabelecimentos5.zip",
+    "remote_last_modified": "Mon, 14 Sep 2026 15:05:02 GMT",
+    "size": 335355867,
+    "sha256": "77a50fe829945f788a18e89390c1577c6cded6f0983007cb9314e9a9ffa20581",
+    "recorded_at": "2026-10-15T11:47:25+00:00"
+  },
+  "cnpj/2026-09_Estabelecimentos6.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2026-09/Estabelecimentos6.zip",
+    "remote_last_modified": "Mon, 14 Sep 2026 15:05:27 GMT",
+    "size": 369173589,
+    "sha256": "89ec562727018972033ffd14cbfcc23221e8aa3125af846ea1bf86bfb109c6fa",
+    "recorded_at": "2026-10-15T11:48:36+00:00"
+  },
+  "cnpj/2026-09_Estabelecimentos7.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2026-09/Estabelecimentos7.zip",
+    "remote_last_modified": "Mon, 14 Sep 2026 15:05:50 GMT",
+    "size": 339164748,
+    "sha256": "07868cda860215dca2368afce06d117b27a6756a8b33ffd0ed562432dfef5f62",
+    "recorded_at": "2026-10-15T11:49:31+00:00"
+  },
+  "cnpj/2026-09_Estabelecimentos8.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2026-09/Estabelecimentos8.zip",
+    "remote_last_modified": "Mon, 14 Sep 2026 15:06:13 GMT",
+    "size": 340381627,
+    "sha256": "bebf369fbe37437fd61f804ec7e24f541f831fb0fcb3e0564de867377c2da52d",
+    "recorded_at": "2026-10-15T11:50:25+00:00"
+  },
+  "cnpj/2026-09_Estabelecimentos9.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2026-09/Estabelecimentos9.zip",
+    "remote_last_modified": "Mon, 14 Sep 2026 15:06:39 GMT",
+    "size": 366879953,
+    "sha256": "45bf199ac5b4adc3b1b99293024902406f13f93ba08389df3c7c27475323212f",
+    "recorded_at": "2026-10-15T11:51:25+00:00"
+  },
+  "geosampa/massa_d_agua.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:massa_d_agua",
+    "size": 24800273,
+    "sha256": "0be248d18143754e446e06eb6535e03288813c548d050ddbea70e59c1e529fe7",
+    "recorded_at": "2026-10-16T13:20:42+00:00"
+  },
+  "geosampa/ferrovia_mdc.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:ferrovia_mdc",
+    "size": 1675260,
+    "sha256": "1d89d9b7d409eb9c34597531c6bc0834c0571b75f721c485f04ea10cd56cada4",
+    "recorded_at": "2026-10-16T13:20:42+00:00"
+  },
+  "geosampa/linha_metro.geojson": {
+    "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?typeNames=geoportal:linha_metro",
+    "size": 41358,
+    "sha256": "4bcce37f1d8a3f2cfa776cb040028aa903f2ddb695afb8e97030563b640d9f34",
+    "recorded_at": "2026-10-16T13:20:42+00:00"
+  },
+  "cnpj/2025-12_Estabelecimentos0.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2025-12/Estabelecimentos0.zip",
+    "remote_last_modified": "Sun, 14 Dec 2025 18:32:58 GMT",
+    "size": 1923897885,
+    "sha256": "b8874b51cc657a6aaacff0f0186d40174562adf621a9f68257ae093d7412e65d",
+    "recorded_at": "2026-10-16T13:20:56+00:00"
+  },
+  "cnpj/2025-12_Estabelecimentos1.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2025-12/Estabelecimentos1.zip",
+    "remote_last_modified": "Sun, 14 Dec 2025 18:33:21 GMT",
+    "size": 340703075,
+    "sha256": "0779d5621824d1f0b948615754ab79ef7242976a7369e4e88d6333e3299d3584",
+    "recorded_at": "2026-10-16T13:21:01+00:00"
+  },
+  "cnpj/2025-12_Estabelecimentos2.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2025-12/Estabelecimentos2.zip",
+    "remote_last_modified": "Sun, 14 Dec 2025 18:33:43 GMT",
+    "size": 335322794,
+    "sha256": "a5d032c14783c68e13e1fa8ad4d75e87d24f35d7dec8777ad89b8e90d2b7837c",
+    "recorded_at": "2026-10-16T13:21:25+00:00"
+  },
+  "cnpj/2025-12_Estabelecimentos3.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2025-12/Estabelecimentos3.zip",
+    "remote_last_modified": "Sun, 14 Dec 2025 18:34:07 GMT",
+    "size": 359506649,
+    "sha256": "b601005796085d6c2e1e9b303be943ddfebeaf28d274af343f1342fad858c172",
+    "recorded_at": "2026-10-16T13:21:35+00:00"
+  },
+  "cnpj/2025-12_Estabelecimentos4.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2025-12/Estabelecimentos4.zip",
+    "remote_last_modified": "Sun, 14 Dec 2025 18:34:30 GMT",
+    "size": 349179056,
+    "sha256": "9db46330e6b5945404a6b97b1fb45dd1f0cb786db2f33d8c106fff6c5b130e45",
+    "recorded_at": "2026-10-16T13:21:46+00:00"
+  },
+  "cnpj/2025-12_Estabelecimentos5.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2025-12/Estabelecimentos5.zip",
+    "remote_last_modified": "Sun, 14 Dec 2025 18:34:52 GMT",
+    "size": 335066030,
+    "sha256": "5abd917728dc5572a675ca527ac03a7a624bf8e81f0004686ea44fc8ca1a3ba4",
+    "recorded_at": "2026-10-16T13:21:56+00:00"
+  },
+  "cnpj/2025-12_Estabelecimentos6.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2025-12/Estabelecimentos6.zip",
+    "remote_last_modified": "Sun, 14 Dec 2025 18:35:15 GMT",
+    "size": 348444092,
+    "sha256": "b87a4b9cbb0cff8299028232f61fcaa9297accbddb3a0bb1b8dc07242074215a",
+    "recorded_at": "2026-10-16T13:22:01+00:00"
+  },
+  "cnpj/2025-12_Estabelecimentos7.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2025-12/Estabelecimentos7.zip",
+    "remote_last_modified": "Sun, 14 Dec 2025 18:35:38 GMT",
+    "size": 359289738,
+    "sha256": "be16157847fef7c08a17824ba9c07413634723818679442f30f5b5cd5bdf0ac7",
+    "recorded_at": "2026-10-16T13:22:07+00:00"
+  },
+  "cnpj/2025-12_Estabelecimentos8.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2025-12/Estabelecimentos8.zip",
+    "remote_last_modified": "Sun, 14 Dec 2025 18:36:00 GMT",
+    "size": 335845856,
+    "sha256": "e15e63d496fbaed44e605955b67f2d004fda62e9afb78ef875535518dec496cf",
+    "recorded_at": "2026-10-16T13:22:12+00:00"
+  },
+  "cnpj/2025-12_Estabelecimentos9.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2025-12/Estabelecimentos9.zip",
+    "remote_last_modified": "Sun, 14 Dec 2025 18:36:22 GMT",
+    "size": 338724207,
+    "sha256": "5c9f4e5d8d131f4e69c290edbc8da170b97d9290d5557fa488604cb1c8fa0b31",
+    "recorded_at": "2026-10-16T13:22:22+00:00"
+  },
+  "cnpj/2025-12_Simples.zip": {
+    "url": "https://arquivos.receitafederal.gov.br/public.php/webdav/2025-12/Simples.zip",
+    "remote_last_modified": "Sun, 14 Dec 2025 18:36:47 GMT",
+    "size": 277556593,
+    "sha256": "16c8e63ab9b371d5d1cb4fb93f78fc670c26d85789b07436dbb10da68d4a8eff",
+    "recorded_at": "2026-10-16T13:22:53+00:00"
+  },
+  "od/OD-2017.zip": {
+    "url": "https://transparencia.metrosp.com.br/sites/default/files/OD-2017.zip",
+    "remote_last_modified": "Fri, 07 May 2021 15:12:26 GMT",
+    "size": 42426273,
+    "sha256": "c87ca4bec430369a37ae99ed79ab303de69f0e9a4f0723cf8248707c970e770e",
+    "recorded_at": "2026-10-19T21:02:57+00:00"
+  },
+  "od/OD-2023-zip/Site_190225_PesquisaOD2023.zip": {
+    "url": "https://transparencia.metrosp.com.br/sites/default/files/Site_190225_PesquisaOD2023.zip",
+    "size": 198350642,
+    "sha256": "1844d38ad83c86cbb679f24c04e317aa49704c5009f8e5a0d0246f026f06bd9d",
+    "recorded_at": "2026-10-20T14:51:11+00:00",
+    "note": "baixada com autorização do autor em 2026-10-20; registrada no manifesto em 2026-10-26"
+  }
+}

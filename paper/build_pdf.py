@@ -10,13 +10,15 @@ Uso: python paper/build_pdf.py
 
 from __future__ import annotations
 
+import os
 import re
+import shutil
 import subprocess
 from pathlib import Path
 
 HERE = Path(__file__).parent
 FIGS = HERE.parent / "figures" / "out" / "dev"
-PANDOC = "/home/MarcosToquetao/miniforge3/envs/regressao_log/bin/pandoc"
+PANDOC = os.environ.get("PANDOC") or shutil.which("pandoc") or "pandoc"
 CHROME = "google-chrome"
 
 CSS = """

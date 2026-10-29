@@ -50,3 +50,12 @@ explorer/public/
 # Manuscrito: PDF e DOCX saem do build (paper/build.py, build_pdf.py)
 paper/**/*.pdf
 paper/**/*.docx
+
+# Arquivos de ferramentas de assistente e de entrevista de specs
+.claude/
+.spec-*.interview.json
+
+# Manuscrito: só os scripts de build são públicos; rascunhos e versões ficam locais
+paper/*
+!paper/build.py
+!paper/build_pdf.py
