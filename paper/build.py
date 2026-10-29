@@ -264,6 +264,10 @@ def limpa_docx(path: Path) -> None:
 ANON = [
     ("had been seen on the first author's public crime website", "had been seen on a public crime-statistics website"),
     ("first author's public crime website", "a public crime-statistics website"),
+    # Repositório e arquivo de código: GitHub e Zenodo mostram os nomes dos autores
+    ("https://github.com/MarcosToquetao/CityOmics", "[ANONYMOUS LINK]"),
+    ("is archived at Zenodo (https://doi.org/10.5281/zenodo.23778358)", "is archived at Zenodo (DOI withheld for review)"),
+    ("are deposited at Zenodo (https://doi.org/10.5281/zenodo.23778485)", "are deposited at Zenodo (DOI withheld for review)"),
 ]
 
 

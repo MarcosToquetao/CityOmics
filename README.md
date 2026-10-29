@@ -8,7 +8,7 @@ The study reads São Paulo with the tools of spatial transcriptomics. Fiscal par
 
 - Article: [DOI after publication]
 - Code archive: Zenodo, https://doi.org/10.5281/zenodo.23778357 (all versions; v1.0.0, the version in the article: https://doi.org/10.5281/zenodo.23778358)
-- Aggregated data and frozen models: Zenodo [DOI]
+- Aggregated data and frozen models: Zenodo, https://doi.org/10.5281/zenodo.23778485
 - Preregistration and vault access log: OSF [OSF DOI]
 
 ## Repository layout
@@ -73,7 +73,7 @@ pytest
 
 The inputs are public, but the repository does not ship them. [DATA.md](DATA.md) lists each source with its provider and terms of use. The files in `data_manifest/` give the URL, access date and SHA-256 checksum of every file, so a fresh download can be checked against the version used in the article.
 
-Police-report microdata contain report numbers and addresses. They are processed on a local machine and never leave it; only aggregates are published. The aggregated outputs, the data behind the figures and the frozen models are on Zenodo [DOI].
+Police-report microdata contain report numbers and addresses. They are processed on a local machine and never leave it; only aggregates are published. The aggregated outputs, the tables behind Figs. 2 and 5 and the frozen models are on Zenodo (https://doi.org/10.5281/zenodo.23778485).
 
 The inputs take about 31 GB of disk once downloaded and processed.
 

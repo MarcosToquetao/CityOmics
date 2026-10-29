@@ -47,7 +47,7 @@ cityomics ingest snapshot --verify
 
 Records dated 2026 are split off at ingestion and stored in `data/sealed_2026/`. The code refuses to read them unless both keys match (see the README). The access log of the vault is registered on OSF [OSF DOI].
 
-## Deposited outputs (Zenodo [DOI])
+## Deposited outputs (Zenodo, https://doi.org/10.5281/zenodo.23778485)
 
 | Content | Level |
 |---|---|
