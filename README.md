@@ -7,7 +7,7 @@ Code for the article "Crime as a phenotype of urban tissue" (Toquetão & Nakaya,
 The study reads São Paulo with the tools of spatial transcriptomics. Fiscal parcels play the role of cells, census tracts are spots of known composition, and police records of 15 crime types are the phenotype. From areal counts, the pipeline estimates which crimes each class of parcel hosts and at what hour, how much of a tract's crime persists beyond its composition, and how well month-to-month counts can be forecast.
 
 - Article: [DOI after publication]
-- Code archive: Zenodo, https://doi.org/10.5281/zenodo.23778357 (all versions; v1.0.0, the version in the article: https://doi.org/10.5281/zenodo.23778358)
+- Code archive: Zenodo, https://doi.org/10.5281/zenodo.23778357 (all versions; v1.0.1, the version cited in the article: https://doi.org/10.5281/zenodo.23779225)
 - Aggregated data and frozen models: Zenodo, https://doi.org/10.5281/zenodo.23778485
 - Preregistration, amendments and freeze manifests: `prereg/`, archived with the code at Zenodo
 
