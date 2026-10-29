@@ -166,13 +166,17 @@ app.add_typer(atlas_app, name="atlas")
 
 ATLAS_STEPS = ["genes", "ruas", "tipagem", "spots", "nichos", "atribuicao", "variancia", "preditores", "comunicacao", "destino", "letal"]
 ATLAS_PILOTOS = ["fenotipo", "presenca", "memoria", "previsibilidade", "perturbacao", "ensaio", "robustez",  # narrativa B (D63); só quando pedidos
-                 "reconciliacao", "identificacao", "ritmo_queda", "presenca_od2023", "sensibilidade_od2023", "repontua_crps"]  # revisão pelo parecer (2026-10)
+                 "reconciliacao", "identificacao", "ritmo_queda", "presenca_od2023", "sensibilidade_od2023", "repontua_crps",  # revisão pelo parecer (2026-10)
+                 "contexto", "contexto_vizinhanca", "contexto_rede", "contexto_od", "contexto_gnn", "contexto_figura",
+                 "contexto_tendencia", "contexto_equalizado", "contexto_od_incerteza", "contexto_od_interacao", "contexto_mgwr",
+                 "contexto_gnn_sementes", "contexto_figura_extra", "contexto_teto", "contexto_teto_resumo"]  # gêmeos de tecido (exploratório, fora do artigo)
 
 
 @atlas_app.command("run")
 def atlas_run(steps: list[str] = typer.Argument(None, help=f"Etapas, na ordem: {', '.join(ATLAS_STEPS)} (padrão: todas); pilotos: {', '.join(ATLAS_PILOTOS)}.")) -> None:
     """Roda as etapas do atlas. Nada de 2026 é lido; o crime exclui o cofre espacial (D53)."""
-    from cityomics.atlas import (attribution, communication, confirmacao, fate, fenotipo, genes_lote, identificacao, memoria, niches,
+    from cityomics.atlas import (attribution, communication, confirmacao, contexto, contexto_extra, contexto_grafo, contexto_teto, contexto_vizinhanca, fate,
+                                 fenotipo, genes_lote, identificacao, memoria, niches,
                                  perturbacao, predictors, presenca, presenca_od2023, previsibilidade, reconciliacao, ritmo_queda,
                                  robustez, spots, streets, typing, variance)
     from cityomics.models import letal_run, repontua_crps
@@ -186,7 +190,15 @@ def atlas_run(steps: list[str] = typer.Argument(None, help=f"Etapas, na ordem: {
            "robustez": robustez.run, "reconciliacao": reconciliacao.run, "identificacao": identificacao.run,
            "ritmo_queda": ritmo_queda.run, "presenca_od2023": presenca_od2023.run,
            "sensibilidade_od2023": lambda log: presenca_od2023.sensibilidade_sigma(log=log),
-           "repontua_crps": lambda log: [repontua_crps.run(tag, log=log) for tag in ("dev", "viirs")]}
+           "repontua_crps": lambda log: [repontua_crps.run(tag, log=log) for tag in ("dev", "viirs")],
+           "contexto": contexto.run, "contexto_vizinhanca": contexto_vizinhanca.run, "contexto_rede": contexto_grafo.rede,
+           "contexto_od": contexto_grafo.od, "contexto_gnn": contexto_grafo.gnn, "contexto_figura": contexto_grafo.figura,
+           "contexto_tendencia": contexto_extra.tendencia, "contexto_equalizado": contexto_extra.equalizado,
+           "contexto_od_incerteza": contexto_extra.od_incerteza, "contexto_od_interacao": contexto_extra.od_interacao,
+           "contexto_mgwr": contexto_extra.mgwr, "contexto_gnn_sementes": contexto_extra.gnn_sementes,
+           "contexto_figura_extra": contexto_extra.figura,
+           "contexto_teto": lambda log: [contexto_teto.run_alvo(a, log=log) for a in contexto_teto.ALVOS],
+           "contexto_teto_resumo": contexto_teto.resumo}
     for s in steps or ATLAS_STEPS:
         typer.echo(f"== {s}")
         run[s](log=typer.echo)
